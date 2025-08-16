@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ui:
+    build: ./ui
+    container_name: jupiter-ui
+    ports:
+      - "${UI_EXTERNAL_PORT:-8443}:443"
+    depends_on:
+      - api
+    volumes:
+      - ./ui/certs:/etc/nginx/certs:ro
+    networks:
+      - siem-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  siem-net:
+    external: true

@@ -3,6 +3,15 @@ import { motion } from 'framer-motion';
 
 const CommandPalette = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
+  const commands = [
+    { name: 'Command 1', shortcut: 'Ctrl+1' },
+    { name: 'Command 2', shortcut: 'Ctrl+2' },
+    { name: 'Command 3', shortcut: 'Ctrl+3' },
+  ];
+
+  const filteredCommands = commands.filter((cmd) =>
+    cmd.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     isOpen && (
@@ -25,9 +34,12 @@ const CommandPalette = ({ isOpen, onClose }) => {
             className="w-full p-3 rounded-xl bg-zinc-800 text-zinc-200 focus:outline-none"
           />
           <ul className="mt-4 space-y-2">
-            <li className="p-2 bg-zinc-800 rounded-xl">Command 1</li>
-            <li className="p-2 bg-zinc-800 rounded-xl">Command 2</li>
-            <li className="p-2 bg-zinc-800 rounded-xl">Command 3</li>
+            {filteredCommands.map((cmd, index) => (
+              <li key={index} className="p-2 bg-zinc-800 rounded-xl flex justify-between">
+                <span>{cmd.name}</span>
+                <span className="text-xs text-zinc-400">{cmd.shortcut}</span>
+              </li>
+            ))}
           </ul>
         </div>
       </motion.div>

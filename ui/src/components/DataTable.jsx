@@ -37,6 +37,9 @@ const DataTable = ({ data = [], columns = [] }) => {
           })}
         </tbody>
       </table>
+      <div className="text-center mt-4">
+        Showing {rowVirtualizer.virtualItems.length} of {data.length} rows
+      </div>
     </div>
   );
 };

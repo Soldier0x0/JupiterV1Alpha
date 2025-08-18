@@ -9,6 +9,7 @@
   
   body {
     @apply bg-[#0b0c10] text-zinc-200 antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
   
   /* Custom scrollbar */
@@ -27,19 +28,34 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-zinc-500;
   }
+
+  /* Professional typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.025em;
+  }
+  
+  p {
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
 }
 
 @layer components {
   .btn-primary {
     @apply bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    font-family: 'Inter', sans-serif;
   }
   
   .btn-secondary {
     @apply bg-zinc-600 hover:bg-zinc-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    font-family: 'Inter', sans-serif;
   }
   
   .btn-ghost {
     @apply bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 border border-zinc-700 hover:border-zinc-600;
+    font-family: 'Inter', sans-serif;
   }
   
   .card {
@@ -52,10 +68,12 @@
   
   .input-field {
     @apply w-full px-4 py-3 bg-[#0b0c10] border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200;
+    font-family: 'Inter', sans-serif;
   }
   
   .nav-link {
     @apply flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800;
+    font-family: 'Inter', sans-serif;
   }
   
   .nav-link-active {
@@ -70,6 +88,26 @@
   
   .bg-mesh {
     background-image: radial-gradient(circle at 25% 25%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+  }
+
+  /* Professional typography utilities */
+  .font-display {
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.025em;
+  }
+  
+  .font-body {
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  
+  .tracking-tight-professional {
+    letter-spacing: -0.025em;
+  }
+  
+  .tracking-normal-professional {
+    letter-spacing: -0.01em;
   }
 }
 

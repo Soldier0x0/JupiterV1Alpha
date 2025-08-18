@@ -1,0 +1,67 @@
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider';
+import WebGLBackground from './WebGLBackground';
+import TopBar from './TopBar';
+import SideNav from './SideNav';
+import Home from '../pages/Home';
+import Alerts from '../pages/Alerts';
+import Explore from '../pages/Explore';
+import Intel from '../pages/Intel';
+import Entities from '../pages/Entities';
+import Cases from '../pages/Cases';
+import Models from '../pages/Models';
+import Settings from '../pages/Settings';
+import Automations from '../pages/Automations';
+import TenantManagement from '../pages/TenantManagement';
+
+const Dashboard = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-cosmic-black flex items-center justify-center">
+        <div className="animate-pulse-glow">
+          <div className="w-16 h-16 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-2xl flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-cosmic-black border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    window.location.href = '/login';
+    return null;
+  }
+
+  return (
+    <div className="relative min-h-screen bg-cosmic-black">
+      <WebGLBackground />
+      <div className="relative z-10 flex">
+        <SideNav />
+        <div className="flex-1">
+          <TopBar />
+          <main className="p-6">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/intel" element={<Intel />} />
+              <Route path="/entities" element={<Entities />} />
+              <Route path="/cases" element={<Cases />} />
+              <Route path="/models" element={<Models />} />
+              <Route path="/automations" element={<Automations />} />
+              <Route path="/settings" element={<Settings />} />
+              {user.is_owner && (
+                <Route path="/admin/tenants" element={<TenantManagement />} />
+              )}
+            </Routes>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

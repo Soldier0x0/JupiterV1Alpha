@@ -102,12 +102,26 @@ class JupiterAPITester:
         
         return success
 
-    def test_login_with_mock_otp(self):
-        """Test login with a mock OTP (we'll try common test OTPs)"""
-        # Common test OTPs to try
-        test_otps = ["123456", "000000", "111111"]
-        
-        for otp in test_otps:
+    def test_login_with_actual_otp(self):
+        """Test login with actual OTP from logs"""
+        # Get the OTP from backend logs
+        import subprocess
+        try:
+            result = subprocess.run(['tail', '-n', '50', '/var/log/supervisor/backend.out.log'], 
+                                  capture_output=True, text=True)
+            log_lines = result.stdout.split('\n')
+            
+            # Find the most recent OTP for our email
+            otp = None
+            for line in reversed(log_lines):
+                if f"OTP for {self.test_email}:" in line:
+                    otp = line.split(":")[-1].strip()
+                    break
+            
+            if not otp:
+                self.log_test("Login with Actual OTP", False, "No OTP found in logs")
+                return False
+            
             login_data = {
                 "email": self.test_email,
                 "otp": otp,
@@ -122,9 +136,13 @@ class JupiterAPITester:
                 self.user_data = data.get("user", {})
                 self.log_test(f"Login with OTP {otp}", True, f"Token received")
                 return True
-            
-        self.log_test("Login with Mock OTP", False, "No valid OTP found")
-        return False
+            else:
+                self.log_test(f"Login with OTP {otp}", False, f"Status: {status}, Response: {data}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Login with Actual OTP", False, f"Error reading logs: {str(e)}")
+            return False
 
     def test_dashboard_overview(self):
         """Test dashboard overview endpoint"""

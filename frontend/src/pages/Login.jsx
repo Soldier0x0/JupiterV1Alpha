@@ -71,8 +71,8 @@ const Login = () => {
         <div className="card">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-red-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-300 to-red-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <JupiterIcon className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-bold text-red-400">Welcome Back</h1>
             <p className="text-zinc-400 mt-2">

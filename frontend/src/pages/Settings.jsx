@@ -141,6 +141,45 @@ const Settings = () => {
         </motion.div>
       )}
 
+      {/* Typography Demonstration */}
+      <Card>
+        <div className="mb-6">
+          <h2 className="display-text text-xl mb-4 flex items-center space-x-2">
+            <Code className="w-5 h-5" />
+            <span>Typography System Demo</span>
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-display text-lg font-semibold mb-2">Display Font (Space Grotesk)</h3>
+              <p className="font-display text-2xl">Project Jupiter Security Platform</p>
+            </div>
+            <div>
+              <h3 className="font-sans text-lg font-semibold mb-2">Body Font (Inter)</h3>
+              <p className="font-sans">This is the primary UI font used for navigation, buttons, forms, and general interface elements.</p>
+            </div>
+            <div>
+              <h3 className="font-mono text-lg font-semibold mb-2">Monospace Font (JetBrains Mono)</h3>
+              <div className="bg-[#0b0c10] border border-zinc-700 rounded-lg p-4">
+                <pre className="font-mono text-sm text-green-400">
+{`{
+  "alert_id": "alert_2025_001",
+  "severity": "critical", 
+  "source": "192.168.1.100",
+  "timestamp": "2025-01-18T19:42:15Z",
+  "message": "Unauthorized access detected",
+  "metadata": {
+    "user_agent": "Mozilla/5.0...",
+    "attempts": 15,
+    "blocked": true
+  }
+}`}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* Add API Key Form */}
       {showAddForm && (
         <motion.div

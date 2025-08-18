@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Zap, Eye, ArrowRight, Github, Book, Server } from 'lucide-react';
 import WebGLBackground from './WebGLBackground';
+import JupiterIcon from './JupiterIcon';
 
 const LandingPage = () => {
   const features = [

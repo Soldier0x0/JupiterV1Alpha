@@ -13,6 +13,7 @@ import {
   Building
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
+import JupiterIcon from './JupiterIcon';
 
 const SideNav = () => {
   const { user, isOwner } = useAuth();

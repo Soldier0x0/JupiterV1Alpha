@@ -220,9 +220,7 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-300 to-red-500 rounded-lg flex items-center justify-center">
-                  <JupiterIcon className="w-5 h-5" />
-                </div>
+                <JupiterIcon className="w-8 h-8 rounded-full" />
                 <span className="text-xl font-bold font-['Inter']">Project Jupiter</span>
               </div>
               <p className="text-zinc-400 font-['Inter'] font-light">Enterprise-grade security visibility for the modern threat landscape.</p>

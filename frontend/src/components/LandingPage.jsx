@@ -137,36 +137,36 @@ const LandingPage = () => {
       >
         <div className="max-w-6xl mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16"
+            className="text-4xl md:text-5xl font-bold text-center mb-16 font-['Inter'] tracking-tight"
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Enterprise Security <span className="text-gradient">Capabilities</span>
+            Enterprise Security <span className="bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent">Capabilities</span>
           </motion.h2>
           
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="card-glow group cursor-pointer"
+                className="bg-[#111214] border border-zinc-700 rounded-lg p-6 hover:border-zinc-600 hover:shadow-red-500/20 hover:shadow-lg transition-all duration-200 group cursor-pointer"
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ y: -10 }}
+                whileHover={{ y: -5 }}
                 viewport={{ once: true }}
               >
                 <div className="flex flex-col items-center text-center">
                   <motion.div
-                    className="w-16 h-16 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-2xl flex items-center justify-center mb-6 group-hover:animate-pulse-glow"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
+                    className="w-16 h-16 bg-gradient-to-br from-orange-300 to-red-500 rounded-2xl flex items-center justify-center mb-6"
+                    whileHover={{ rotate: 5 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <feature.icon className="w-8 h-8 text-cosmic-black" />
+                    <feature.icon className="w-8 h-8 text-white" />
                   </motion.div>
-                  <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
-                  <p className="text-zinc-400 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-semibold mb-4 font-['Inter']">{feature.title}</h3>
+                  <p className="text-zinc-400 leading-relaxed font-['Inter'] font-light">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -185,27 +185,27 @@ const LandingPage = () => {
       >
         <div className="max-w-4xl mx-auto">
           <motion.h2 
-            className="text-4xl font-bold text-center mb-16"
+            className="text-4xl md:text-5xl font-bold text-center mb-16 font-['Inter'] tracking-tight"
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Frequently Asked <span className="text-gradient">Questions</span>
+            Frequently Asked <span className="bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent">Questions</span>
           </motion.h2>
           
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
-                className="card"
+                className="bg-[#111214] border border-zinc-700 rounded-lg p-6 hover:border-zinc-600 transition-colors duration-200"
                 initial={{ x: -50, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-xl font-semibold mb-3 text-jupiter-secondary">{faq.question}</h3>
-                <p className="text-zinc-400 leading-relaxed">{faq.answer}</p>
+                <h3 className="text-xl font-semibold mb-3 text-orange-300 font-['Inter']">{faq.question}</h3>
+                <p className="text-zinc-400 leading-relaxed font-['Inter'] font-light">{faq.answer}</p>
               </motion.div>
             ))}
           </div>
@@ -214,7 +214,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <motion.footer 
-        className="relative z-10 bg-cosmic-dark/50 backdrop-blur-sm border-t border-cosmic-border py-12 px-6"
+        className="relative z-10 bg-[#111214]/80 backdrop-blur-sm border-t border-zinc-700 py-12 px-6"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -224,41 +224,41 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-cosmic-black" />
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-300 to-red-500 rounded-lg flex items-center justify-center">
+                  <JupiterIcon className="w-5 h-5" />
                 </div>
-                <span className="text-xl font-bold">Project Jupiter</span>
+                <span className="text-xl font-bold font-['Inter']">Project Jupiter</span>
               </div>
-              <p className="text-zinc-400">Enterprise-grade security visibility for the modern threat landscape.</p>
+              <p className="text-zinc-400 font-['Inter'] font-light">Enterprise-grade security visibility for the modern threat landscape.</p>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
-              <div className="space-y-2 text-zinc-400">
-                <a href="/docs" className="block hover:text-jupiter-secondary transition-colors">Documentation</a>
-                <a href="/api" className="block hover:text-jupiter-secondary transition-colors">API Reference</a>
-                <a href="/support" className="block hover:text-jupiter-secondary transition-colors">Support</a>
+              <h4 className="font-semibold mb-4 font-['Inter']">Resources</h4>
+              <div className="space-y-2 text-zinc-400 font-['Inter']">
+                <a href="/docs" className="block hover:text-orange-300 transition-colors">Documentation</a>
+                <a href="/api" className="block hover:text-orange-300 transition-colors">API Reference</a>
+                <a href="/support" className="block hover:text-orange-300 transition-colors">Support</a>
               </div>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Technology</h4>
-              <div className="flex items-center space-x-4 text-zinc-400">
+              <h4 className="font-semibold mb-4 font-['Inter']">Technology</h4>
+              <div className="flex items-center space-x-4 text-zinc-400 font-['Inter']">
                 <div className="flex items-center space-x-2">
                   <Server className="w-4 h-4" />
-                  <span>Debian</span>
+                  <span>FastAPI</span>
                 </div>
                 <span>•</span>
-                <span>Docker</span>
+                <span>React</span>
                 <span>•</span>
-                <span>OpenSearch</span>
+                <span>MongoDB</span>
               </div>
-              <p className="text-sm text-zinc-500 mt-2">Powered by open-source technologies</p>
+              <p className="text-sm text-zinc-500 mt-2 font-['Inter'] font-light">Powered by open-source technologies</p>
             </div>
           </div>
           
-          <div className="text-center pt-8 border-t border-cosmic-border">
-            <p className="text-zinc-500">© 2025 Project Jupiter. Protecting the digital frontier.</p>
+          <div className="text-center pt-8 border-t border-zinc-700">
+            <p className="text-zinc-500 font-['Inter'] font-light">© 2025 Project Jupiter. Protecting the digital frontier.</p>
           </div>
         </div>
       </motion.footer>

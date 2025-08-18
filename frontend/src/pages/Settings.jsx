@@ -303,7 +303,7 @@ const Settings = () => {
 
       {/* Existing API Keys */}
       <Card>
-        <h2 className="text-xl font-semibold mb-6 flex items-center space-x-2">
+        <h2 className="display-text text-xl mb-6 flex items-center space-x-2">
           <Shield className="w-5 h-5 text-jupiter-secondary" />
           <span>Configured API Keys</span>
         </h2>

@@ -55,7 +55,7 @@ const TopBar = () => {
           onClick={handleTestAlert}
           className="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-lg border border-red-500/30 hover:border-red-500/50 transition-all duration-200 flex items-center space-x-2"
         >
-          <Shield className="w-4 h-4" />
+          <JupiterIcon className="w-4 h-4" />
           <span className="hidden sm:inline">Test Alert</span>
         </button>
 

@@ -323,7 +323,7 @@ const Training = () => {
                   <div key={pathId} className="flex items-center justify-between p-4 bg-[#0b0c10] rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${trainingPaths[pathId].color} flex items-center justify-center`}>
-                        <trainingPaths[pathId].icon className="w-5 h-5 text-white" />
+                        {React.createElement(trainingPaths[pathId].icon, { className: "w-5 h-5 text-white" })}
                       </div>
                       <div>
                         <h4 className="font-semibold">{trainingPaths[pathId].title}</h4>

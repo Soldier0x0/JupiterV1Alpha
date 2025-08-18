@@ -378,7 +378,7 @@ const Settings = () => {
         </Card>
 
         <Card>
-          <h2 className="text-xl font-semibold mb-6">Backup Configuration</h2>
+          <h2 className="display-text text-xl mb-6">Backup Configuration</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Backup Location</label>

@@ -239,7 +239,7 @@ const Settings = () => {
                     type="url"
                     value={newApiKey.endpoint}
                     onChange={(e) => setNewApiKey(prev => ({ ...prev, endpoint: e.target.value }))}
-                    className="input-field"
+                    className="input-field font-mono text-sm"
                     placeholder="https://api.service.com"
                     required
                   />

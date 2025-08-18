@@ -252,7 +252,7 @@ const Settings = () => {
                   type="password"
                   value={newApiKey.api_key}
                   onChange={(e) => setNewApiKey(prev => ({ ...prev, api_key: e.target.value }))}
-                  className="input-field"
+                  className="input-field font-mono"
                   placeholder="Your API key (will be encrypted)"
                   required
                 />

@@ -51,13 +51,13 @@ const LandingPage = () => {
       >
         <div className="flex items-center space-x-3">
           <motion.div 
-            className="w-10 h-10 bg-gradient-to-br from-orange-300 to-red-500 rounded-xl flex items-center justify-center"
+            className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center shadow-lg"
             whileHover={{ scale: 1.1, rotate: 360 }}
             transition={{ duration: 0.5 }}
           >
             <JupiterIcon className="w-6 h-6" />
           </motion.div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent font-['Inter'] tracking-tight">Project Jupiter</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent font-display tracking-tight">Project Jupiter</h1>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">

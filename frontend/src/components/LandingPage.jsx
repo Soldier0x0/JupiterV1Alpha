@@ -39,7 +39,7 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="relative min-h-screen bg-cosmic-black text-zinc-200 overflow-hidden">
+    <div className="relative min-h-screen bg-[#0b0c10] text-zinc-200 overflow-hidden">
       <WebGLBackground />
       
       {/* Header */}
@@ -51,19 +51,19 @@ const LandingPage = () => {
       >
         <div className="flex items-center space-x-3">
           <motion.div 
-            className="w-10 h-10 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-xl flex items-center justify-center"
+            className="w-10 h-10 bg-gradient-to-br from-orange-300 to-red-500 rounded-xl flex items-center justify-center"
             whileHover={{ scale: 1.1, rotate: 360 }}
             transition={{ duration: 0.5 }}
           >
-            <Shield className="w-6 h-6 text-cosmic-black" />
+            <JupiterIcon className="w-6 h-6" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-gradient">Project Jupiter</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent font-['Inter'] tracking-tight">Project Jupiter</h1>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="hover:text-jupiter-secondary transition-colors">Features</a>
-          <a href="#faq" className="hover:text-jupiter-secondary transition-colors">FAQ</a>
-          <a href="https://github.com/your-org/jupiter" className="hover:text-jupiter-secondary transition-colors flex items-center space-x-2">
+          <a href="#features" className="hover:text-orange-300 transition-colors font-medium">Features</a>
+          <a href="#faq" className="hover:text-orange-300 transition-colors font-medium">FAQ</a>
+          <a href="https://github.com/your-org/jupiter" className="hover:text-orange-300 transition-colors flex items-center space-x-2 font-medium">
             <Github className="w-4 h-4" />
             <span>GitHub</span>
           </a>
@@ -78,24 +78,24 @@ const LandingPage = () => {
         className="relative z-10 text-center py-20 px-6"
       >
         <motion.h1 
-          className="text-5xl md:text-7xl font-bold mb-6"
+          className="text-5xl md:text-7xl font-bold mb-6 font-['Inter'] tracking-tight leading-tight"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <span className="text-gradient">Secure.</span>{' '}
-          <span className="text-gradient">Isolate.</span>{' '}
-          <span className="text-gradient">Visualize.</span>
+          <span className="bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent">Secure.</span>{' '}
+          <span className="bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">Isolate.</span>{' '}
+          <span className="bg-gradient-to-r from-orange-400 to-yellow-500 bg-clip-text text-transparent">Visualize.</span>
         </motion.h1>
         
         <motion.p 
-          className="text-xl md:text-2xl text-zinc-400 mb-12 max-w-4xl mx-auto"
+          className="text-xl md:text-2xl text-zinc-400 mb-12 max-w-4xl mx-auto font-['Inter'] leading-relaxed font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          A modern, self-hosted SIEM & SOAR for real-time log visibility, 
-          threat intelligence, and incident response.
+          A modern, self-hosted SIEM & SOAR platform delivering real-time security visibility, 
+          automated threat intelligence, and intelligent incident response.
         </motion.p>
         
         <motion.div 
@@ -106,7 +106,7 @@ const LandingPage = () => {
         >
           <motion.button
             onClick={() => window.location.href = '/dashboard'}
-            className="btn-primary flex items-center space-x-2 text-lg"
+            className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center space-x-3 shadow-lg hover:shadow-red-500/25"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -116,7 +116,7 @@ const LandingPage = () => {
           
           <motion.button
             onClick={() => window.location.href = '/docs'}
-            className="btn-ghost flex items-center space-x-2 text-lg"
+            className="bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 border border-zinc-700 hover:border-zinc-600 flex items-center space-x-3"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

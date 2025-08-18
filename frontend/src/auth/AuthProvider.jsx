@@ -49,8 +49,12 @@ export const AuthProvider = ({ children }) => {
 
   const requestOTP = async (email, tenantId) => {
     try {
-      await authAPI.requestOTP({ email, tenant_id: tenantId });
-      return { success: true };
+      const response = await authAPI.requestOTP({ email, tenant_id: tenantId });
+      const data = response.data;
+      return { 
+        success: true, 
+        dev_otp: data.dev_otp // Include OTP for development testing
+      };
     } catch (error) {
       return { 
         success: false, 

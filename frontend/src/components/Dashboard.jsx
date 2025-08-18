@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
-import WebGLBackground from './WebGLBackground';
 import TopBar from './TopBar';
 import SideNav from './SideNav';
 import Home from '../pages/Home';
@@ -20,11 +19,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cosmic-black flex items-center justify-center">
-        <div className="animate-pulse-glow">
-          <div className="w-16 h-16 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-2xl flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-cosmic-black border-t-transparent rounded-full animate-spin"></div>
-          </div>
+      <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center">
+        <div className="w-16 h-16 bg-gradient-to-br from-zinc-700 to-zinc-600 rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-zinc-300 border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
     );
@@ -36,9 +33,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-cosmic-black">
-      <WebGLBackground />
-      <div className="relative z-10 flex">
+    <div className="min-h-screen bg-[#0b0c10]">
+      <div className="flex">
         <SideNav />
         <div className="flex-1">
           <TopBar />

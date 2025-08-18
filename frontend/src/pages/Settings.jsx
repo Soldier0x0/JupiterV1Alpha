@@ -356,7 +356,7 @@ const Settings = () => {
       {/* System Configuration */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <h2 className="text-xl font-semibold mb-6">System Configuration</h2>
+          <h2 className="display-text text-xl mb-6">System Configuration</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Log Retention (days)</label>

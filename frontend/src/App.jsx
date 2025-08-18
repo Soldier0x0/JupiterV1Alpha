@@ -10,7 +10,7 @@ import './styles.css';
 const App = () => {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-cosmic-black">
+      <div className="min-h-screen bg-[#0b0c10]">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />

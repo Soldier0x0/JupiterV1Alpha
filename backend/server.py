@@ -199,7 +199,12 @@ async def request_otp(otp_request: OTPRequest):
     # Send OTP email
     await send_otp_email(otp_request.email, otp)
     
-    return {"message": "OTP sent successfully"}
+    # For development/testing - include OTP in response
+    environment = os.getenv("ENVIRONMENT", "development")
+    if environment == "development":
+        return {"message": "OTP sent successfully", "dev_otp": otp}
+    else:
+        return {"message": "OTP sent successfully"}
 
 @app.post("/api/auth/login")
 async def login_user(login_data: UserLogin):

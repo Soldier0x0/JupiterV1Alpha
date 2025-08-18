@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, Search, Command, User, LogOut } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';
+import GlobalSearch from './GlobalSearch';
 
 const TopBar = () => {
   const { user, logout } = useAuth();

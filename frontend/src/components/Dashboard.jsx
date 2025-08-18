@@ -13,6 +13,7 @@ import Models from '../pages/Models';
 import Settings from '../pages/Settings';
 import Automations from '../pages/Automations';
 import TenantManagement from '../pages/TenantManagement';
+import Training from '../pages/Training';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();

@@ -263,20 +263,19 @@ class JupiterAPITester:
             self.log_test("Threat Intel Lookup", False, "No authentication token")
             return False
             
-        # The endpoint expects form parameters
+        # The endpoint expects query parameters
         url = f"{self.base_url}/threat-intel/lookup"
         headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': f'Bearer {self.token}'
         }
         
-        form_data = {
+        params = {
             'indicator': '8.8.8.8',
             'ioc_type': 'ip'
         }
         
         try:
-            response = requests.post(url, data=form_data, headers=headers, timeout=10)
+            response = requests.post(url, params=params, headers=headers, timeout=10)
             success = response.status_code == 200
             
             if success:

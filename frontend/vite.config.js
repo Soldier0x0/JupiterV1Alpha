@@ -6,7 +6,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3000,
-    allowedHosts: ['secvisihub.preview.emergentagent.com', 'localhost'],
+    allowedHosts: [
+      'secvisihub.preview.emergentagent.com',
+      'threatdefend.preview.emergentagent.com', 
+      'localhost'
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:8001',

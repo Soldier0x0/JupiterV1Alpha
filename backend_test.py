@@ -358,7 +358,7 @@ class JupiterAPITester:
         if not self.test_request_otp():
             print("❌ OTP request failed - cannot continue with login tests")
         else:
-            if not self.test_login_with_mock_otp():
+            if not self.test_login_with_actual_otp():
                 print("⚠️  Login failed - continuing with other tests but auth-required tests will fail")
         
         # Dashboard tests

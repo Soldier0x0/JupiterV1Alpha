@@ -8,9 +8,6 @@ import jwt
 import bcrypt
 import uuid
 import random
-import smtplib
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
 import requests
 import json
 from datetime import datetime, timedelta

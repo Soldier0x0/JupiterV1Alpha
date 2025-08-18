@@ -28,6 +28,7 @@ const SideNav = () => {
     { path: '/dashboard/cases', label: 'Cases', icon: Briefcase },
     { path: '/dashboard/automations', label: 'SOAR', icon: Zap },
     { path: '/dashboard/models', label: 'Models', icon: Cpu },
+    { path: '/dashboard/training', label: 'Training', icon: GraduationCap },
     { path: '/dashboard/settings', label: 'Settings', icon: Settings },
   ];
 

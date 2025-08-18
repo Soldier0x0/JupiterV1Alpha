@@ -23,7 +23,12 @@ const Login = () => {
       const result = await requestOTP(formData.email, formData.tenant_id);
       if (result.success) {
         setStep(2);
-        setMessage('OTP sent to your email. Check your inbox.');
+        // Show OTP in development mode
+        if (result.dev_otp) {
+          setMessage(`OTP sent! For testing, use: ${result.dev_otp}`);
+        } else {
+          setMessage('OTP sent to your email. Check your inbox.');
+        }
       } else {
         setMessage(result.error);
       }

@@ -10,7 +10,8 @@ import {
   Cpu, 
   Settings,
   Zap,
-  Building
+  Building,
+  GraduationCap
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';

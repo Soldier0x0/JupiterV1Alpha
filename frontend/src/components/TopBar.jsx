@@ -7,6 +7,21 @@ import GlobalSearch from './GlobalSearch';
 const TopBar = () => {
   const { user, logout } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+K or Cmd+K for search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearch(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleTestAlert = async () => {
     try {

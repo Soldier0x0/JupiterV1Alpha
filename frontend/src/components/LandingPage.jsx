@@ -78,7 +78,7 @@ const LandingPage = () => {
         className="relative z-10 text-center py-20 px-6"
       >
         <motion.h1 
-          className="text-5xl md:text-7xl font-bold mb-6 font-['Inter'] tracking-tight leading-tight"
+          className="hero-text text-5xl md:text-7xl mb-6 tracking-tight leading-tight"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -89,7 +89,7 @@ const LandingPage = () => {
         </motion.h1>
         
         <motion.p 
-          className="text-xl md:text-2xl text-zinc-400 mb-12 max-w-4xl mx-auto font-['Inter'] leading-relaxed font-light"
+          className="body-text text-xl md:text-2xl text-zinc-400 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}

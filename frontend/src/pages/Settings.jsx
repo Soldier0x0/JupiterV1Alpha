@@ -107,8 +107,8 @@ const Settings = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Settings</h1>
-          <p className="text-zinc-400 mt-1">Configure your threat intelligence APIs and system settings</p>
+          <h1 className="display-text text-3xl text-gradient">Settings</h1>
+          <p className="body-text text-zinc-400 mt-1">Manage API keys, integrations, and system configuration</p>
         </div>
         <motion.button
           onClick={() => setShowAddForm(true)}

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Shield, Mail, Key, Building, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
@@ -66,24 +65,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cosmic-black flex items-center justify-center p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
-      >
+    <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
         <div className="card">
           {/* Header */}
           <div className="text-center mb-8">
-            <motion.div 
-              className="w-16 h-16 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-2xl flex items-center justify-center mx-auto mb-4"
-              whileHover={{ scale: 1.1, rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Shield className="w-8 h-8 text-cosmic-black" />
-            </motion.div>
-            <h1 className="text-2xl font-bold text-gradient">Welcome Back</h1>
+            <div className="w-16 h-16 bg-red-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-red-400">Welcome Back</h1>
             <p className="text-zinc-400 mt-2">
               {step === 1 ? 'Enter your credentials to continue' : 'Enter the OTP sent to your email'}
             </p>
@@ -91,10 +81,8 @@ const Login = () => {
 
           {/* Step 1: Email & Tenant */}
           {step === 1 && (
-            <motion.form 
+            <form 
               onSubmit={handleEmailSubmit}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
               className="space-y-6"
             >
               <div>
@@ -129,31 +117,27 @@ const Login = () => {
                 />
               </div>
 
-              <motion.button
+              <button
                 type="submit"
                 disabled={loading}
                 className="btn-primary w-full flex items-center justify-center space-x-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
                 {loading ? (
-                  <div className="w-5 h-5 border-2 border-cosmic-black border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
                     <span>Send OTP</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </motion.button>
-            </motion.form>
+              </button>
+            </form>
           )}
 
           {/* Step 2: OTP */}
           {step === 2 && (
-            <motion.form 
+            <form 
               onSubmit={handleOTPSubmit}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
               className="space-y-6"
             >
               <div>
@@ -181,51 +165,46 @@ const Login = () => {
                 >
                   Back
                 </button>
-                <motion.button
+                <button
                   type="submit"
                   disabled={loading}
                   className="btn-primary flex-1 flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   {loading ? (
-                    <div className="w-5 h-5 border-2 border-cosmic-black border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
                     <>
                       <span>Sign In</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
-                </motion.button>
+                </button>
               </div>
-            </motion.form>
+            </form>
           )}
 
           {/* Message Display */}
           {message && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 p-3 rounded-xl text-sm flex items-center space-x-2 ${
+            <div className={`mt-4 p-3 rounded-lg text-sm flex items-center space-x-2 ${
                 message.includes('successful') || message.includes('sent')
-                  ? 'bg-jupiter-success/20 text-jupiter-success border border-jupiter-success/30'
-                  : 'bg-jupiter-danger/20 text-jupiter-danger border border-jupiter-danger/30'
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
               }`}
             >
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{message}</span>
-            </motion.div>
+            </div>
           )}
 
           {/* Footer */}
           <div className="mt-8 text-center">
             <span className="text-zinc-400">New to Project Jupiter? </span>
-            <a href="/register" className="text-jupiter-secondary hover:underline font-medium">
+            <a href="/register" className="text-red-400 hover:underline font-medium">
               Create account
             </a>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -329,7 +329,7 @@ const Settings = () => {
                     <div className={`w-3 h-3 rounded-full ${keyData.enabled ? 'bg-jupiter-success' : 'bg-zinc-500'}`}></div>
                     <div>
                       <h3 className="font-medium text-zinc-200">{keyData.name}</h3>
-                      <p className="text-sm text-zinc-500">{keyData.endpoint}</p>
+                      <p className="text-sm text-zinc-500 font-mono">{keyData.endpoint}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">

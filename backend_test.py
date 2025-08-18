@@ -263,17 +263,20 @@ class JupiterAPITester:
             self.log_test("Threat Intel Lookup", False, "No authentication token")
             return False
             
-        # The endpoint expects form data, not JSON
-        lookup_data = "indicator=8.8.8.8&ioc_type=ip"
-        
+        # The endpoint expects form parameters
         url = f"{self.base_url}/threat-intel/lookup"
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': f'Bearer {self.token}'
         }
         
+        form_data = {
+            'indicator': '8.8.8.8',
+            'ioc_type': 'ip'
+        }
+        
         try:
-            response = requests.post(url, data=lookup_data, headers=headers, timeout=10)
+            response = requests.post(url, data=form_data, headers=headers, timeout=10)
             success = response.status_code == 200
             
             if success:
@@ -282,7 +285,11 @@ class JupiterAPITester:
                 print(f"   🔍 Lookup results: {len(results)} services")
                 self.log_test("Threat Intel Lookup", True, f"Status: {response.status_code}")
             else:
-                self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}")
+                try:
+                    error_data = response.json()
+                    self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}, Error: {error_data}")
+                except:
+                    self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}, Response: {response.text}")
             
             return success
             

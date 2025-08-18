@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, Mail, Key, Building, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Key, Building, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
+import JupiterIcon from '../components/JupiterIcon';
 
 const Login = () => {
   const { login, requestOTP } = useAuth();

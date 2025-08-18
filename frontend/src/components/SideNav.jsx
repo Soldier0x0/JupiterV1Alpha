@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { 
   Home, 
   AlertTriangle, 
@@ -40,75 +39,59 @@ const SideNav = () => {
   }
 
   return (
-    <motion.nav 
-      className="bg-cosmic-dark/90 backdrop-blur-sm w-64 h-screen border-r border-cosmic-border overflow-y-auto"
-      initial={{ x: -250 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <nav className="bg-[#111214] w-64 h-screen border-r border-red-600/20 overflow-y-auto">
       <div className="p-6">
         {/* Logo */}
-        <motion.div 
-          className="flex items-center space-x-3 mb-8"
-          whileHover={{ scale: 1.05 }}
-        >
-          <div className="w-10 h-10 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-xl flex items-center justify-center">
-            <Shield className="w-6 h-6 text-cosmic-black" />
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+            <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="font-bold text-gradient">Jupiter</h2>
+            <h2 className="font-bold text-white">Jupiter</h2>
             <p className="text-xs text-zinc-500">Security Hub</p>
           </div>
-        </motion.div>
+        </div>
 
         {/* User Info */}
         {user && (
-          <motion.div 
-            className="bg-cosmic-gray/50 rounded-xl p-4 mb-6 border border-cosmic-border"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+          <div className="bg-[#0b0c10] rounded-lg p-4 mb-6 border border-zinc-700">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-jupiter-secondary rounded-lg flex items-center justify-center">
-                <span className="text-cosmic-black text-sm font-bold">
+              <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">
                   {user.email[0].toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-zinc-200 truncate">{user.email}</p>
                 <p className="text-xs text-zinc-500 flex items-center">
-                  {isOwner && <span className="text-jupiter-warning mr-1">👑</span>}
+                  {isOwner && <span className="text-red-400 mr-1">👑</span>}
                   {isOwner ? 'Owner' : 'Member'}
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Navigation Links */}
         <ul className="space-y-2">
-          {links.map((link, index) => (
-            <motion.li 
-              key={link.path}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * index }}
-            >
+          {links.map((link) => (
+            <li key={link.path}>
               <NavLink
                 to={link.path}
                 className={({ isActive }) =>
-                  isActive ? 'nav-link-active' : 'nav-link'
+                  isActive 
+                    ? 'flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-500 text-white font-medium transition-colors duration-200'
+                    : 'flex items-center space-x-3 px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors duration-200'
                 }
               >
                 <link.icon className="w-5 h-5" />
                 <span>{link.label}</span>
               </NavLink>
-            </motion.li>
+            </li>
           ))}
         </ul>
       </div>
-    </motion.nav>
+    </nav>
   );
 };
 

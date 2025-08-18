@@ -44,8 +44,8 @@ const SideNav = () => {
       <div className="p-6">
         {/* Logo */}
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
-            <Shield className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-300 to-red-500 rounded-xl flex items-center justify-center">
+            <JupiterIcon className="w-6 h-6" />
           </div>
           <div>
             <h2 className="font-bold text-white">Jupiter</h2>

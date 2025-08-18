@@ -188,7 +188,7 @@ const Settings = () => {
           exit={{ opacity: 0, height: 0 }}
         >
           <Card>
-            <h2 className="text-xl font-semibold mb-6 flex items-center space-x-2">
+            <h2 className="display-text text-xl mb-6 flex items-center space-x-2">
               <Key className="w-5 h-5 text-jupiter-secondary" />
               <span>Add Threat Intelligence API</span>
             </h2>

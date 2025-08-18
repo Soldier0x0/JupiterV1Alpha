@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-cosmic-border;
+  }
+  
+  body {
+    @apply bg-cosmic-black text-zinc-200 antialiased;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-cosmic-dark;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-600 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-500;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-jupiter-primary hover:bg-jupiter-primary/90 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-glow-red;
+  }
+  
+  .btn-secondary {
+    @apply bg-jupiter-secondary hover:bg-jupiter-secondary/90 text-cosmic-black px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-glow;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 border border-zinc-700 hover:border-zinc-600;
+  }
+  
+  .card {
+    @apply bg-cosmic-dark/80 backdrop-blur-sm border border-cosmic-border rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300;
+  }
+  
+  .card-glow {
+    @apply card hover:shadow-glow;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 bg-cosmic-gray border border-cosmic-border rounded-xl text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-jupiter-secondary focus:border-transparent transition-all duration-200;
+  }
+  
+  .nav-link {
+    @apply flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800;
+  }
+  
+  .nav-link-active {
+    @apply nav-link bg-jupiter-secondary text-cosmic-black font-medium shadow-glow;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-jupiter-secondary to-jupiter-primary bg-clip-text text-transparent;
+  }
+  
+  .bg-mesh {
+    background-image: radial-gradient(circle at 25% 25%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 75% 75%, rgba(255, 68, 68, 0.1) 0%, transparent 50%);
+  }
+}
+
+/* Loading animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

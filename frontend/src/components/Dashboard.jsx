@@ -49,6 +49,7 @@ const Dashboard = () => {
               <Route path="/cases" element={<Cases />} />
               <Route path="/models" element={<Models />} />
               <Route path="/automations" element={<Automations />} />
+              <Route path="/training" element={<Training />} />
               <Route path="/settings" element={<Settings />} />
               {user.is_owner && (
                 <Route path="/admin/tenants" element={<TenantManagement />} />

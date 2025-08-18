@@ -137,7 +137,7 @@ const LandingPage = () => {
       >
         <div className="max-w-6xl mx-auto">
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-center mb-16 font-['Inter'] tracking-tight"
+            className="display-text text-4xl md:text-5xl text-center mb-16 tracking-tight"
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}

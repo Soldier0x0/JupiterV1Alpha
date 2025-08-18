@@ -263,19 +263,32 @@ class JupiterAPITester:
             self.log_test("Threat Intel Lookup", False, "No authentication token")
             return False
             
-        lookup_data = {
-            "indicator": "8.8.8.8",
-            "ioc_type": "ip"
+        # The endpoint expects form data, not JSON
+        lookup_data = "indicator=8.8.8.8&ioc_type=ip"
+        
+        url = f"{self.base_url}/threat-intel/lookup"
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Bearer {self.token}'
         }
         
-        success, status, data = self.make_request('POST', 'threat-intel/lookup', lookup_data, expected_status=200)
-        self.log_test("Threat Intel Lookup", success, f"Status: {status}")
-        
-        if success:
-            results = data.get('results', {})
-            print(f"   🔍 Lookup results: {len(results)} services")
-        
-        return success
+        try:
+            response = requests.post(url, data=lookup_data, headers=headers, timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                results = data.get('results', {})
+                print(f"   🔍 Lookup results: {len(results)} services")
+                self.log_test("Threat Intel Lookup", True, f"Status: {response.status_code}")
+            else:
+                self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}")
+            
+            return success
+            
+        except Exception as e:
+            self.log_test("Threat Intel Lookup", False, f"Error: {str(e)}")
+            return False
 
     def test_get_api_keys(self):
         """Test getting API keys"""

@@ -1005,6 +1005,11 @@ class JupiterAPITester:
         
         # RBAC System testing
         print("\n🎭 Testing RBAC System...")
+        
+        # Login as super admin for roles management tests
+        print("   🔐 Logging in as super admin for RBAC tests...")
+        super_admin_login_success = self.test_login_super_admin()
+        
         self.test_rbac_roles_endpoint()
         self.test_rbac_permissions_endpoint()
         self.test_rbac_users_with_roles()

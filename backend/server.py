@@ -73,6 +73,9 @@ class ThreatIntelAPI(BaseModel):
     endpoint: str
     enabled: bool = True
 
+class OAuthSession(BaseModel):
+    session_id: str
+
 class IOCCreate(BaseModel):
     ioc_type: str  # ip, domain, hash, url
     value: str

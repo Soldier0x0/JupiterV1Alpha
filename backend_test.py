@@ -860,11 +860,19 @@ class JupiterAPITester:
 
     def test_rbac_role_hierarchy(self):
         """Test role hierarchy levels are correctly set"""
+        # Use super admin token for roles management
+        original_token = self.token
+        if hasattr(self, 'super_admin_token') and self.super_admin_token:
+            self.token = self.super_admin_token
+        
         if not self.token:
             self.log_test("RBAC Role Hierarchy", False, "No authentication token")
             return False
             
         success, status, data = self.make_request('GET', 'roles')
+        
+        # Restore original token
+        self.token = original_token
         
         if success:
             roles = data.get('roles', [])

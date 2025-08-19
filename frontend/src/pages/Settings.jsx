@@ -152,6 +152,58 @@ const Settings = () => {
     }));
   };
 
+  const handleAddAIConfig = async (e) => {
+    e.preventDefault();
+    setAiLoading(true);
+    setAiMessage('');
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/config/api-key`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(newAIConfig)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAiMessage(data.message);
+        setShowAddAIForm(false);
+        setNewAIConfig({
+          provider: '',
+          api_key: '',
+          model_name: 'gpt-4o-mini',
+          enabled: true
+        });
+        loadAIConfigurations();
+      } else {
+        const error = await response.json();
+        setAiMessage(error.detail || 'Failed to save AI configuration');
+      }
+    } catch (error) {
+      setAiMessage('Failed to save AI configuration');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const selectAIService = (service) => {
+    setNewAIConfig(prev => ({
+      ...prev,
+      provider: service.name.toLowerCase(),
+      model_name: service.models[0] || 'gpt-4o-mini'
+    }));
+  };
+
+  const toggleShowAIKey = (configId) => {
+    setShowAIKeys(prev => ({
+      ...prev,
+      [configId]: !prev[configId]
+    }));
+  };
+
   const toggleShowKey = (keyId) => {
     setShowKeys(prev => ({
       ...prev,

@@ -365,6 +365,11 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         
+        # Check if user has 2FA enabled and if token is fully verified
+        twofa_verified = payload.get("twofa_verified", True)  # Default to True for backward compatibility
+        if user.get("twofa_enabled") and not twofa_verified:
+            raise HTTPException(status_code=401, detail="2FA verification required")
+        
         # Get user's role and permissions
         role = None
         permissions = []
@@ -388,7 +393,9 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             "is_owner": payload.get("is_owner", False),  # Keep for backward compatibility
             "role": role.get("name") if role else ("tenant_owner" if user.get("is_owner") else "viewer"),
             "role_display": role.get("display_name") if role else ("Tenant Owner" if user.get("is_owner") else "Viewer"),
-            "permissions": permissions
+            "permissions": permissions,
+            "twofa_enabled": user.get("twofa_enabled", False),
+            "twofa_verified": twofa_verified
         }
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")

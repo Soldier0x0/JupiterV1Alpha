@@ -1132,6 +1132,8 @@ async def get_available_permissions(current_user: dict = Depends(get_current_use
 
 if __name__ == "__main__":
     import uvicorn
+    # Initialize default roles on startup
+    initialize_default_roles()
     uvicorn.run(app, host="0.0.0.0", port=8001)
 
 # AI Endpoints - Integrated directly to avoid import issues

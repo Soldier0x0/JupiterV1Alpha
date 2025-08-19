@@ -545,6 +545,15 @@ class JupiterAPITester:
         self.test_get_automations()
         self.test_get_cases()
         
+        # AI endpoints testing
+        print("\n🤖 Testing AI Endpoints...")
+        self.test_ai_models()
+        self.test_ai_threat_analysis()
+        self.test_ai_chat()
+        self.test_ai_config_save()
+        self.test_ai_config_get()
+        self.test_ai_intelligence_summary()
+        
         # Results summary
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")

@@ -368,17 +368,26 @@ const TenantManagement = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            onClick={handleModalBackdropClick}
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               className="bg-[#111214] border border-zinc-700 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Tenant Settings - {selectedTenant.name}</h3>
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-xl font-bold">Tenant Settings - {selectedTenant.name}</h3>
+                  {hasUnsavedChanges && (
+                    <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
+                      Unsaved Changes
+                    </span>
+                  )}
+                </div>
                 <button
-                  onClick={() => setShowSettingsModal(false)}
+                  onClick={closeSettingsModal}
                   className="text-zinc-400 hover:text-white"
                 >
                   ✕

@@ -42,7 +42,33 @@ const AIConsole = () => {
   const analyzeWithAI = async (threatData) => {
     setLoading(true);
     try {
-      // This will integrate with OpenAI/Claude API
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/analyze/threat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          source_ip: threatData.source_ip,
+          technique: threatData.technique,
+          severity: threatData.severity,
+          indicators: threatData.indicators,
+          timeline: threatData.timeline,
+          metadata: threatData.metadata || {},
+          model_preference: "auto"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const analysis = await response.json();
+      setLlmAnalysis(analysis.ai_analysis);
+      
+    } catch (error) {
+      console.error('AI Analysis failed:', error);
+      // Fallback to mock data on error
       const analysis = {
         severity: "HIGH",
         confidence: 94.7,
@@ -59,8 +85,6 @@ const AIConsole = () => {
       };
       
       setLlmAnalysis(analysis);
-    } catch (error) {
-      console.error('AI Analysis failed:', error);
     } finally {
       setLoading(false);
     }

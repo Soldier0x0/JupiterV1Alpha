@@ -944,6 +944,15 @@ class JupiterAPITester:
         self.test_cors_configuration_for_cookies()
         self.test_session_token_cookie_setting()
         
+        # RBAC System testing
+        print("\n🎭 Testing RBAC System...")
+        self.test_rbac_roles_endpoint()
+        self.test_rbac_permissions_endpoint()
+        self.test_rbac_users_with_roles()
+        self.test_rbac_authentication_with_roles()
+        self.test_rbac_role_hierarchy()
+        self.test_rbac_backward_compatibility()
+        
         # Results summary
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")

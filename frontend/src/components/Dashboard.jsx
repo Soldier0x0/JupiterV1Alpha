@@ -61,7 +61,7 @@ const Dashboard = () => {
               <Route path="/mcp" element={<MCP />} />
               <Route path="/training" element={<Training />} />
               <Route path="/settings" element={<Settings />} />
-              {user.is_owner && (
+              {user?.is_owner && (
                 <Route path="/admin/tenants" element={<TenantManagement />} />
               )}
             </Routes>

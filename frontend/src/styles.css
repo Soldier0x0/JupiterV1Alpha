@@ -203,6 +203,11 @@
   }
 }
 
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
 /* Focus management for accessibility */
 .focus-visible:focus {
   @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-background-primary;

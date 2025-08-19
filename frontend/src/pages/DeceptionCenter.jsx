@@ -199,7 +199,7 @@ const DeceptionCenter = () => {
         <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30">
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <Trap className="w-5 h-5 text-amber-400" />
+              <Shield className="w-5 h-5 text-amber-400" />
               <span className="text-2xl font-bold text-amber-400">{deceptionMetrics.total_decoys}</span>
             </div>
             <p className="text-sm text-zinc-400">Active Decoys</p>

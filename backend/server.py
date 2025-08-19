@@ -99,6 +99,25 @@ class AlertCreate(BaseModel):
     message: str
     metadata: Optional[Dict[str, Any]] = {}
 
+class RoleCreate(BaseModel):
+    name: str
+    display_name: str
+    description: str
+    permissions: List[str]
+    level: int  # Hierarchy level - lower numbers = more powerful
+    tenant_scoped: bool = True  # Whether this role is limited to tenant scope
+
+class RoleUpdate(BaseModel):
+    display_name: Optional[str] = None
+    description: Optional[str] = None
+    permissions: Optional[List[str]] = None
+    enabled: Optional[bool] = None
+
+class UserRoleAssignment(BaseModel):
+    user_id: str
+    role_id: str
+    assigned_by: str
+
 # Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

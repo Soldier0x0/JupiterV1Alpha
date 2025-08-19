@@ -359,6 +359,145 @@ class JupiterAPITester:
         
         return success
 
+    # AI Endpoints Testing
+    def test_ai_models(self):
+        """Test AI models endpoint"""
+        if not self.token:
+            self.log_test("AI Models", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'ai/models')
+        self.log_test("AI Models", success, f"Status: {status}")
+        
+        if success:
+            local_models = data.get('local_models', [])
+            cloud_providers = data.get('cloud_providers', [])
+            print(f"   🤖 Local models: {len(local_models)}")
+            print(f"   ☁️  Cloud providers: {len(cloud_providers)}")
+            print(f"   🔑 Emergent key available: {data.get('emergent_key_available', False)}")
+        
+        return success
+
+    def test_ai_threat_analysis(self):
+        """Test AI threat analysis endpoint"""
+        if not self.token:
+            self.log_test("AI Threat Analysis", False, "No authentication token")
+            return False
+            
+        threat_data = {
+            "source_ip": "192.168.1.100",
+            "technique": "T1055.012",
+            "severity": "high",
+            "indicators": ["suspicious_process.exe", "192.168.1.100", "malicious.domain.com"],
+            "timeline": "2024-01-15T10:30:00Z",
+            "metadata": {
+                "attack_vector": "phishing_email",
+                "affected_systems": ["workstation-01", "server-02"]
+            },
+            "model_preference": "auto"
+        }
+        
+        success, status, data = self.make_request('POST', 'ai/analyze/threat', threat_data)
+        self.log_test("AI Threat Analysis", success, f"Status: {status}")
+        
+        if success:
+            analysis_id = data.get('analysis_id', 'unknown')
+            confidence = data.get('ai_analysis', {}).get('confidence', 0)
+            threat_type = data.get('ai_analysis', {}).get('threat_type', 'unknown')
+            print(f"   🆔 Analysis ID: {analysis_id}")
+            print(f"   📊 Confidence: {confidence}%")
+            print(f"   🎯 Threat Type: {threat_type}")
+        
+        return success
+
+    def test_ai_chat(self):
+        """Test AI chat endpoint"""
+        if not self.token:
+            self.log_test("AI Chat", False, "No authentication token")
+            return False
+            
+        chat_data = {
+            "message": "I'm seeing suspicious network activity from IP 10.0.1.50. Can you help me analyze this threat?",
+            "session_id": "test-session-123",
+            "model_preference": "auto",
+            "context_type": "security"
+        }
+        
+        success, status, data = self.make_request('POST', 'ai/chat', chat_data)
+        self.log_test("AI Chat", success, f"Status: {status}")
+        
+        if success:
+            session_id = data.get('session_id', 'unknown')
+            response_text = data.get('response', {}).get('response', '')
+            confidence = data.get('response', {}).get('confidence', 0)
+            print(f"   💬 Session ID: {session_id}")
+            print(f"   📊 Confidence: {confidence}%")
+            print(f"   🤖 Response preview: {response_text[:100]}...")
+        
+        return success
+
+    def test_ai_config_save(self):
+        """Test AI config save endpoint"""
+        if not self.token:
+            self.log_test("AI Config Save", False, "No authentication token")
+            return False
+            
+        config_data = {
+            "provider": "openai",
+            "api_key": "sk-test-key-12345",
+            "model_name": "gpt-4o-mini",
+            "enabled": True
+        }
+        
+        success, status, data = self.make_request('POST', 'ai/config/api-key', config_data)
+        self.log_test("AI Config Save", success, f"Status: {status}")
+        
+        if success:
+            provider = data.get('provider', 'unknown')
+            print(f"   🔧 Provider configured: {provider}")
+        
+        return success
+
+    def test_ai_config_get(self):
+        """Test AI config get endpoint"""
+        if not self.token:
+            self.log_test("AI Config Get", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'ai/config')
+        self.log_test("AI Config Get", success, f"Status: {status}")
+        
+        if success:
+            configs = data.get('ai_configurations', [])
+            print(f"   ⚙️  AI configurations: {len(configs)}")
+            for config in configs:
+                provider = config.get('provider', 'unknown')
+                enabled = config.get('enabled', False)
+                print(f"      - {provider}: {'enabled' if enabled else 'disabled'}")
+        
+        return success
+
+    def test_ai_intelligence_summary(self):
+        """Test AI intelligence summary endpoint"""
+        if not self.token:
+            self.log_test("AI Intelligence Summary", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'ai/intelligence/summary')
+        self.log_test("AI Intelligence Summary", success, f"Status: {status}")
+        
+        if success:
+            recent_analyses = data.get('recent_analyses', 0)
+            threat_assessments = data.get('threat_assessments_today', 0)
+            high_confidence = data.get('high_confidence_alerts', 0)
+            cognitive_load = data.get('cognitive_load', 0)
+            print(f"   📊 Recent analyses: {recent_analyses}")
+            print(f"   🎯 Threat assessments today: {threat_assessments}")
+            print(f"   ⚠️  High confidence alerts: {high_confidence}")
+            print(f"   🧠 Cognitive load: {cognitive_load}%")
+        
+        return success
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Project Jupiter API Testing")

@@ -20,7 +20,8 @@ import {
   Trash2,
   Eye,
   Loader,
-  Info
+  Info,
+  Monitor
 } from 'lucide-react';
 import Card from '../components/Card';
 

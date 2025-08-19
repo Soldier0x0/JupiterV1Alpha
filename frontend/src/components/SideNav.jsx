@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
   AlertTriangle, 
@@ -21,9 +21,10 @@ import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';
 
 const SideNav = () => {
-  const { user, isOwner } = useAuth();
+  const { user, logout, isOwner } = useAuth();
+  const location = useLocation();
 
-  const links = [
+  const navItems = [
     { path: '/dashboard', label: 'Overview', icon: Home },
     { path: '/dashboard/alerts', label: 'Alerts', icon: AlertTriangle },
     { path: '/dashboard/explore', label: 'Explore', icon: Search },
@@ -38,33 +39,33 @@ const SideNav = () => {
     { path: '/dashboard/mcp', label: 'MCP', icon: Zap },
     { path: '/dashboard/models', label: 'Models', icon: Cpu },
     { path: '/dashboard/training', label: 'Training', icon: GraduationCap },
-    { path: '/dashboard/settings', label: 'Settings', icon: Settings },
+    { path: '/dashboard/settings', label: 'Settings', icon: Settings }
   ];
 
-  // Add admin links for owners
-  if (isOwner) {
-    links.push({
-      path: '/dashboard/admin/tenants',
-      label: 'Tenants',
-      icon: Building
-    });
-  }
+  const isActivePath = (path) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
+    }
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   return (
-    <nav className="bg-[#111214] w-64 h-screen border-r border-red-600/20 overflow-y-auto">
+    <div className="w-64 bg-[#111214] border-r border-zinc-700 flex flex-col h-full">
+      {/* Header */}
       <div className="p-6">
-        {/* Logo */}
-        <div className="flex items-center space-x-3 mb-8">
-          <JupiterIcon className="w-10 h-10 rounded-full" />
+        <div className="flex items-center space-x-3">
+          <JupiterIcon className="w-8 h-8" />
           <div>
-            <h2 className="font-bold text-white">Jupiter</h2>
-            <p className="text-xs text-zinc-500">Security Hub</p>
+            <h1 className="text-white font-bold text-lg">Jupiter</h1>
+            <p className="text-zinc-500 text-sm">Security Hub</p>
           </div>
         </div>
+      </div>
 
-        {/* User Info */}
-        {user && (
-          <div className="bg-[#0b0c10] rounded-lg p-4 mb-6 border border-zinc-700">
+      {/* User Info */}
+      {user && (
+        <div className="px-6 pb-4">
+          <div className="bg-[#0b0c10] rounded-lg p-3">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">
@@ -72,36 +73,76 @@ const SideNav = () => {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-zinc-200 truncate">{user.email}</p>
-                <p className="text-xs text-zinc-500 flex items-center">
+                <p className="text-white text-sm font-medium truncate">{user.email}</p>
+                <p className="text-zinc-400 text-xs">
                   {isOwner && <span className="text-red-400 mr-1">👑</span>}
                   {isOwner ? 'Owner' : 'Member'}
                 </p>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Navigation Links */}
-        <ul className="space-y-2">
-          {links.map((link) => (
-            <li key={link.path}>
+      {/* Navigation */}
+      <nav className="flex-1 px-4 pb-4">
+        <div className="space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = isActivePath(item.path);
+            
+            return (
               <NavLink
-                to={link.path}
-                className={({ isActive }) =>
-                  isActive 
-                    ? 'flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-500 text-white font-medium transition-colors duration-200'
-                    : 'flex items-center space-x-3 px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors duration-200'
-                }
+                key={item.path}
+                to={item.path}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors group relative ${
+                  isActive
+                    ? 'bg-red-500 text-white'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+                }`}
               >
-                <link.icon className="w-5 h-5" />
-                <span>{link.label}</span>
+                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`} />
+                <span className="text-sm font-medium">{item.label}</span>
+                
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-r-lg" />
+                )}
               </NavLink>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </div>
+
+        {/* Admin Section */}
+        {isOwner && (
+          <div className="mt-8">
+            <div className="px-4 mb-2">
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Administration</p>
+            </div>
+            <NavLink
+              to="/dashboard/admin/tenants"
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                isActivePath('/dashboard/admin/tenants')
+                  ? 'bg-red-500 text-white'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+              }`}
+            >
+              <Building className="w-5 h-5" />
+              <span className="text-sm font-medium">Tenant Management</span>
+            </NavLink>
+          </div>
+        )}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-zinc-700">
+        <button
+          onClick={logout}
+          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+        >
+          Logout
+        </button>
       </div>
-    </nav>
+    </div>
   );
 };
 

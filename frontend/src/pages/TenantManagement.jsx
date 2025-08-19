@@ -7,6 +7,7 @@ import { adminAPI } from '../utils/api';
 const TenantManagement = () => {
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newTenant, setNewTenant] = useState({
     name: '',

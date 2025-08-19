@@ -23,6 +23,9 @@ load_dotenv()
 
 app = FastAPI(title="Jupiter SIEM API", version="1.0.0")
 
+# Include AI routes
+app.include_router(ai_router)
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,

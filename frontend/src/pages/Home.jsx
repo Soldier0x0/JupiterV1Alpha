@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, Shield, Activity, Database, Users, Zap } from 'lucide-react';
 import Card from '../components/Card';

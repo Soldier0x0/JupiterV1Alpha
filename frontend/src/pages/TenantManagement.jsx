@@ -27,12 +27,15 @@ const TenantManagement = () => {
 
   const openTenantSettings = (tenant) => {
     setSelectedTenant(tenant);
-    setTenantSettings({
+    const settings = {
       enabled_features: tenant.enabled_features || [],
       permissions: tenant.permissions || {},
       notifications: tenant.notifications !== false,
       api_access: tenant.api_access || false
-    });
+    };
+    setTenantSettings(settings);
+    setOriginalSettings(settings);
+    setHasUnsavedChanges(false);
     setShowSettingsModal(true);
   };
 

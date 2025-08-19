@@ -568,8 +568,8 @@ class JupiterAPITester:
 
 def main():
     """Main test execution"""
-    # Check if custom URL provided
-    base_url = "http://localhost:8001/api"
+    # Use the configured backend URL from environment
+    base_url = "/api"
     if len(sys.argv) > 1:
         base_url = sys.argv[1]
     

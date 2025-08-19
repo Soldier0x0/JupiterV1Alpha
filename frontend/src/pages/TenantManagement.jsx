@@ -312,6 +312,192 @@ const TenantManagement = () => {
           ))
         )}
       </div>
+
+      {/* Tenant Settings Modal */}
+      <AnimatePresence>
+        {showSettingsModal && selectedTenant && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-[#111214] border border-zinc-700 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold">Tenant Settings - {selectedTenant.name}</h3>
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="text-zinc-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Enabled Features */}
+                <div>
+                  <label className="block text-sm font-medium mb-3">Enabled Features</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { id: 'alerts', label: 'Alerts & Monitoring' },
+                      { id: 'intel', label: 'Threat Intelligence' },
+                      { id: 'automations', label: 'SOAR Automations' },
+                      { id: 'ai_console', label: 'AI Console' },
+                      { id: 'deception', label: 'Deception Technology' },
+                      { id: 'training', label: 'Security Training' },
+                      { id: 'cases', label: 'Case Management' },
+                      { id: 'entities', label: 'Entity Management' }
+                    ].map((feature) => (
+                      <div key={feature.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={feature.id}
+                          checked={tenantSettings.enabled_features.includes(feature.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTenantSettings(prev => ({
+                                ...prev,
+                                enabled_features: [...prev.enabled_features, feature.id]
+                              }));
+                            } else {
+                              setTenantSettings(prev => ({
+                                ...prev,
+                                enabled_features: prev.enabled_features.filter(f => f !== feature.id)
+                              }));
+                            }
+                          }}
+                          className="w-4 h-4 text-red-500"
+                        />
+                        <label htmlFor={feature.id} className="text-sm text-zinc-300">
+                          {feature.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Permissions */}
+                <div>
+                  <label className="block text-sm font-medium mb-3">Permissions</label>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-zinc-300">Create Users</span>
+                      <input
+                        type="checkbox"
+                        checked={tenantSettings.permissions.create_users || false}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          permissions: { ...prev.permissions, create_users: e.target.checked }
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-zinc-300">Manage API Keys</span>
+                      <input
+                        type="checkbox"
+                        checked={tenantSettings.permissions.manage_api_keys || false}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          permissions: { ...prev.permissions, manage_api_keys: e.target.checked }
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-zinc-300">Export Data</span>
+                      <input
+                        type="checkbox"
+                        checked={tenantSettings.permissions.export_data || false}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          permissions: { ...prev.permissions, export_data: e.target.checked }
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-zinc-300">Configure Integrations</span>
+                      <input
+                        type="checkbox"
+                        checked={tenantSettings.permissions.configure_integrations || false}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          permissions: { ...prev.permissions, configure_integrations: e.target.checked }
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notifications & API Access */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-3">Notifications</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="notifications"
+                        checked={tenantSettings.notifications}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          notifications: e.target.checked
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                      <label htmlFor="notifications" className="text-sm text-zinc-300">
+                        Enable email notifications
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-3">API Access</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="api_access"
+                        checked={tenantSettings.api_access}
+                        onChange={(e) => setTenantSettings(prev => ({
+                          ...prev,
+                          api_access: e.target.checked
+                        }))}
+                        className="w-4 h-4 text-red-500"
+                      />
+                      <label htmlFor="api_access" className="text-sm text-zinc-300">
+                        Enable API access
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3 mt-8">
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="flex-1 bg-zinc-600 hover:bg-zinc-500 text-white py-2 px-4 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  onClick={saveTenantSettings}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Save Settings
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

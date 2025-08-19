@@ -122,26 +122,47 @@ async def send_otp_email(email: str, otp: str):
     print(f"OTP for {email}: {otp}")  # In production, use real SMTP
     # TODO: Implement real email sending
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    try:
-        token = credentials.credentials
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        user_id = payload.get("user_id")
-        tenant_id = payload.get("tenant_id")
-        is_owner = payload.get("is_owner", False)
-        
-        if not user_id or not tenant_id:
+def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    session_token: Optional[str] = Cookie(None)
+):
+    # Try session token first (OAuth)
+    if session_token:
+        session = sessions_collection.find_one({
+            "session_token": session_token,
+            "expires_at": {"$gt": datetime.utcnow()}
+        })
+        if session:
+            user = users_collection.find_one({"_id": session["user_id"]})
+            if user:
+                return {
+                    "user_id": user["_id"],
+                    "tenant_id": user["tenant_id"],
+                    "email": user["email"],
+                    "is_owner": user.get("is_owner", False)
+                }
+    
+    # Fallback to JWT token (traditional auth)
+    if credentials:
+        try:
+            token = credentials.credentials
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            user_id = payload.get("user_id")
+            tenant_id = payload.get("tenant_id")
+            
+            if user_id is None or tenant_id is None:
+                raise HTTPException(status_code=401, detail="Invalid token")
+            
+            return {
+                "user_id": user_id,
+                "tenant_id": tenant_id,
+                "email": payload.get("email"),
+                "is_owner": payload.get("is_owner", False)
+            }
+        except JWTError:
             raise HTTPException(status_code=401, detail="Invalid token")
-        
-        return {
-            "user_id": user_id,
-            "tenant_id": tenant_id,
-            "is_owner": is_owner
-        }
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    raise HTTPException(status_code=401, detail="Authentication required")
 
 # API Routes
 

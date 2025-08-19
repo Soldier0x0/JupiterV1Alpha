@@ -11,7 +11,9 @@ import {
   Settings,
   Zap,
   Building,
-  GraduationCap
+  GraduationCap,
+  Eye,
+  Brain
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';

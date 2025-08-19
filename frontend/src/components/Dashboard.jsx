@@ -64,6 +64,9 @@ const Dashboard = () => {
               {user?.is_owner && (
                 <Route path="/admin/tenants" element={<TenantManagement />} />
               )}
+              {(user?.permissions?.includes('roles:manage') || user?.permissions?.includes('system:manage') || user?.is_owner) && (
+                <Route path="/admin/roles" element={<RoleManagement />} />
+              )}
             </Routes>
           </main>
         </div>

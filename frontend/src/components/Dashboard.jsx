@@ -16,6 +16,8 @@ import TenantManagement from '../pages/TenantManagement';
 import Training from '../pages/Training';
 import AIConsole from '../pages/AIConsole';
 import DeceptionCenter from '../pages/DeceptionCenter';
+import KnowledgeBase from '../pages/KnowledgeBase';
+import LocalModels from '../pages/LocalModels';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();

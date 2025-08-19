@@ -55,6 +55,8 @@ const Dashboard = () => {
               <Route path="/automations" element={<Automations />} />
               <Route path="/ai-console" element={<AIConsole />} />
               <Route path="/deception" element={<DeceptionCenter />} />
+              <Route path="/knowledge" element={<KnowledgeBase />} />
+              <Route path="/local-models" element={<LocalModels />} />
               <Route path="/training" element={<Training />} />
               <Route path="/settings" element={<Settings />} />
               {user.is_owner && (

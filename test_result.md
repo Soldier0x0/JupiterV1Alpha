@@ -521,6 +521,66 @@ test_plan:
         agent: "testing"
         comment: "✅ PASSED - RBAC system maintains full backward compatibility. Legacy is_owner field preserved in dashboard responses (is_owner_view field present), existing authentication flows continue working, legacy users without role_id properly handled with fallback to tenant_owner/viewer permissions based on is_owner status."
 
+  - task: "Two-Factor Authentication (2FA) Setup"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing - 2FA setup endpoint at /api/auth/2fa/setup"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - 2FA setup endpoint working correctly. Generates 32-character secret key, QR code image, provisioning URI for authenticator apps, and 10 backup codes. All required fields present in response."
+
+  - task: "Two-Factor Authentication (2FA) Verification"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing - 2FA verification endpoints at /api/auth/2fa/verify-setup and /api/auth/2fa/verify"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - 2FA verification endpoints working correctly. Setup verification enables 2FA with valid TOTP codes. Login verification accepts both TOTP codes and backup codes, removes used backup codes, and returns full JWT tokens."
+
+  - task: "Two-Factor Authentication (2FA) Management"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing - 2FA management endpoints at /api/auth/2fa/status, /api/auth/2fa/disable, /api/auth/2fa/regenerate-backup-codes"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - 2FA management endpoints working correctly. Status endpoint returns enabled/verified status and backup codes count. Disable endpoint requires TOTP verification and properly removes 2FA secrets. Backup code regeneration creates 10 new codes and replaces old ones."
+
+  - task: "Two-Factor Authentication (2FA) Login Flow"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing - Enhanced login endpoint at /api/auth/login with 2FA support"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Enhanced login endpoint working correctly. Returns requires_2fa flag and partial_token when 2FA is enabled. Partial tokens require 2FA verification before granting full access. Complete 2FA workflow from setup to login verification functional."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive backend API testing for Project Jupiter SIEM platform"
@@ -552,3 +612,5 @@ agent_communication:
     message: "🎭 RBAC SYSTEM TESTING COMPLETE - Conducted comprehensive testing of the new Role-Based Access Control system for Project Jupiter. PRIORITY 1 ✅ ROLE INITIALIZATION: All 5 default roles successfully created and accessible via /api/roles endpoint (super_admin, tenant_owner, admin, analyst, viewer) with correct hierarchy levels 0-4 and proper permission counts (23, 18, 13, 8, 4 respectively). PRIORITY 2 ✅ PERMISSION SYSTEM: /api/permissions endpoint fully operational returning 25 permissions organized into 12 categories including System, Users, Roles, Dashboards, Alerts, Threat Intelligence. PRIORITY 3 ✅ USER ROLE ASSIGNMENT: /api/users endpoint enhanced with complete role information (role_name, role_display, role_level), showing proper role distribution across users. PRIORITY 4 ✅ AUTHENTICATION WITH ROLES: JWT authentication system successfully enhanced with role and permission data, permission-based access control working correctly (proper denial/access based on user roles). PRIORITY 5 ✅ BACKWARD COMPATIBILITY: Legacy is_owner field maintained in all responses, existing authentication flows preserved, legacy users without role_id properly handled with fallback permissions. Complete RBAC system operational and ready for production use!"
   - agent: "testing"
     message: "🔐 COMPREHENSIVE RBAC VERIFICATION COMPLETE - Conducted extensive testing of all RBAC functionality after recent changes as requested. ROLE MANAGEMENT ENDPOINTS ✅ FULLY OPERATIONAL: Created, updated, and tested custom roles via /api/roles endpoints, system roles properly protected from modification/deletion, all 5 default roles (super_admin, tenant_owner, admin, analyst, viewer) working with correct hierarchy levels 0-4. PERMISSION SYSTEM ✅ VERIFIED: Permission-based access control working perfectly - tenant owners properly denied system access but allowed user management, super admins have full system access, all 25 permissions across 12 categories accessible via /api/permissions. USER ROLE ASSIGNMENTS ✅ TESTED: Successfully assigned custom roles to users via /api/users/{id}/role endpoint, role information properly reflected in /api/users response with role_name, role_display, and role_level fields. AUTHENTICATION ENHANCEMENT ✅ CONFIRMED: JWT tokens now include role and permission information, role-based access control working correctly across all endpoints. BACKWARD COMPATIBILITY ✅ MAINTAINED: Legacy is_owner=true users still work correctly, is_owner_view field preserved in dashboard responses. ROLE HIERARCHY ✅ ENFORCED: Lower-level users cannot assign higher-privilege roles, hierarchy levels properly enforced. All 11/11 comprehensive RBAC tests passed successfully - system ready for production use!"
+  - agent: "testing"
+    message: "🔐 TWO-FACTOR AUTHENTICATION (2FA) SYSTEM TESTING COMPLETE - Conducted comprehensive testing of the complete 2FA implementation for Project Jupiter SIEM. PRIORITY 1 ✅ 2FA SETUP: /api/auth/2fa/setup endpoint generates 32-character secret keys, QR codes for authenticator apps, provisioning URIs, and 10 backup codes. All security components properly implemented. PRIORITY 2 ✅ 2FA VERIFICATION: /api/auth/2fa/verify-setup enables 2FA with valid TOTP codes, /api/auth/2fa/verify handles login verification with both TOTP and backup codes, used backup codes properly removed. PRIORITY 3 ✅ 2FA MANAGEMENT: /api/auth/2fa/status returns complete status information, /api/auth/2fa/disable requires TOTP verification and removes secrets, /api/auth/2fa/regenerate-backup-codes creates new recovery codes. PRIORITY 4 ✅ ENHANCED LOGIN FLOW: /api/auth/login now returns requires_2fa flag and partial tokens when 2FA enabled, complete workflow from OTP → 2FA verification → full token access functional. PRIORITY 5 ✅ SECURITY FEATURES: TOTP validation using PyOTP library, backup code hashing with bcrypt, QR code generation for easy setup, JWT tokens include 2FA verification status. Complete 2FA system tested end-to-end with 8/8 tests passed - critical security feature ready for production use!"

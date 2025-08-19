@@ -70,6 +70,15 @@ const Login = () => {
     }));
   };
 
+  const handleOAuthLogin = () => {
+    // Get current preview URL for redirect
+    const redirectUrl = `${window.location.protocol}//${window.location.host}/profile`;
+    const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    
+    // Redirect to Emergent Auth
+    window.location.href = authUrl;
+  };
+
   return (
     <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6">
       <div className="w-full max-w-md">

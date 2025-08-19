@@ -47,13 +47,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const requestOTP = async (email, tenantId) => {
+  const requestOTP = async (email, tenantName) => {
     try {
+      // First, resolve tenant name to tenant ID
+      const tenantResponse = await authAPI.getTenantByName(tenantName);
+      const tenantId = tenantResponse.data.tenant_id;
+      
+      // Now request OTP with the proper tenant ID
       const response = await authAPI.requestOTP({ email, tenant_id: tenantId });
       const data = response.data;
       return { 
         success: true, 
-        dev_otp: data.dev_otp // Include OTP for development testing
+        dev_otp: data.dev_otp, // Include OTP for development testing
+        tenant_id: tenantId     // Return resolved tenant ID for login
       };
     } catch (error) {
       return { 

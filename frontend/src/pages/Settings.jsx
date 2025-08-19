@@ -50,6 +50,39 @@ const Settings = () => {
     }
   ];
 
+  // AI Model Services
+  const aiModelServices = [
+    {
+      name: 'OpenAI',
+      description: 'GPT-4, GPT-4o, GPT-4o-mini models',
+      icon: Brain,
+      models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4', 'o1-mini'],
+      website: 'https://platform.openai.com/api-keys'
+    },
+    {
+      name: 'Anthropic',
+      description: 'Claude 3.5 Sonnet, Claude 3.5 Haiku models',
+      icon: Brain,
+      models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022'],
+      website: 'https://console.anthropic.com/keys'
+    },
+    {
+      name: 'Google',
+      description: 'Gemini 2.0 Flash, Gemini 1.5 Pro models',
+      icon: Brain,
+      models: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
+      website: 'https://aistudio.google.com/app/apikey'
+    },
+    {
+      name: 'Emergent',
+      description: 'Universal key for all LLM providers',
+      icon: Cpu,
+      models: ['Universal Access'],
+      website: '/profile#universal-key',
+      isUniversal: true
+    }
+  ];
+
   useEffect(() => {
     loadApiKeys();
   }, []);

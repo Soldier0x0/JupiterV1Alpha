@@ -78,4 +78,15 @@ export const casesAPI = {
   getCases: () => api.get('/cases'),
 };
 
+// RBAC API endpoints
+export const rbacAPI = {
+  getRoles: () => api.get('/roles'),
+  createRole: (data) => api.post('/roles', data),
+  updateRole: (roleId, data) => api.put(`/roles/${roleId}`, data),
+  deleteRole: (roleId) => api.delete(`/roles/${roleId}`),
+  assignUserRole: (userId, assignment) => api.post(`/users/${userId}/role`, assignment),
+  getUsers: () => api.get('/users'),
+  getPermissions: () => api.get('/permissions'),
+};
+
 export default api;

@@ -14,6 +14,8 @@ import Settings from '../pages/Settings';
 import Automations from '../pages/Automations';
 import TenantManagement from '../pages/TenantManagement';
 import Training from '../pages/Training';
+import AIConsole from '../pages/AIConsole';
+import DeceptionCenter from '../pages/DeceptionCenter';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();

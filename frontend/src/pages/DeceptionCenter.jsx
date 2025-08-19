@@ -4,7 +4,7 @@ import {
   Eye, 
   EyeOff, 
   Target, 
-  Trap,
+  Shield,
   Network,
   Server,
   Database,

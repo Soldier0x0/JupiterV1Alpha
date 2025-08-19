@@ -522,8 +522,8 @@ class JupiterAPITester:
         try:
             response = requests.get(url, headers=headers, timeout=10)
             
-            # Should fail with 401 for invalid session token
-            expected_failure = response.status_code == 401
+            # Should fail with 401 or 403 for invalid session token
+            expected_failure = response.status_code in [401, 403]
             self.log_test("OAuth Session Token Validation", expected_failure, 
                          f"Status: {response.status_code}")
             

@@ -304,6 +304,46 @@ def require_permission(permission: str):
         return wrapper
     return decorator
 
+# Two-Factor Authentication (2FA) Helper Functions
+
+def generate_backup_codes(count=10):
+    """Generate backup codes for 2FA recovery"""
+    codes = []
+    for _ in range(count):
+        code = ''.join([str(secrets.randbelow(10)) for _ in range(8)])
+        codes.append(f"{code[:4]}-{code[4:]}")
+    return codes
+
+def hash_backup_codes(codes):
+    """Hash backup codes for secure storage"""
+    return [bcrypt.hashpw(code.replace('-', '').encode('utf-8'), bcrypt.gensalt()).decode('utf-8') for code in codes]
+
+def verify_backup_code(code, hashed_codes):
+    """Verify a backup code against stored hashes"""
+    clean_code = code.replace('-', '').encode('utf-8')
+    for hashed in hashed_codes:
+        if bcrypt.checkpw(clean_code, hashed.encode('utf-8')):
+            return True
+    return False
+
+def generate_qr_code(provisioning_uri):
+    """Generate QR code for TOTP setup"""
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(provisioning_uri)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffered = BytesIO()
+    img.save(buffered)
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    return img_str
+
 async def send_otp_email(email: str, otp: str):
     """Send OTP via email - simplified for demo"""
     print(f"OTP for {email}: {otp}")  # In production, use real SMTP

@@ -21,6 +21,11 @@ load_dotenv()
 
 app = FastAPI(title="Jupiter SIEM API", version="1.0.0")
 
+# Initialize default roles on startup
+@app.on_event("startup")
+async def startup_event():
+    initialize_default_roles()
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,

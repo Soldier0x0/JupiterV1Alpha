@@ -1,8 +1,10 @@
 import React from 'react';
 
-const Card = ({ children, className = '' }) => {
+const Card = ({ children, className = '', elevated = false }) => {
+  const baseClasses = elevated ? 'card-elevated' : 'card';
+  
   return (
-    <div className={`card ${className}`}>
+    <div className={`${baseClasses} ${className}`}>
       {children}
     </div>
   );

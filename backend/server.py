@@ -137,6 +137,146 @@ def create_jwt_token(user_id: str, tenant_id: str, is_owner: bool = False) -> st
 def generate_otp() -> str:
     return str(random.randint(100000, 999999))
 
+# RBAC System Constants and Functions
+DEFAULT_ROLES = [
+    {
+        "name": "super_admin",
+        "display_name": "Super Administrator", 
+        "description": "Complete system access across all tenants",
+        "permissions": [
+            "system:manage", "tenants:create", "tenants:delete", "tenants:manage",
+            "users:create", "users:delete", "users:manage", "roles:manage",
+            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
+            "intel:view", "intel:manage", "automations:view", "automations:manage",
+            "cases:view", "cases:manage", "settings:view", "settings:manage",
+            "ai:view", "ai:manage", "reports:generate"
+        ],
+        "level": 0,
+        "tenant_scoped": False
+    },
+    {
+        "name": "tenant_owner",
+        "display_name": "Tenant Owner",
+        "description": "Full access within tenant scope",
+        "permissions": [
+            "users:create", "users:manage", "roles:assign",
+            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
+            "intel:view", "intel:manage", "automations:view", "automations:manage", 
+            "cases:view", "cases:manage", "settings:view", "settings:manage",
+            "ai:view", "ai:manage", "reports:generate"
+        ],
+        "level": 1,
+        "tenant_scoped": True
+    },
+    {
+        "name": "admin",
+        "display_name": "Administrator",
+        "description": "Administrative access to security operations",
+        "permissions": [
+            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
+            "intel:view", "intel:manage", "automations:view", "automations:manage",
+            "cases:view", "cases:manage", "settings:view", "ai:view", "ai:manage"
+        ],
+        "level": 2,
+        "tenant_scoped": True
+    },
+    {
+        "name": "analyst",
+        "display_name": "Security Analyst",
+        "description": "Operational access for threat analysis and response",
+        "permissions": [
+            "dashboards:view", "alerts:view", "alerts:manage", "intel:view", 
+            "intel:create", "cases:view", "cases:manage", "ai:view"
+        ],
+        "level": 3,
+        "tenant_scoped": True
+    },
+    {
+        "name": "viewer",
+        "display_name": "Viewer",
+        "description": "Read-only access to security data",
+        "permissions": [
+            "dashboards:view", "alerts:view", "intel:view", "cases:view"
+        ],
+        "level": 4,
+        "tenant_scoped": True
+    }
+]
+
+def initialize_default_roles():
+    """Initialize default roles if they don't exist"""
+    try:
+        for role_data in DEFAULT_ROLES:
+            existing = roles_collection.find_one({"name": role_data["name"]})
+            if not existing:
+                role_id = str(uuid.uuid4())
+                role = {
+                    "_id": role_id,
+                    **role_data,
+                    "enabled": True,
+                    "created_at": datetime.utcnow(),
+                    "created_by": "system"
+                }
+                roles_collection.insert_one(role)
+                print(f"Initialized role: {role_data['display_name']}")
+    except Exception as e:
+        print(f"Error initializing roles: {e}")
+
+def has_permission(user_permissions: List[str], required_permission: str) -> bool:
+    """Check if user has required permission"""
+    if "system:manage" in user_permissions:  # Super admin has all permissions
+        return True
+    return required_permission in user_permissions
+
+def get_user_permissions(user_id: str, tenant_id: str = None) -> List[str]:
+    """Get all permissions for a user"""
+    try:
+        user = users_collection.find_one({"_id": user_id})
+        if not user:
+            return []
+        
+        # Get user's role
+        role_id = user.get("role_id")
+        if not role_id:
+            # Fallback for legacy users - convert is_owner to role
+            if user.get("is_owner", False):
+                # Find tenant_owner role
+                role = roles_collection.find_one({"name": "tenant_owner"})
+            else:
+                # Find viewer role as default
+                role = roles_collection.find_one({"name": "viewer"})
+                
+            if role:
+                return role.get("permissions", [])
+            return []
+        
+        role = roles_collection.find_one({"_id": role_id, "enabled": True})
+        if not role:
+            return []
+            
+        return role.get("permissions", [])
+    except Exception as e:
+        print(f"Error getting user permissions: {e}")
+        return []
+
+def require_permission(permission: str):
+    """Decorator to require specific permission"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Get current_user from kwargs or function signature
+            current_user = kwargs.get('current_user')
+            if not current_user:
+                raise HTTPException(status_code=401, detail="Authentication required")
+            
+            user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+            
+            if not has_permission(user_permissions, permission):
+                raise HTTPException(status_code=403, detail=f"Permission required: {permission}")
+                
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
 async def send_otp_email(email: str, otp: str):
     """Send OTP via email - simplified for demo"""
     print(f"OTP for {email}: {otp}")  # In production, use real SMTP

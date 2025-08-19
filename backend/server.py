@@ -194,6 +194,136 @@ async def get_tenant_by_name(tenant_name: str):
         raise HTTPException(status_code=404, detail="Tenant not found")
     return {"tenant_id": tenant["_id"], "name": tenant["name"]}
 
+# OAuth Endpoints
+@app.post("/api/auth/oauth/profile")
+async def oauth_profile(session_data: OAuthSession, response: Response):
+    """Handle OAuth session authentication from Emergent auth"""
+    try:
+        # Call Emergent auth API to get session data
+        async with aiohttp.ClientSession() as session:
+            headers = {"X-Session-ID": session_data.session_id}
+            async with session.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers=headers
+            ) as resp:
+                if resp.status != 200:
+                    raise HTTPException(status_code=401, detail="Invalid session")
+                
+                auth_data = await resp.json()
+                
+        # Extract user data
+        user_email = auth_data["email"]
+        user_name = auth_data.get("name", "")
+        user_picture = auth_data.get("picture", "")
+        session_token = auth_data["session_token"]
+        
+        # Check if user exists, create if not
+        user = users_collection.find_one({"email": user_email})
+        
+        if not user:
+            # Create default tenant for new OAuth users
+            tenant_id = str(uuid.uuid4())
+            default_tenant_name = f"{user_name.split()[0] if user_name else 'User'}'s Organization"
+            
+            tenants_collection.insert_one({
+                "_id": tenant_id,
+                "name": default_tenant_name,
+                "created_at": datetime.utcnow(),
+                "enabled": True
+            })
+            
+            # Create new user
+            user_id = str(uuid.uuid4())
+            users_collection.insert_one({
+                "_id": user_id,
+                "email": user_email,
+                "name": user_name,
+                "picture": user_picture,
+                "tenant_id": tenant_id,
+                "is_owner": True,  # OAuth users are owners of their default tenant
+                "auth_method": "oauth",
+                "created_at": datetime.utcnow(),
+                "last_login": datetime.utcnow()
+            })
+            
+            user = users_collection.find_one({"_id": user_id})
+        else:
+            # Update last login for existing user
+            users_collection.update_one(
+                {"_id": user["_id"]},
+                {"$set": {"last_login": datetime.utcnow()}}
+            )
+        
+        # Save session token with 7-day expiry
+        session_expiry = datetime.utcnow() + timedelta(days=7)
+        sessions_collection.update_one(
+            {"session_token": session_token},
+            {
+                "$set": {
+                    "user_id": user["_id"],
+                    "expires_at": session_expiry,
+                    "created_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        
+        # Set HttpOnly cookie with session token
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            max_age=7 * 24 * 60 * 60,  # 7 days in seconds
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/"
+        )
+        
+        return {
+            "success": True,
+            "user": {
+                "user_id": user["_id"],
+                "email": user["email"],
+                "name": user.get("name", ""),
+                "tenant_id": user["tenant_id"],
+                "is_owner": user.get("is_owner", False)
+            },
+            "session_token": session_token
+        }
+        
+    except Exception as e:
+        print(f"OAuth authentication error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Authentication failed")
+
+# Helper function to get user from session token
+async def get_current_user_from_session(
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = Header(None)
+):
+    """Get current user from session token (cookie or header)"""
+    token = session_token
+    
+    # Fallback to Authorization header if no cookie
+    if not token and authorization:
+        if authorization.startswith("Bearer "):
+            token = authorization.split(" ")[1]
+    
+    if not token:
+        return None
+    
+    # Check if session exists and is valid
+    session = sessions_collection.find_one({
+        "session_token": token,
+        "expires_at": {"$gt": datetime.utcnow()}
+    })
+    
+    if not session:
+        return None
+    
+    # Get user data
+    user = users_collection.find_one({"_id": session["user_id"]})
+    return user
+
 @app.post("/api/auth/request-otp")
 async def request_otp(otp_request: OTPRequest):
     user = users_collection.find_one({"email": otp_request.email, "tenant_id": otp_request.tenant_id})

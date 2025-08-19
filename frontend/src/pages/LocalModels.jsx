@@ -504,12 +504,12 @@ const LocalModels = () => {
                         <CheckCircle className="w-4 h-4" />
                         <span>Installed</span>
                       </div>
-                    ) : isDownloading ? (
+                    ) : downloadState ? (
                       <div className="flex-1 bg-blue-500/20 text-blue-400 py-2 px-4 rounded-lg flex items-center justify-center space-x-2">
                         <Loader className="w-4 h-4 animate-spin" />
                         <span>
-                          {typeof isDownloading === 'object' 
-                            ? `${isDownloading.progress}%` 
+                          {typeof downloadState === 'object' 
+                            ? `${downloadState.progress}%` 
                             : 'Downloading...'
                           }
                         </span>

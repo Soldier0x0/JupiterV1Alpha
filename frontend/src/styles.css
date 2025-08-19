@@ -212,3 +212,83 @@
 .focus-visible:focus {
   @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-background-primary;
 }
+
+/* React Grid Layout Styles */
+.react-grid-layout {
+  position: relative;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+  box-sizing: border-box;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM0Yjc2ODgiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0ibTUgNXYxaC0xdi0xeiIvPjxwYXRoIGQ9Im0zIDV2MWgtMXYtMXoiLz48cGF0aCBkPSJtNSAzdjFoLTF2LTF6Ii8+PC9nPjwvc3ZnPg==');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+  z-index: 10;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border: 2px dashed rgba(59, 130, 246, 0.4) !important;
+  opacity: 0.4;
+  transition-duration: 100ms;
+  z-index: 2;
+  user-select: none;
+  border-radius: 0.75rem;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(163, 163, 163, 0.6);
+  border-bottom: 2px solid rgba(163, 163, 163, 0.6);
+}
+
+.react-grid-item:hover > .react-resizable-handle::after {
+  border-right: 2px solid rgba(163, 163, 163, 0.9);
+  border-bottom: 2px solid rgba(163, 163, 163, 0.9);
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  opacity: 0.8;
+  transform: rotate(2deg);
+}
+
+.react-grid-item.resizing {
+  opacity: 0.7;
+  z-index: 3;
+}
+
+/* Custom grid item styles for our theme */
+.layout .react-grid-item {
+  border-radius: 0.75rem;
+}
+
+.layout .react-grid-item.react-grid-placeholder {
+  border-radius: 0.75rem;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px dashed rgba(59, 130, 246, 0.3) !important;
+}

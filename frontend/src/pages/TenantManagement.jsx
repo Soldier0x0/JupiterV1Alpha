@@ -289,10 +289,11 @@ const TenantManagement = () => {
                     </span>
                     
                     <motion.button
-                      onClick={() => toggleTenantStatus(tenant._id, tenant.enabled)}
+                      onClick={() => openTenantSettings(tenant)}
                       className="p-2 hover:bg-cosmic-gray rounded-lg transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
+                      title="Tenant Settings"
                     >
                       <Settings className="w-4 h-4 text-zinc-400" />
                     </motion.button>

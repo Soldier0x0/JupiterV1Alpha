@@ -50,33 +50,33 @@ const SideNav = () => {
   };
 
   return (
-    <div className="w-64 bg-[#111214] border-r border-zinc-700 flex flex-col h-full">
+    <div className="w-64 bg-background-secondary border-r border-neutral-800 flex flex-col h-full">
       {/* Header */}
-      <div className="p-6">
+      <div className="p-6 border-b border-neutral-800">
         <div className="flex items-center space-x-3">
           <JupiterIcon className="w-8 h-8" />
           <div>
-            <h1 className="text-white font-bold text-lg">Jupiter</h1>
-            <p className="text-zinc-500 text-sm">Security Hub</p>
+            <h1 className="text-heading text-lg font-semibold">Jupiter</h1>
+            <p className="text-caption">Security Platform</p>
           </div>
         </div>
       </div>
 
       {/* User Info */}
       {user && (
-        <div className="px-6 pb-4">
-          <div className="bg-[#0b0c10] rounded-lg p-3">
+        <div className="p-6 border-b border-neutral-800">
+          <div className="bg-background-tertiary rounded-lg p-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-bold">
+              <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">
                   {user.email[0].toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{user.email}</p>
-                <p className="text-zinc-400 text-xs">
-                  {isOwner && <span className="text-red-400 mr-1">👑</span>}
-                  {isOwner ? 'Owner' : 'Member'}
+                <p className="text-neutral-200 text-sm font-medium truncate">{user.email}</p>
+                <p className="text-caption text-xs">
+                  {isOwner && <span className="text-primary-400 mr-1">★</span>}
+                  {isOwner ? 'Administrator' : 'User'}
                 </p>
               </div>
             </div>
@@ -85,7 +85,7 @@ const SideNav = () => {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 pb-4">
+      <nav className="flex-1 px-4 py-6">
         <div className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -95,18 +95,14 @@ const SideNav = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors group relative ${
+                className={`${
                   isActive
-                    ? 'bg-red-500 text-white'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
-                }`}
+                    ? 'bg-primary-500/10 text-primary-400 border-r-2 border-primary-500'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+                } flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 font-medium relative`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`} />
-                <span className="text-sm font-medium">{item.label}</span>
-                
-                {isActive && (
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-red-400 rounded-r-lg" />
-                )}
+                <Icon className={`w-5 h-5 ${isActive ? 'text-primary-400' : 'text-neutral-500'}`} />
+                <span className="text-sm">{item.label}</span>
               </NavLink>
             );
           })}
@@ -115,31 +111,31 @@ const SideNav = () => {
         {/* Admin Section */}
         {isOwner && (
           <div className="mt-8">
-            <div className="px-4 mb-2">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Administration</p>
+            <div className="px-4 mb-3">
+              <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Administration</p>
             </div>
             <NavLink
               to="/dashboard/admin/tenants"
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`${
                 isActivePath('/dashboard/admin/tenants')
-                  ? 'bg-red-500 text-white'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
-              }`}
+                  ? 'bg-primary-500/10 text-primary-400 border-r-2 border-primary-500'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+              } flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 font-medium`}
             >
               <Building className="w-5 h-5" />
-              <span className="text-sm font-medium">Tenant Management</span>
+              <span className="text-sm">Tenant Management</span>
             </NavLink>
           </div>
         )}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-zinc-700">
+      <div className="p-4 border-t border-neutral-800">
         <button
           onClick={logout}
-          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+          className="w-full btn-ghost text-sm py-2"
         >
-          Logout
+          Sign Out
         </button>
       </div>
     </div>

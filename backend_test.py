@@ -682,11 +682,19 @@ class JupiterAPITester:
     # RBAC System Testing
     def test_rbac_roles_endpoint(self):
         """Test RBAC roles endpoint - check if 5 default roles exist"""
+        # Use super admin token for roles management
+        original_token = self.token
+        if hasattr(self, 'super_admin_token') and self.super_admin_token:
+            self.token = self.super_admin_token
+        
         if not self.token:
             self.log_test("RBAC Roles Endpoint", False, "No authentication token")
             return False
             
         success, status, data = self.make_request('GET', 'roles')
+        
+        # Restore original token
+        self.token = original_token
         
         if success:
             roles = data.get('roles', [])
@@ -720,11 +728,19 @@ class JupiterAPITester:
 
     def test_rbac_permissions_endpoint(self):
         """Test RBAC permissions endpoint - check available permissions"""
+        # Use super admin token for permissions management
+        original_token = self.token
+        if hasattr(self, 'super_admin_token') and self.super_admin_token:
+            self.token = self.super_admin_token
+        
         if not self.token:
             self.log_test("RBAC Permissions Endpoint", False, "No authentication token")
             return False
             
         success, status, data = self.make_request('GET', 'permissions')
+        
+        # Restore original token
+        self.token = original_token
         
         if success:
             permissions = data.get('permissions', [])

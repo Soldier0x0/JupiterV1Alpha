@@ -43,6 +43,8 @@ export const authAPI = {
   requestOTP: (data) => api.post('/auth/request-otp', data),
   login: (data) => api.post('/auth/login', data),
   getTenantByName: (tenantName) => api.get(`/auth/tenant/${tenantName}`),
+  // OAuth endpoints
+  oauthProfile: (sessionId) => api.post('/auth/oauth/profile', { session_id: sessionId }),
 };
 
 export const dashboardAPI = {

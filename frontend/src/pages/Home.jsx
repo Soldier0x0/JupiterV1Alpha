@@ -27,9 +27,9 @@ const Home = () => {
         critical_alerts: 23,
         recent_alerts: [],
         health_metrics: [
-          { name: 'API', status: 'healthy' },
-          { name: 'MongoDB', status: 'healthy' },
-          { name: 'OpenSearch', status: 'degraded' },
+          { name: 'API Gateway', status: 'healthy' },
+          { name: 'Database', status: 'healthy' },
+          { name: 'Search Engine', status: 'degraded' },
           { name: 'Threat Intel', status: 'healthy' },
           { name: 'SOAR Engine', status: 'healthy' }
         ],

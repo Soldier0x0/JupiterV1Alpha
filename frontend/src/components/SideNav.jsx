@@ -109,22 +109,37 @@ const SideNav = () => {
         </div>
 
         {/* Admin Section */}
-        {isOwner && (
+        {(isOwner || user?.permissions?.includes('roles:manage') || user?.permissions?.includes('system:manage')) && (
           <div className="mt-8">
             <div className="px-4 mb-3">
               <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Administration</p>
             </div>
-            <NavLink
-              to="/dashboard/admin/tenants"
-              className={`${
-                isActivePath('/dashboard/admin/tenants')
-                  ? 'bg-primary-500/10 text-primary-400 border-r-2 border-primary-500'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
-              } flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 font-medium`}
-            >
-              <Building className="w-5 h-5" />
-              <span className="text-sm">Tenant Management</span>
-            </NavLink>
+            {isOwner && (
+              <NavLink
+                to="/dashboard/admin/tenants"
+                className={`${
+                  isActivePath('/dashboard/admin/tenants')
+                    ? 'bg-primary-500/10 text-primary-400 border-r-2 border-primary-500'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+                } flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 font-medium`}
+              >
+                <Building className="w-5 h-5" />
+                <span className="text-sm">Tenant Management</span>
+              </NavLink>
+            )}
+            {(user?.permissions?.includes('roles:manage') || user?.permissions?.includes('system:manage') || isOwner) && (
+              <NavLink
+                to="/dashboard/admin/roles"
+                className={`${
+                  isActivePath('/dashboard/admin/roles')
+                    ? 'bg-primary-500/10 text-primary-400 border-r-2 border-primary-500'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+                } flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 font-medium`}
+              >
+                <Shield className="w-5 h-5" />
+                <span className="text-sm">Role Management</span>
+              </NavLink>
+            )}
           </div>
         )}
       </nav>

@@ -5,7 +5,6 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8001/
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,  // Enable credentials for OAuth cookies
   headers: {
     'Content-Type': 'application/json',
   },

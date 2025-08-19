@@ -2,172 +2,204 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Variables for Professional Typography */
+/* Professional Enterprise Design System */
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 @layer base {
   * {
-    @apply border-zinc-700;
+    @apply border-neutral-800;
   }
   
   body {
-    @apply bg-[#0b0c10] text-zinc-200 antialiased;
+    @apply bg-background-primary text-neutral-200 antialiased;
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
   
-  /* Custom scrollbar */
+  /* Clean, minimal scrollbar */
   ::-webkit-scrollbar {
-    @apply w-2;
+    @apply w-1;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-[#111214];
+    @apply bg-background-primary;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-600 rounded-full;
+    @apply bg-neutral-700 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-zinc-500;
+    @apply bg-neutral-600;
   }
 
-  /* Professional Typography Hierarchy */
+  /* Professional Typography System */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: theme('colors.neutral.100');
   }
   
   h1 {
-    font-size: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(1.75rem, 4vw, 3rem);
     font-weight: 700;
   }
   
   h2 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
   }
   
   h3 {
-    font-size: clamp(1.25rem, 3vw, 1.875rem);
-    font-weight: 600;
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
   }
   
-  /* Body text */
+  /* Body text with improved readability */
   p, span, div {
     font-family: var(--font-sans);
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    line-height: 1.6;
+    color: theme('colors.neutral.300');
   }
   
-  /* Monospace for technical content */
+  /* Technical content styling */
   code, pre, .mono {
     font-family: var(--font-mono);
     font-feature-settings: 'liga' 1, 'calt' 1;
+    color: theme('colors.neutral.200');
   }
 }
 
 @layer components {
+  /* Button System - Professional & Accessible */
   .btn-primary {
-    @apply bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    @apply bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background-primary;
     font-family: var(--font-sans);
   }
   
   .btn-secondary {
-    @apply bg-zinc-600 hover:bg-zinc-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    @apply bg-neutral-700 hover:bg-neutral-600 text-neutral-200 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-background-primary;
     font-family: var(--font-sans);
   }
   
   .btn-ghost {
-    @apply bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 border border-zinc-700 hover:border-zinc-600;
+    @apply bg-transparent hover:bg-neutral-800 text-neutral-300 hover:text-neutral-100 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border border-neutral-700 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-background-primary;
     font-family: var(--font-sans);
   }
   
+  .btn-danger {
+    @apply bg-danger-500 hover:bg-danger-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+    font-family: var(--font-sans);
+  }
+  
+  /* Card System - Clean & Modern */
   .card {
-    @apply bg-[#111214] border border-zinc-700 rounded-lg p-6 hover:border-zinc-600 transition-colors duration-200;
+    @apply bg-background-secondary border border-neutral-800 rounded-xl p-6 transition-all duration-200 hover:border-neutral-700;
   }
   
-  .card-glow {
-    @apply card hover:shadow-red-500/20 hover:shadow-lg;
+  .card-elevated {
+    @apply card shadow-lg hover:shadow-xl;
   }
   
+  /* Input System - Professional */
   .input-field {
-    @apply w-full px-4 py-3 bg-[#0b0c10] border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-3 bg-background-secondary border border-neutral-700 rounded-lg text-neutral-200 placeholder-neutral-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
     font-family: var(--font-sans);
   }
   
+  /* Navigation - Clean & Intuitive */
   .nav-link {
-    @apply flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800;
+    @apply flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800;
     font-family: var(--font-sans);
   }
   
   .nav-link-active {
-    @apply nav-link bg-red-500 text-white font-medium;
+    @apply nav-link bg-primary-500/10 text-primary-400 border-l-4 border-primary-500 font-medium;
   }
 
-  /* Typography Component Classes */
-  .hero-text {
-    font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+  /* Status Indicators */
+  .status-success {
+    @apply bg-success-500/10 text-success-500 border border-success-500/20;
   }
   
-  .display-text {
+  .status-warning {
+    @apply bg-warning-500/10 text-warning-500 border border-warning-500/20;
+  }
+  
+  .status-danger {
+    @apply bg-danger-500/10 text-danger-500 border border-danger-500/20;
+  }
+
+  /* Typography Utilities */
+  .text-heading {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: theme('colors.neutral.100');
   }
   
-  .body-text {
+  .text-body {
     font-family: var(--font-sans);
-    font-weight: 400;
     line-height: 1.6;
+    color: theme('colors.neutral.300');
   }
   
-  .code-text {
+  .text-caption {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: theme('colors.neutral.500');
+  }
+  
+  .text-code {
     font-family: var(--font-mono);
     font-feature-settings: 'liga' 1, 'calt' 1;
-    font-weight: 400;
+    color: theme('colors.neutral.200');
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent;
+  /* Gradient utilities for subtle accents */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600;
   }
   
-  .bg-mesh {
-    background-image: radial-gradient(circle at 25% 25%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
-  }
-
-  /* Font Utility Classes */
-  .font-display {
-    font-family: var(--font-display);
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
   }
   
-  .font-body {
-    font-family: var(--font-sans);
+  /* Animation utilities - minimal and purposeful */
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-in-out;
   }
   
-  .font-code {
-    font-family: var(--font-mono);
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
   }
 }
 
-/* Minimal loading animation - only when needed */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Refined loading animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.animate-spin {
-  animation: spin 1s linear infinite;
+@keyframes slideIn {
+  from { 
+    transform: translateY(-10px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* Focus management for accessibility */
+.focus-visible:focus {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-background-primary;
 }

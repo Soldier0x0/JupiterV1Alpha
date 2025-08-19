@@ -399,45 +399,56 @@ const AIConsole = () => {
       </div>
 
       {/* Evolution Timeline */}
-      <Card>
-        <div className="p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <TrendingUp className="w-5 h-5 text-orange-400" />
-            <h3 className="font-semibold">System Evolution Timeline</h3>
-            <div className="ml-auto text-sm text-zinc-400">
-              Adaptation Rate: {immuneSystemData.adaptation_rate}%
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <div className="p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <TrendingUp className="w-5 h-5 text-orange-400" />
+              <h3 className="font-semibold">System Evolution Timeline</h3>
+              <div className="ml-auto text-sm text-zinc-400">
+                Adaptation Rate: {immuneSystemData.adaptation_rate}%
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              {[
+                { time: "2 min ago", event: "Learned new lateral movement pattern from APT simulation", type: "learning" },
+                { time: "15 min ago", event: "Updated firewall rules based on deception technology feedback", type: "adaptation" },
+                { time: "1 hour ago", event: "Identified false positive pattern - reduced alert noise by 23%", type: "optimization" },
+                { time: "3 hours ago", event: "Discovered new IOC correlation - strengthened threat detection", type: "discovery" },
+              ].map((event, index) => (
+                <div key={index} className="flex items-start space-x-4">
+                  <div className={`w-3 h-3 rounded-full mt-1.5 ${
+                    event.type === 'learning' ? 'bg-blue-400' :
+                    event.type === 'adaptation' ? 'bg-green-400' :
+                    event.type === 'optimization' ? 'bg-yellow-400' : 'bg-purple-400'
+                  }`}></div>
+                  <div className="flex-1">
+                    <p className="text-sm text-zinc-300">{event.event}</p>
+                    <p className="text-xs text-zinc-500 mt-1">{event.time}</p>
+                  </div>
+                  <div className={`px-2 py-1 rounded-full text-xs ${
+                    event.type === 'learning' ? 'bg-blue-500/20 text-blue-400' :
+                    event.type === 'adaptation' ? 'bg-green-500/20 text-green-400' :
+                    event.type === 'optimization' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
+                  }`}>
+                    {event.type}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          
-          <div className="space-y-4">
-            {[
-              { time: "2 min ago", event: "Learned new lateral movement pattern from APT simulation", type: "learning" },
-              { time: "15 min ago", event: "Updated firewall rules based on deception technology feedback", type: "adaptation" },
-              { time: "1 hour ago", event: "Identified false positive pattern - reduced alert noise by 23%", type: "optimization" },
-              { time: "3 hours ago", event: "Discovered new IOC correlation - strengthened threat detection", type: "discovery" },
-            ].map((event, index) => (
-              <div key={index} className="flex items-start space-x-4">
-                <div className={`w-3 h-3 rounded-full mt-1.5 ${
-                  event.type === 'learning' ? 'bg-blue-400' :
-                  event.type === 'adaptation' ? 'bg-green-400' :
-                  event.type === 'optimization' ? 'bg-yellow-400' : 'bg-purple-400'
-                }`}></div>
-                <div className="flex-1">
-                  <p className="text-sm text-zinc-300">{event.event}</p>
-                  <p className="text-xs text-zinc-500 mt-1">{event.time}</p>
-                </div>
-                <div className={`px-2 py-1 rounded-full text-xs ${
-                  event.type === 'learning' ? 'bg-blue-500/20 text-blue-400' :
-                  event.type === 'adaptation' ? 'bg-green-500/20 text-green-400' :
-                  event.type === 'optimization' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
-                }`}>
-                  {event.type}
-                </div>
-              </div>
-            ))}
-          </div>
+        </Card>
+
+        {/* AI Chat Console */}
+        <div>
+          <h3 className="font-semibold mb-4 flex items-center space-x-2">
+            <Brain className="w-5 h-5 text-purple-400" />
+            <span>AI Security Assistant</span>
+          </h3>
+          <AIChat onAnalysisRequest={analyzeWithAI} />
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

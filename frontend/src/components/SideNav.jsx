@@ -29,7 +29,7 @@ const SideNav = () => {
     { path: '/dashboard/entities', label: 'Entities', icon: Users },
     { path: '/dashboard/cases', label: 'Cases', icon: Briefcase },
     { path: '/dashboard/automations', label: 'SOAR', icon: Zap },
-    { path: '/dashboard/ai-console', label: 'AI Console', icon: Cpu },
+    { path: '/dashboard/ai-console', label: 'AI Console', icon: Brain },
     { path: '/dashboard/deception', label: 'Deception', icon: Eye },
     { path: '/dashboard/models', label: 'Models', icon: Cpu },
     { path: '/dashboard/training', label: 'Training', icon: GraduationCap },

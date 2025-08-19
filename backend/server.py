@@ -829,8 +829,10 @@ async def get_cases(current_user: dict = Depends(get_current_user)):
 # System Health
 @app.get("/api/system/health")
 async def get_system_health(current_user: dict = Depends(get_current_user)):
-    if not current_user["is_owner"]:
-        raise HTTPException(status_code=403, detail="Admin access required")
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "system:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: system:manage")
     
     # Check database connectivity
     try:
@@ -845,7 +847,8 @@ async def get_system_health(current_user: dict = Depends(get_current_user)):
         "tenants": tenants_collection.count_documents({}),
         "alerts": alerts_collection.count_documents({}),
         "iocs": iocs_collection.count_documents({}),
-        "automations": automations_collection.count_documents({})
+        "automations": automations_collection.count_documents({}),
+        "roles": roles_collection.count_documents({})
     }
     
     return {

@@ -9,6 +9,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     tenant_id: '',
+    tenant_name: '',  // Store the human-readable name separately
     otp: ''
   });
   const [loading, setLoading] = useState(false);

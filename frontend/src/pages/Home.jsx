@@ -75,14 +75,6 @@ const Home = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
-    switch (status.toLowerCase()) {
-      case 'healthy': return '●';
-      case 'degraded': return '◐';
-      case 'critical': case 'unhealthy': return '●';
-      default: return '○';
-    }
-  };
 
   if (loading) {
     return (

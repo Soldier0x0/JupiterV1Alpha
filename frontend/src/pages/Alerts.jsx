@@ -177,13 +177,13 @@ const Alerts = () => {
             <span>Export</span>
           </motion.button>
           <motion.button
-            onClick={() => setShowCreateForm(true)}
+            onClick={createTestAlert}
             className="btn-primary flex items-center space-x-2"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Plus className="w-4 h-4" />
-            <span>Test Alert</span>
+            <span>Create Test Alert</span>
           </motion.button>
         </div>
       </div>

@@ -262,42 +262,22 @@ class JupiterAPITester:
             self.log_test("Threat Intel Lookup", False, "No authentication token")
             return False
             
-        # The endpoint expects query parameters
-        if self.base_url.startswith('http'):
-            url = f"{self.base_url}/threat-intel/lookup"
-        else:
-            url = f"http://localhost:8001{self.base_url}/threat-intel/lookup"
-            
-        headers = {
-            'Authorization': f'Bearer {self.token}'
-        }
-        
-        params = {
+        # Send data as JSON body since it's a POST endpoint
+        lookup_data = {
             'indicator': '8.8.8.8',
             'ioc_type': 'ip'
         }
         
-        try:
-            response = requests.post(url, params=params, headers=headers, timeout=10)
-            success = response.status_code == 200
-            
-            if success:
-                data = response.json()
-                results = data.get('results', {})
-                print(f"   🔍 Lookup results: {len(results)} services")
-                self.log_test("Threat Intel Lookup", True, f"Status: {response.status_code}")
-            else:
-                try:
-                    error_data = response.json()
-                    self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}, Error: {error_data}")
-                except:
-                    self.log_test("Threat Intel Lookup", False, f"Status: {response.status_code}, Response: {response.text}")
-            
-            return success
-            
-        except Exception as e:
-            self.log_test("Threat Intel Lookup", False, f"Error: {str(e)}")
-            return False
+        success, status, data = self.make_request('POST', 'threat-intel/lookup', lookup_data)
+        
+        if success:
+            results = data.get('results', {})
+            print(f"   🔍 Lookup results: {len(results)} services")
+            self.log_test("Threat Intel Lookup", True, f"Status: {status}")
+        else:
+            self.log_test("Threat Intel Lookup", False, f"Status: {status}, Response: {data}")
+        
+        return success
 
     def test_get_api_keys(self):
         """Test getting API keys"""

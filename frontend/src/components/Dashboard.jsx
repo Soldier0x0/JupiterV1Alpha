@@ -33,10 +33,9 @@ const Dashboard = () => {
     );
   }
 
-  // TEMPORARY: Bypass authentication check for debugging
-  // if (!user) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0b0c10]">

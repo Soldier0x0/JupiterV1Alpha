@@ -109,45 +109,38 @@ class JupiterAPITester:
         return success
 
     def test_login_with_actual_otp(self):
-        """Test login with actual OTP from logs"""
-        # Get the OTP from backend logs
-        import subprocess
-        try:
-            result = subprocess.run(['tail', '-n', '50', '/var/log/supervisor/backend.out.log'], 
-                                  capture_output=True, text=True)
-            log_lines = result.stdout.split('\n')
-            
-            # Find the most recent OTP for our email
-            otp = None
-            for line in reversed(log_lines):
-                if f"OTP for {self.test_email}:" in line:
-                    otp = line.split(":")[-1].strip()
-                    break
-            
-            if not otp:
-                self.log_test("Login with Actual OTP", False, "No OTP found in logs")
-                return False
-            
-            login_data = {
-                "email": self.test_email,
-                "otp": otp,
-                "tenant_id": self.tenant_id
-            }
-            
-            success, status, data = self.make_request('POST', 'auth/login', login_data, 
-                                                    expected_status=200, auth_required=False)
-            
-            if success and "token" in data:
-                self.token = data["token"]
-                self.user_data = data.get("user", {})
-                self.log_test(f"Login with OTP {otp}", True, f"Token received")
-                return True
-            else:
-                self.log_test(f"Login with OTP {otp}", False, f"Status: {status}, Response: {data}")
-                return False
-                
-        except Exception as e:
-            self.log_test("Login with Actual OTP", False, f"Error reading logs: {str(e)}")
+        """Test login with actual OTP from development response"""
+        # First request OTP and get it from the response (development mode)
+        otp_data = {
+            "email": self.test_email,
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/request-otp', otp_data, 
+                                                expected_status=200, auth_required=False)
+        
+        if not success or "dev_otp" not in data:
+            self.log_test("Login with Actual OTP", False, "Could not get OTP from development response")
+            return False
+        
+        otp = data["dev_otp"]
+        
+        login_data = {
+            "email": self.test_email,
+            "otp": otp,
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/login', login_data, 
+                                                expected_status=200, auth_required=False)
+        
+        if success and "token" in data:
+            self.token = data["token"]
+            self.user_data = data.get("user", {})
+            self.log_test(f"Login with OTP {otp}", True, f"Token received")
+            return True
+        else:
+            self.log_test(f"Login with OTP {otp}", False, f"Status: {status}, Response: {data}")
             return False
 
     def test_dashboard_overview(self):

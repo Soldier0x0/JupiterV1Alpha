@@ -20,6 +20,11 @@ class JupiterAPITester:
         self.tests_passed = 0
         self.tenant_id = "b48d69da-51a1-4d08-9f0a-deb736a23c25"  # From test data
         self.test_email = "admin@jupiter.com"  # From test data
+        # 2FA testing variables
+        self.twofa_secret = None
+        self.backup_codes = []
+        self.partial_token = None
+        self.twofa_enabled = False
 
     def log_test(self, name, success, details=""):
         """Log test results"""

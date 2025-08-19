@@ -510,10 +510,13 @@ async def query_virustotal(indicator: str, api_key: str) -> Dict[str, Any]:
     except Exception as e:
         return {"error": str(e)}
 
+class ThreatLookupRequest(BaseModel):
+    indicator: str
+    ioc_type: str
+
 @app.post("/api/threat-intel/lookup")
 async def threat_intel_lookup(
-    indicator: str, 
-    ioc_type: str, 
+    request: ThreatLookupRequest,
     current_user: dict = Depends(get_current_user)
 ):
     tenant_id = current_user["tenant_id"]
@@ -527,12 +530,12 @@ async def threat_intel_lookup(
         service_name = key_doc["name"].lower()
         api_key = key_doc["api_key"]
         
-        if service_name == "abuseipdb" and ioc_type == "ip":
-            results["abuseipdb"] = await query_abuseipdb(indicator, api_key)
+        if service_name == "abuseipdb" and request.ioc_type == "ip":
+            results["abuseipdb"] = await query_abuseipdb(request.indicator, api_key)
         elif service_name == "virustotal":
-            results["virustotal"] = await query_virustotal(indicator, api_key)
+            results["virustotal"] = await query_virustotal(request.indicator, api_key)
     
-    return {"indicator": indicator, "type": ioc_type, "results": results}
+    return {"indicator": request.indicator, "type": request.ioc_type, "results": results}
 
 # Automation Engine
 async def trigger_automations(event_type: str, event_data: Dict[str, Any]):

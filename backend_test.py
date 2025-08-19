@@ -143,6 +143,40 @@ class JupiterAPITester:
             self.log_test(f"Login with OTP {otp}", False, f"Status: {status}, Response: {data}")
             return False
 
+    def test_login_super_admin(self):
+        """Test login with super admin user for RBAC testing"""
+        # First request OTP for super admin
+        otp_data = {
+            "email": "superadmin@jupiter.com",
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/request-otp', otp_data, 
+                                                expected_status=200, auth_required=False)
+        
+        if not success or "dev_otp" not in data:
+            self.log_test("Super Admin Login", False, "Could not get OTP for super admin")
+            return False
+        
+        otp = data["dev_otp"]
+        
+        login_data = {
+            "email": "superadmin@jupiter.com",
+            "otp": otp,
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/login', login_data, 
+                                                expected_status=200, auth_required=False)
+        
+        if success and "token" in data:
+            self.super_admin_token = data["token"]
+            self.log_test(f"Super Admin Login with OTP {otp}", True, f"Super admin token received")
+            return True
+        else:
+            self.log_test(f"Super Admin Login with OTP {otp}", False, f"Status: {status}, Response: {data}")
+            return False
+
     def test_dashboard_overview(self):
         """Test dashboard overview endpoint"""
         if not self.token:

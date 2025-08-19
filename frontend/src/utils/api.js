@@ -29,7 +29,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('JWT');
       localStorage.removeItem('TENANT_ID');
-      window.location.href = '/login';
+      localStorage.removeItem('USER_DATA');
+      // Don't redirect here - let the AuthProvider handle it
     }
     return Promise.reject(error);
   }

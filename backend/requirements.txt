@@ -1,33 +1,31 @@
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pymongo==4.6.0
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+pymongo==4.8.0
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-python-multipart==0.0.6
-bcrypt==4.1.2
-pydantic==2.5.0
-pydantic-settings==2.1.0
-email-validator==2.1.0
-requests==2.31.0
-python-dotenv==1.0.0
-aiosmtplib==3.0.1
-jinja2==3.1.2
-opensearch-py==2.4.2
-schedule==1.2.0
-asyncio-mqtt==0.16.1
-websockets==12.0
-python-socketio==5.10.0
-# AI/ML and Vector Database Dependencies
-chromadb==0.4.24
-ollama==0.4.2
-sentence-transformers==3.1.1
-faiss-cpu==1.8.0.post1
+python-multipart==0.0.12
+bcrypt==4.2.1
+pydantic==2.9.2
+pydantic-settings==2.6.1
+email-validator==2.2.0
+requests==2.32.3
+python-dotenv==1.0.1
+aiosmtplib==3.0.2
+jinja2==3.1.4
+schedule==1.2.2
+asyncio-mqtt==0.16.2
+websockets==13.1
+python-socketio==5.11.4
+# AI/ML and Vector Database Dependencies  
+chromadb==0.5.18
+sentence-transformers==3.3.1
+faiss-cpu==1.9.0
 numpy==1.26.4
 pandas==2.2.3
-scikit-learn==1.5.2
-# Cloud LLM support  
-openai==1.51.2
-anthropic==0.40.0
+scikit-learn==1.6.0
+# Cloud LLM support
+openai==1.58.1
+anthropic==0.44.0
 google-generativeai==0.8.3
-# Emergent LLM integration
-emergentintegrations
+# Local LLM support
+ollama==0.4.4

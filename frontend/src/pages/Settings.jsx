@@ -469,6 +469,231 @@ const Settings = () => {
 
       {/* System Configuration */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      {/* AI Model Configuration */}
+      <Card>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="display-text text-xl flex items-center space-x-2">
+            <Brain className="w-5 h-5 text-purple-400" />
+            <span>AI Model Configuration</span>
+          </h2>
+          <motion.button
+            onClick={() => setShowAddAIForm(true)}
+            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add AI Key</span>
+          </motion.button>
+        </div>
+
+        {/* AI Service Options */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+          {aiModelServices.map((service, index) => (
+            <motion.div
+              key={service.name}
+              className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                service.isUniversal 
+                  ? 'border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20'
+                  : 'border-zinc-700 hover:border-purple-500/50 hover:bg-purple-500/5'
+              }`}
+              onClick={() => selectAIService(service)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <div className="flex items-start space-x-3">
+                <service.icon className={`w-8 h-8 mt-1 ${
+                  service.isUniversal ? 'text-amber-400' : 'text-purple-400'
+                }`} />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-zinc-200">{service.name}</h3>
+                    {service.isUniversal && (
+                      <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded-full">
+                        Universal
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-zinc-400 mb-2">{service.description}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {service.models.slice(0, 2).map((model) => (
+                      <span key={model} className="text-xs bg-zinc-700 text-zinc-300 px-2 py-1 rounded">
+                        {model}
+                      </span>
+                    ))}
+                    {service.models.length > 2 && (
+                      <span className="text-xs text-zinc-500">+{service.models.length - 2} more</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Configured AI Models */}
+        {aiConfigs.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="font-medium text-zinc-300 mb-3">Configured Models</h3>
+            {aiConfigs.map((config, index) => (
+              <motion.div
+                key={config._id}
+                className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-2 h-2 rounded-full ${config.enabled ? 'bg-green-400' : 'bg-zinc-500'}`}></div>
+                    <div>
+                      <h4 className="font-medium text-zinc-200 capitalize">{config.provider}</h4>
+                      <p className="text-sm text-zinc-400">{config.model_name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      config.api_key_configured 
+                        ? 'bg-green-500/20 text-green-400' 
+                        : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {config.api_key_configured ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {aiMessage && (
+          <div className={`mt-4 p-3 rounded-lg border ${
+            aiMessage.includes('success') || aiMessage.includes('saved')
+              ? 'bg-green-500/10 border-green-500/30 text-green-400'
+              : 'bg-red-500/10 border-red-500/30 text-red-400'
+          }`}>
+            <div className="flex items-center space-x-2">
+              {aiMessage.includes('success') || aiMessage.includes('saved') ? (
+                <CheckCircle className="w-4 h-4" />
+              ) : (
+                <AlertCircle className="w-4 h-4" />
+              )}
+              <span className="text-sm">{aiMessage}</span>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* AI Configuration Form Modal */}
+      {showAddAIForm && (
+        <motion.div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="bg-[#111214] border border-zinc-700 rounded-xl p-6 max-w-md w-full mx-4"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Add AI Model</h3>
+              <button
+                onClick={() => setShowAddAIForm(false)}
+                className="text-zinc-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddAIConfig} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-zinc-300">Provider</label>
+                <select
+                  value={newAIConfig.provider}
+                  onChange={(e) => setNewAIConfig({...newAIConfig, provider: e.target.value})}
+                  className="input-field"
+                  required
+                >
+                  <option value="">Select provider</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="google">Google</option>
+                  <option value="emergent">Emergent (Universal)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-zinc-300">Model Name</label>
+                <input
+                  type="text"
+                  value={newAIConfig.model_name}
+                  onChange={(e) => setNewAIConfig({...newAIConfig, model_name: e.target.value})}
+                  className="input-field"
+                  placeholder="e.g., gpt-4o-mini"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-zinc-300">API Key</label>
+                <input
+                  type="password"
+                  value={newAIConfig.api_key}
+                  onChange={(e) => setNewAIConfig({...newAIConfig, api_key: e.target.value})}
+                  className="input-field font-mono"
+                  placeholder="Enter your API key"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="ai-enabled"
+                  checked={newAIConfig.enabled}
+                  onChange={(e) => setNewAIConfig({...newAIConfig, enabled: e.target.checked})}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="ai-enabled" className="text-sm text-zinc-300">Enable this configuration</label>
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddAIForm(false)}
+                  className="flex-1 bg-zinc-600 hover:bg-zinc-500 text-white py-2 px-4 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  type="submit"
+                  disabled={aiLoading}
+                  className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {aiLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Save</span>
+                    </>
+                  )}
+                </motion.button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+
         <Card>
           <h2 className="display-text text-xl mb-6">System Configuration</h2>
           <div className="space-y-4">

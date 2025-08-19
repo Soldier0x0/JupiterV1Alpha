@@ -40,16 +40,16 @@ const TopBar = () => {
 
   return (
     <>
-      <div className="bg-[#111214] border-b border-red-600/20 p-4 flex justify-between items-center">
+      <div className="bg-background-secondary border-b border-neutral-800 p-4 flex justify-between items-center">
         {/* Left Side - Search */}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setShowSearch(true)}
-            className="flex items-center space-x-3 bg-[#0b0c10] px-4 py-2 rounded-lg border border-zinc-700 max-w-md hover:border-zinc-600 transition-colors duration-200 group"
+            className="flex items-center space-x-3 bg-background-primary px-4 py-2.5 rounded-lg border border-neutral-700 max-w-md hover:border-neutral-600 transition-all duration-200 group"
           >
-            <Search className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400" />
-            <span className="text-zinc-500 group-hover:text-zinc-400">Search everything...</span>
-            <div className="flex items-center space-x-1 text-xs text-zinc-500">
+            <Search className="w-4 h-4 text-neutral-500 group-hover:text-neutral-400" />
+            <span className="text-neutral-500 group-hover:text-neutral-400">Search everything...</span>
+            <div className="flex items-center space-x-1 text-xs text-neutral-500 bg-neutral-800 px-2 py-1 rounded">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
@@ -57,63 +57,63 @@ const TopBar = () => {
         </div>
 
         {/* Center - System Status */}
-        <div className="hidden md:flex items-center space-x-4">
-          <div className="flex items-center space-x-2 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-zinc-400">System Healthy</span>
+        <div className="hidden md:flex items-center space-x-6">
+          <div className="flex items-center space-x-2 text-sm px-3 py-1.5 rounded-lg bg-success-500/10 border border-success-500/20">
+            <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse-subtle"></div>
+            <span className="text-success-500 font-medium">System Operational</span>
           </div>
         </div>
 
         {/* Right Side - Actions & Profile */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           {/* Test Alert Button */}
           <button
             onClick={handleTestAlert}
-            className="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-lg border border-red-500/30 hover:border-red-500/50 transition-all duration-200 flex items-center space-x-2"
+            className="bg-warning-500/10 hover:bg-warning-500/20 text-warning-500 px-4 py-2 rounded-lg border border-warning-500/30 hover:border-warning-500/50 transition-all duration-200 flex items-center space-x-2 text-sm font-medium"
           >
             <JupiterIcon className="w-4 h-4" />
             <span className="hidden sm:inline">Test Alert</span>
           </button>
 
           {/* Notifications */}
-          <button className="relative p-2 hover:bg-zinc-700 rounded-lg transition-colors duration-200">
-            <Bell className="w-5 h-5 text-zinc-400" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+          <button className="relative p-2.5 hover:bg-neutral-800 rounded-lg transition-all duration-200">
+            <Bell className="w-5 h-5 text-neutral-400" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-danger-500 rounded-full border-2 border-background-secondary"></div>
           </button>
 
           {/* Profile Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowProfile(!showProfile)}
-              className="flex items-center space-x-3 p-2 hover:bg-zinc-700 rounded-lg transition-colors duration-200"
+              className="flex items-center space-x-3 p-2 hover:bg-neutral-800 rounded-lg transition-all duration-200"
             >
-              <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-bold">
+              <div className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">
                   {user?.email[0].toUpperCase()}
                 </span>
               </div>
               <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-zinc-200">{user?.email}</p>
-                <p className="text-xs text-zinc-500">
-                  {user?.is_owner ? 'Owner' : 'Member'}
+                <p className="text-sm font-medium text-neutral-200">{user?.email}</p>
+                <p className="text-xs text-neutral-500">
+                  {user?.is_owner ? 'Administrator' : 'User'}
                 </p>
               </div>
             </button>
 
             {/* Dropdown Menu */}
             {showProfile && (
-              <div className="absolute right-0 mt-2 w-48 bg-[#111214] border border-zinc-700 rounded-lg shadow-lg overflow-hidden">
+              <div className="absolute right-0 mt-2 w-48 bg-background-secondary border border-neutral-700 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                 <div className="p-2">
-                  <button className="flex items-center space-x-3 w-full p-2 hover:bg-zinc-700 rounded-lg transition-colors duration-200 text-left">
-                    <User className="w-4 h-4 text-zinc-400" />
-                    <span className="text-zinc-300">Profile</span>
+                  <button className="flex items-center space-x-3 w-full p-3 hover:bg-neutral-800 rounded-lg transition-all duration-200 text-left">
+                    <User className="w-4 h-4 text-neutral-400" />
+                    <span className="text-neutral-300 text-sm">Profile Settings</span>
                   </button>
                   <button
                     onClick={logout}
-                    className="flex items-center space-x-3 w-full p-2 hover:bg-red-500/20 rounded-lg transition-colors duration-200 text-left text-red-400"
+                    className="flex items-center space-x-3 w-full p-3 hover:bg-danger-500/10 rounded-lg transition-all duration-200 text-left text-danger-400"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
+                    <span className="text-sm">Sign Out</span>
                   </button>
                 </div>
               </div>

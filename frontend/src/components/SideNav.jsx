@@ -35,6 +35,7 @@ const SideNav = () => {
     { path: '/dashboard/deception', label: 'Deception', icon: Eye },
     { path: '/dashboard/knowledge', label: 'Knowledge', icon: Database },
     { path: '/dashboard/local-models', label: 'Local Models', icon: HardDrive },
+    { path: '/dashboard/mcp', label: 'MCP', icon: Zap },
     { path: '/dashboard/models', label: 'Models', icon: Cpu },
     { path: '/dashboard/training', label: 'Training', icon: GraduationCap },
     { path: '/dashboard/settings', label: 'Settings', icon: Settings },

@@ -123,6 +123,23 @@ class UserRoleAssignment(BaseModel):
     role_id: str
     assigned_by: str
 
+class TwoFASetup(BaseModel):
+    secret_key: str
+    backup_codes: List[str]
+
+class TwoFAEnable(BaseModel):
+    user_id: str
+    totp_code: str
+
+class TwoFAVerify(BaseModel):
+    email: str
+    totp_code: str
+    tenant_id: str
+
+class TwoFADisable(BaseModel):
+    user_id: str
+    totp_code: str
+
 # Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

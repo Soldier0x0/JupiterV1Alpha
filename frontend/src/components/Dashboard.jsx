@@ -18,6 +18,7 @@ import AIConsole from '../pages/AIConsole';
 import DeceptionCenter from '../pages/DeceptionCenter';
 import KnowledgeBase from '../pages/KnowledgeBase';
 import LocalModels from '../pages/LocalModels';
+import MCP from '../pages/MCP';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();

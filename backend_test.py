@@ -1393,6 +1393,20 @@ class JupiterAPITester:
         self.test_rbac_role_hierarchy()
         self.test_rbac_backward_compatibility()
         
+        # Two-Factor Authentication (2FA) testing
+        print("\n🔐 Testing Two-Factor Authentication (2FA) System...")
+        self.test_2fa_setup()
+        self.test_2fa_verify_setup()
+        self.test_2fa_status()
+        self.test_2fa_login_flow()
+        self.test_2fa_verify_login()
+        self.test_2fa_regenerate_backup_codes()
+        self.test_2fa_disable()
+        
+        # Comprehensive 2FA workflow test
+        print("\n🔄 Testing Complete 2FA Workflow...")
+        self.test_2fa_comprehensive_workflow()
+        
         # Results summary
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")

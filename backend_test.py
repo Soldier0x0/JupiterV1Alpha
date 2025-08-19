@@ -31,7 +31,13 @@ class JupiterAPITester:
         
     def make_request(self, method, endpoint, data=None, expected_status=200, auth_required=True):
         """Make HTTP request with proper headers"""
-        url = f"{self.base_url}/{endpoint}"
+        # Use absolute URL for external access
+        if self.base_url.startswith('http'):
+            url = f"{self.base_url}/{endpoint}"
+        else:
+            # Use localhost for internal testing
+            url = f"http://localhost:8001{self.base_url}/{endpoint}"
+        
         headers = {'Content-Type': 'application/json'}
         
         if auth_required and self.token:

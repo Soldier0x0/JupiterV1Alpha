@@ -172,82 +172,151 @@ const Home = () => {
             </div>
           </div>
         </Card>
-      </div>
-              <Shield className="w-8 h-8 text-jupiter-danger" />
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card elevated>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-heading text-lg">Events Per Second</h3>
+              <p className="text-caption">Real-time event processing rate</p>
             </div>
-          </Card>
-        </motion.div>
+            <div className="w-10 h-10 bg-primary-500/10 rounded-lg flex items-center justify-center">
+              <Activity className="w-5 h-5 text-primary-500" />
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={epsData}>
+              <XAxis dataKey="time" stroke="#525252" fontSize={12} />
+              <YAxis stroke="#525252" fontSize={12} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#171717', 
+                  border: '1px solid #404040',
+                  borderRadius: '0.5rem',
+                  color: '#e5e5e5'
+                }} 
+              />
+              <Line 
+                type="monotone" 
+                dataKey="eps" 
+                stroke="#0ea5e9" 
+                strokeWidth={2}
+                dot={{ fill: '#0ea5e9', strokeWidth: 2, r: 3 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <Card className="border-l-4 border-jupiter-success">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-zinc-400 text-sm">Automations</p>
-                <p className="text-2xl font-bold text-jupiter-success">Active</p>
+        <Card elevated>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-heading text-lg">Alert Distribution</h3>
+              <p className="text-caption">Alerts by severity level</p>
+            </div>
+            <div className="w-10 h-10 bg-warning-500/10 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-warning-500" />
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={severityData}>
+              <XAxis dataKey="severity" stroke="#525252" fontSize={12} />
+              <YAxis stroke="#525252" fontSize={12} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#171717', 
+                  border: '1px solid #404040',
+                  borderRadius: '0.5rem',
+                  color: '#e5e5e5'
+                }} 
+              />
+              <Bar dataKey="count" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+
+      {/* System Health and Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card elevated>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-heading text-lg">System Health</h3>
+              <p className="text-caption">Component status overview</p>
+            </div>
+            <div className="w-10 h-10 bg-success-500/10 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-success-500" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            {dashboardData?.health_metrics?.map((metric, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-background-primary">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${getStatusColor(metric.status).replace('text-', 'bg-')}`}></div>
+                  <span className="text-body font-medium">{metric.name}</span>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBgColor(metric.status)}`}>
+                  {metric.status}
+                </span>
               </div>
-              <Zap className="w-8 h-8 text-jupiter-success" />
+            ))}
+          </div>
+        </Card>
+
+        <Card elevated>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-heading text-lg">Quick Actions</h3>
+              <p className="text-caption">Common security operations</p>
             </div>
-          </Card>
-        </motion.div>
+            <div className="w-10 h-10 bg-neutral-700 rounded-lg flex items-center justify-center">
+              <Zap className="w-5 h-5 text-neutral-400" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <button className="btn-secondary p-4 text-left">
+              <div className="flex items-center space-x-3">
+                <Users className="w-5 h-5" />
+                <div>
+                  <p className="font-medium">Manage Users</p>
+                  <p className="text-xs text-neutral-500">User administration</p>
+                </div>
+              </div>
+            </button>
+            
+            <button className="btn-secondary p-4 text-left">
+              <div className="flex items-center space-x-3">
+                <Database className="w-5 h-5" />
+                <div>
+                  <p className="font-medium">View Logs</p>
+                  <p className="text-xs text-neutral-500">Log analysis</p>
+                </div>
+              </div>
+            </button>
+            
+            <button className="btn-secondary p-4 text-left">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="w-5 h-5" />
+                <div>
+                  <p className="font-medium">Alert Rules</p>
+                  <p className="text-xs text-neutral-500">Configure alerts</p>
+                </div>
+              </div>
+            </button>
+            
+            <button className="btn-secondary p-4 text-left">
+              <div className="flex items-center space-x-3">
+                <Shield className="w-5 h-5" />
+                <div>
+                  <p className="font-medium">Threat Intel</p>
+                  <p className="text-xs text-neutral-500">IOC management</p>
+                </div>
+              </div>
+            </button>
+          </div>
+        </Card>
       </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div whileHover={{ scale: 1.01 }}>
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Events Per Second</h2>
-              <Activity className="w-5 h-5 text-jupiter-secondary" />
-            </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={epsData}>
-                <XAxis dataKey="time" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1a1a1a', 
-                    border: '1px solid #3a3a3a',
-                    borderRadius: '0.75rem'
-                  }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="eps" 
-                  stroke="#22d3ee" 
-                  strokeWidth={2}
-                  dot={{ fill: '#22d3ee', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Card>
-        </motion.div>
-
-        <motion.div whileHover={{ scale: 1.01 }}>
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Alerts by Severity</h2>
-              <AlertTriangle className="w-5 h-5 text-jupiter-warning" />
-            </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={severityData}>
-                <XAxis dataKey="severity" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1a1a1a', 
-                    border: '1px solid #3a3a3a',
-                    borderRadius: '0.75rem'
-                  }} 
-                />
-                <Bar dataKey="count" fill="#22d3ee" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    </div>
+  );
         {/* System Health */}
         <motion.div whileHover={{ scale: 1.01 }}>
           <Card>

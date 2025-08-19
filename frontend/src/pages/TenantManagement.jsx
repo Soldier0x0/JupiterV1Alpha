@@ -415,17 +415,13 @@ const TenantManagement = () => {
                           id={feature.id}
                           checked={tenantSettings.enabled_features.includes(feature.id)}
                           onChange={(e) => {
+                            const newSettings = { ...tenantSettings };
                             if (e.target.checked) {
-                              setTenantSettings(prev => ({
-                                ...prev,
-                                enabled_features: [...prev.enabled_features, feature.id]
-                              }));
+                              newSettings.enabled_features = [...newSettings.enabled_features, feature.id];
                             } else {
-                              setTenantSettings(prev => ({
-                                ...prev,
-                                enabled_features: prev.enabled_features.filter(f => f !== feature.id)
-                              }));
+                              newSettings.enabled_features = newSettings.enabled_features.filter(f => f !== feature.id);
                             }
+                            updateTenantSettings(newSettings);
                           }}
                           className="w-4 h-4 text-red-500"
                         />

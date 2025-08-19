@@ -183,7 +183,24 @@ const Intel = () => {
                       </div>
                     </div>
                   </div>
-                  <Eye className="w-4 h-4 text-zinc-400" />
+                  
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={(e) => editIOC(ioc, e)}
+                      className="p-2 hover:bg-blue-600/20 rounded-lg transition-colors"
+                      title="Edit IOC"
+                    >
+                      <Edit className="w-4 h-4 text-blue-400" />
+                    </button>
+                    <button
+                      onClick={(e) => deleteIOC(ioc._id, e)}
+                      className="p-2 hover:bg-red-600/20 rounded-lg transition-colors"
+                      title="Delete IOC"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
+                    <Eye className="w-4 h-4 text-zinc-400" />
+                  </div>
                 </motion.div>
               );
             })}

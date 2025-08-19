@@ -105,7 +105,7 @@ const SideNav = () => {
                 <span className="text-sm font-medium">{item.label}</span>
                 
                 {isActive && (
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-r-lg" />
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-red-400 rounded-r-lg" />
                 )}
               </NavLink>
             );

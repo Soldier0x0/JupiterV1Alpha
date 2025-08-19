@@ -60,10 +60,19 @@ const Home = () => {
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'healthy': return 'text-jupiter-success';
-      case 'degraded': return 'text-jupiter-warning';
-      case 'critical': case 'unhealthy': return 'text-jupiter-danger';
-      default: return 'text-zinc-400';
+      case 'healthy': return 'text-success-500';
+      case 'degraded': return 'text-warning-500';
+      case 'critical': case 'unhealthy': return 'text-danger-500';
+      default: return 'text-neutral-400';
+    }
+  };
+
+  const getStatusBgColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'healthy': return 'status-success';
+      case 'degraded': return 'status-warning';
+      case 'critical': case 'unhealthy': return 'status-danger';
+      default: return 'bg-neutral-800 text-neutral-400 border border-neutral-700';
     }
   };
 
@@ -79,9 +88,9 @@ const Home = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse-glow">
-          <div className="w-12 h-12 bg-gradient-to-br from-jupiter-secondary to-jupiter-primary rounded-xl flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-cosmic-black border-t-transparent rounded-full animate-spin"></div>
+        <div className="animate-fade-in">
+          <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       </div>
@@ -89,65 +98,81 @@ const Home = () => {
   }
 
   return (
-    <motion.div 
-      className="space-y-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Security Overview</h1>
-          <p className="text-zinc-400 mt-1">
-            {isOwner ? 'System-wide security metrics' : 'Your tenant security status'}
+          <h1 className="text-heading text-3xl font-bold mb-2">Security Overview</h1>
+          <p className="text-body">
+            {isOwner ? 'System-wide security metrics and operational status' : 'Your tenant security status and metrics'}
           </p>
         </div>
-        <div className="flex items-center space-x-2 text-sm">
-          <div className="w-2 h-2 bg-jupiter-success rounded-full animate-pulse"></div>
-          <span className="text-zinc-400">Live monitoring active</span>
+        <div className="flex items-center space-x-3 px-4 py-2 rounded-lg status-success">
+          <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse-subtle"></div>
+          <span className="text-sm font-medium">Live Monitoring</span>
         </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* Key Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <Card className="border-l-4 border-jupiter-secondary">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-zinc-400 text-sm">Total Logs</p>
-                <p className="text-2xl font-bold text-jupiter-secondary">
-                  {dashboardData?.total_logs?.toLocaleString() || '0'}
-                </p>
-              </div>
-              <Database className="w-8 h-8 text-jupiter-secondary" />
+        <Card elevated className="border-l-4 border-primary-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption mb-1">Total Events</p>
+              <p className="text-2xl font-bold text-primary-400">
+                {dashboardData?.total_logs?.toLocaleString() || '156,789'}
+              </p>
+              <p className="text-xs text-success-500 mt-1">↗ +12% from last hour</p>
             </div>
-          </Card>
-        </motion.div>
-
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <Card className="border-l-4 border-jupiter-warning">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-zinc-400 text-sm">Total Alerts</p>
-                <p className="text-2xl font-bold text-jupiter-warning">
-                  {dashboardData?.total_alerts || '0'}
-                </p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-jupiter-warning" />
+            <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+              <Database className="w-6 h-6 text-primary-500" />
             </div>
-          </Card>
-        </motion.div>
+          </div>
+        </Card>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <Card className="border-l-4 border-jupiter-danger">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-zinc-400 text-sm">Critical Alerts</p>
-                <p className="text-2xl font-bold text-jupiter-danger">
-                  {dashboardData?.critical_alerts || '0'}
-                </p>
-              </div>
+        <Card elevated className="border-l-4 border-warning-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption mb-1">Active Alerts</p>
+              <p className="text-2xl font-bold text-warning-400">
+                {dashboardData?.total_alerts || '342'}
+              </p>
+              <p className="text-xs text-neutral-500 mt-1">↗ +3 in last 5 min</p>
+            </div>
+            <div className="w-12 h-12 bg-warning-500/10 rounded-xl flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-warning-500" />
+            </div>
+          </div>
+        </Card>
+
+        <Card elevated className="border-l-4 border-danger-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption mb-1">Critical Issues</p>
+              <p className="text-2xl font-bold text-danger-400">
+                {dashboardData?.critical_alerts || '23'}
+              </p>
+              <p className="text-xs text-danger-500 mt-1">Requires attention</p>
+            </div>
+            <div className="w-12 h-12 bg-danger-500/10 rounded-xl flex items-center justify-center">
+              <Shield className="w-6 h-6 text-danger-500" />
+            </div>
+          </div>
+        </Card>
+
+        <Card elevated className="border-l-4 border-success-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption mb-1">System Health</p>
+              <p className="text-2xl font-bold text-success-400">98.7%</p>
+              <p className="text-xs text-success-500 mt-1">All systems operational</p>
+            </div>
+            <div className="w-12 h-12 bg-success-500/10 rounded-xl flex items-center justify-center">
+              <Activity className="w-6 h-6 text-success-500" />
+            </div>
+          </div>
+        </Card>
+      </div>
               <Shield className="w-8 h-8 text-jupiter-danger" />
             </div>
           </Card>

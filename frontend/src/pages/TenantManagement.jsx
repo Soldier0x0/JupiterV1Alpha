@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Building, Users, Plus, Settings, Trash2, Mail, Shield, Crown } from 'lucide-react';
 import Card from '../components/Card';
 import { adminAPI } from '../utils/api';

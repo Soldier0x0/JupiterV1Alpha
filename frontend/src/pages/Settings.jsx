@@ -96,6 +96,7 @@ const Settings = () => {
 
   useEffect(() => {
     loadApiKeys();
+    loadAIConfigurations();
   }, []);
 
   const loadApiKeys = async () => {
@@ -105,6 +106,23 @@ const Settings = () => {
     } catch (error) {
       console.error('Failed to load API keys:', error);
       setMessage('Failed to load API keys');
+    }
+  };
+
+  const loadAIConfigurations = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/config`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAiConfigs(data.ai_configurations);
+      }
+    } catch (error) {
+      console.error('Error loading AI configurations:', error);
     }
   };
 

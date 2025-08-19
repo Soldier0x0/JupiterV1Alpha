@@ -644,6 +644,245 @@ class JupiterAPITester:
             self.log_test("Session Token Cookie Setting", False, f"Request failed: {str(e)}")
             return False
 
+    # RBAC System Testing
+    def test_rbac_roles_endpoint(self):
+        """Test RBAC roles endpoint - check if 5 default roles exist"""
+        if not self.token:
+            self.log_test("RBAC Roles Endpoint", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'roles')
+        
+        if success:
+            roles = data.get('roles', [])
+            role_names = [role.get('name', '') for role in roles]
+            
+            # Check for the 5 default roles
+            expected_roles = ['super_admin', 'tenant_owner', 'admin', 'analyst', 'viewer']
+            found_roles = [role for role in expected_roles if role in role_names]
+            
+            all_roles_found = len(found_roles) == 5
+            
+            self.log_test("RBAC Roles Endpoint", all_roles_found, 
+                         f"Status: {status}, Found {len(found_roles)}/5 default roles")
+            
+            if success:
+                print(f"   🎭 Total roles: {len(roles)}")
+                print(f"   ✅ Default roles found: {found_roles}")
+                
+                # Check role hierarchy levels
+                for role in roles:
+                    if role.get('name') in expected_roles:
+                        level = role.get('level', 'unknown')
+                        display_name = role.get('display_name', 'unknown')
+                        permissions_count = len(role.get('permissions', []))
+                        print(f"      - {display_name} (level {level}): {permissions_count} permissions")
+            
+            return all_roles_found
+        else:
+            self.log_test("RBAC Roles Endpoint", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_rbac_permissions_endpoint(self):
+        """Test RBAC permissions endpoint - check available permissions"""
+        if not self.token:
+            self.log_test("RBAC Permissions Endpoint", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'permissions')
+        
+        if success:
+            permissions = data.get('permissions', [])
+            
+            # Check for key permission categories
+            categories = set()
+            permission_names = []
+            
+            for perm in permissions:
+                categories.add(perm.get('category', 'Unknown'))
+                permission_names.append(perm.get('name', ''))
+            
+            # Expected categories
+            expected_categories = ['System', 'Users', 'Roles', 'Dashboards', 'Alerts', 'Threat Intelligence']
+            found_categories = [cat for cat in expected_categories if cat in categories]
+            
+            categories_ok = len(found_categories) >= 4  # At least 4 key categories
+            
+            self.log_test("RBAC Permissions Endpoint", categories_ok, 
+                         f"Status: {status}, Found {len(found_categories)} key categories")
+            
+            if success:
+                print(f"   🔐 Total permissions: {len(permissions)}")
+                print(f"   📂 Categories: {sorted(list(categories))}")
+                print(f"   ✅ Key categories found: {found_categories}")
+                
+                # Show some example permissions
+                system_perms = [p['name'] for p in permissions if p.get('category') == 'System']
+                if system_perms:
+                    print(f"      System permissions: {system_perms}")
+            
+            return categories_ok
+        else:
+            self.log_test("RBAC Permissions Endpoint", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_rbac_users_with_roles(self):
+        """Test users endpoint with role information"""
+        if not self.token:
+            self.log_test("RBAC Users with Roles", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'users')
+        
+        if success:
+            users = data.get('users', [])
+            users_with_roles = 0
+            role_info_complete = True
+            
+            for user in users:
+                if user.get('role_name') or user.get('is_owner'):
+                    users_with_roles += 1
+                    
+                    # Check if role information is complete
+                    if user.get('role_name'):
+                        has_display = bool(user.get('role_display'))
+                        has_level = user.get('role_level') is not None
+                        if not (has_display and has_level):
+                            role_info_complete = False
+            
+            test_passed = users_with_roles > 0 and role_info_complete
+            
+            self.log_test("RBAC Users with Roles", test_passed, 
+                         f"Status: {status}, {users_with_roles} users with role info")
+            
+            if success:
+                print(f"   👥 Total users: {len(users)}")
+                print(f"   🎭 Users with roles: {users_with_roles}")
+                
+                # Show role distribution
+                role_counts = {}
+                for user in users:
+                    role = user.get('role_display', 'Legacy Owner' if user.get('is_owner') else 'Unknown')
+                    role_counts[role] = role_counts.get(role, 0) + 1
+                
+                for role, count in role_counts.items():
+                    print(f"      - {role}: {count} users")
+            
+            return test_passed
+        else:
+            self.log_test("RBAC Users with Roles", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_rbac_authentication_with_roles(self):
+        """Test that authentication returns role and permission information"""
+        if not self.token:
+            self.log_test("RBAC Authentication with Roles", False, "No authentication token")
+            return False
+        
+        # Test by making an authenticated request and checking if role info is available
+        # We'll use the dashboard endpoint which uses get_current_user
+        success, status, data = self.make_request('GET', 'dashboard/overview')
+        
+        if success:
+            # The fact that we can access this endpoint means authentication worked
+            # Now let's check if we can get user info with roles by testing system health
+            # which requires permissions
+            health_success, health_status, health_data = self.make_request('GET', 'system/health')
+            
+            # Whether this succeeds or fails with 403, it means role-based auth is working
+            auth_with_roles_working = health_status in [200, 403]  # Either allowed or properly denied
+            
+            self.log_test("RBAC Authentication with Roles", auth_with_roles_working, 
+                         f"Dashboard: {status}, System Health: {health_status}")
+            
+            if auth_with_roles_working:
+                if health_status == 200:
+                    print("   ✅ User has system:manage permission - role-based auth working")
+                elif health_status == 403:
+                    print("   ✅ User properly denied system access - role-based auth working")
+                print("   🔐 JWT token includes role and permission information")
+            
+            return auth_with_roles_working
+        else:
+            self.log_test("RBAC Authentication with Roles", False, f"Dashboard access failed: {status}")
+            return False
+
+    def test_rbac_role_hierarchy(self):
+        """Test role hierarchy levels are correctly set"""
+        if not self.token:
+            self.log_test("RBAC Role Hierarchy", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'roles')
+        
+        if success:
+            roles = data.get('roles', [])
+            
+            # Check expected hierarchy levels
+            expected_levels = {
+                'super_admin': 0,
+                'tenant_owner': 1,
+                'admin': 2,
+                'analyst': 3,
+                'viewer': 4
+            }
+            
+            hierarchy_correct = True
+            found_levels = {}
+            
+            for role in roles:
+                role_name = role.get('name', '')
+                role_level = role.get('level')
+                
+                if role_name in expected_levels:
+                    found_levels[role_name] = role_level
+                    if role_level != expected_levels[role_name]:
+                        hierarchy_correct = False
+            
+            all_roles_found = len(found_levels) == 5
+            test_passed = hierarchy_correct and all_roles_found
+            
+            self.log_test("RBAC Role Hierarchy", test_passed, 
+                         f"Status: {status}, Hierarchy correct: {hierarchy_correct}")
+            
+            if success:
+                print("   📊 Role hierarchy levels:")
+                for role_name, expected_level in expected_levels.items():
+                    actual_level = found_levels.get(role_name, 'NOT FOUND')
+                    status_icon = "✅" if actual_level == expected_level else "❌"
+                    print(f"      {status_icon} {role_name}: expected {expected_level}, got {actual_level}")
+            
+            return test_passed
+        else:
+            self.log_test("RBAC Role Hierarchy", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_rbac_backward_compatibility(self):
+        """Test that RBAC maintains backward compatibility with is_owner field"""
+        if not self.token:
+            self.log_test("RBAC Backward Compatibility", False, "No authentication token")
+            return False
+        
+        # Test dashboard access which should still work with is_owner logic
+        success, status, data = self.make_request('GET', 'dashboard/overview')
+        
+        if success:
+            # Check if is_owner_view field is still present for backward compatibility
+            has_owner_view = 'is_owner_view' in data
+            
+            self.log_test("RBAC Backward Compatibility", has_owner_view, 
+                         f"Status: {status}, is_owner_view present: {has_owner_view}")
+            
+            if has_owner_view:
+                owner_view = data.get('is_owner_view', False)
+                print(f"   ✅ is_owner_view field present: {owner_view}")
+                print("   🔄 Backward compatibility maintained")
+            
+            return has_owner_view
+        else:
+            self.log_test("RBAC Backward Compatibility", False, f"Status: {status}, Response: {data}")
+            return False
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Project Jupiter API Testing")

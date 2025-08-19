@@ -14,6 +14,7 @@ class JupiterAPITester:
     def __init__(self, base_url="/api"):
         self.base_url = base_url
         self.token = None
+        self.super_admin_token = None
         self.user_data = None
         self.tests_run = 0
         self.tests_passed = 0

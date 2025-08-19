@@ -18,6 +18,7 @@ import {
   Waves
 } from 'lucide-react';
 import Card from '../components/Card';
+import AIChat from '../components/AIChat';
 
 const AIConsole = () => {
   const [immuneSystemHealth, setImmuneSystemHealth] = useState(87);

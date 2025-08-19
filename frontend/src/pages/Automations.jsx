@@ -7,6 +7,8 @@ import { automationAPI } from '../utils/api';
 const Automations = () => {
   const [rules, setRules] = useState([]);
   const [showBuilder, setShowBuilder] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRule, setSelectedRule] = useState(null);
   const [newRule, setNewRule] = useState({
     name: '',
     trigger_type: 'high_severity_alert',

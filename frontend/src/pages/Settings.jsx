@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Key, Save, Trash2, Plus, Eye, EyeOff, Shield, AlertCircle, CheckCircle, Code, Brain, Cpu } from 'lucide-react';
+import { Key, Save, Trash2, Plus, Eye, EyeOff, Shield, AlertCircle, CheckCircle, Code, Brain, Cpu, Monitor } from 'lucide-react';
 import Card from '../components/Card';
 import { settingsAPI } from '../utils/api';
 

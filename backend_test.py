@@ -270,7 +270,11 @@ class JupiterAPITester:
             return False
             
         # The endpoint expects query parameters
-        url = f"{self.base_url}/threat-intel/lookup"
+        if self.base_url.startswith('http'):
+            url = f"{self.base_url}/threat-intel/lookup"
+        else:
+            url = f"http://localhost:8001{self.base_url}/threat-intel/lookup"
+            
         headers = {
             'Authorization': f'Bearer {self.token}'
         }

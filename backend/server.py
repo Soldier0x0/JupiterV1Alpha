@@ -1230,6 +1230,286 @@ async def get_available_permissions(current_user: dict = Depends(get_current_use
     
     return {"permissions": permissions}
 
+# Two-Factor Authentication (2FA) Endpoints
+
+@app.post("/api/auth/2fa/setup")
+async def setup_2fa(current_user: dict = Depends(get_current_user)):
+    """Generate 2FA secret and QR code for user setup"""
+    try:
+        user_id = current_user["user_id"]
+        user = users_collection.find_one({"_id": user_id})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user.get("twofa_enabled"):
+            raise HTTPException(status_code=400, detail="2FA is already enabled for this user")
+        
+        # Generate secret key
+        secret_key = pyotp.random_base32()
+        
+        # Create TOTP object and provisioning URI
+        totp = pyotp.TOTP(secret_key)
+        provisioning_uri = totp.provisioning_uri(
+            name=user["email"],
+            issuer_name="Jupiter SIEM"
+        )
+        
+        # Generate QR code
+        qr_code_img = generate_qr_code(provisioning_uri)
+        
+        # Generate backup codes
+        backup_codes = generate_backup_codes()
+        hashed_backup_codes = hash_backup_codes(backup_codes)
+        
+        # Store the secret temporarily (not enabled until verification)
+        users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "twofa_secret": secret_key,
+                    "twofa_backup_codes": hashed_backup_codes,
+                    "twofa_setup_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        return {
+            "secret_key": secret_key,
+            "qr_code": qr_code_img,
+            "provisioning_uri": provisioning_uri,
+            "backup_codes": backup_codes,
+            "message": "2FA setup initiated. Please verify with your authenticator app to complete setup."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to setup 2FA: {str(e)}")
+
+@app.post("/api/auth/2fa/verify-setup")
+async def verify_2fa_setup(setup_data: TwoFAEnable, current_user: dict = Depends(get_current_user)):
+    """Verify and enable 2FA for user"""
+    try:
+        user_id = current_user["user_id"]
+        user = users_collection.find_one({"_id": user_id})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user.get("twofa_enabled"):
+            raise HTTPException(status_code=400, detail="2FA is already enabled")
+        
+        secret_key = user.get("twofa_secret")
+        if not secret_key:
+            raise HTTPException(status_code=400, detail="2FA setup not initiated. Please start setup first.")
+        
+        # Verify the TOTP code
+        totp = pyotp.TOTP(secret_key)
+        if not totp.verify(setup_data.totp_code, valid_window=1):
+            raise HTTPException(status_code=400, detail="Invalid TOTP code")
+        
+        # Enable 2FA
+        users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "twofa_enabled": True,
+                    "twofa_verified": True,
+                    "twofa_enabled_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        return {"message": "2FA has been successfully enabled for your account"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to verify 2FA setup: {str(e)}")
+
+@app.post("/api/auth/2fa/verify")
+async def verify_2fa_login(verify_data: TwoFAVerify):
+    """Verify 2FA during login process"""
+    try:
+        # Find user by email and tenant
+        user = users_collection.find_one({
+            "email": verify_data.email, 
+            "tenant_id": verify_data.tenant_id
+        })
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if not user.get("twofa_enabled") or not user.get("twofa_verified"):
+            raise HTTPException(status_code=400, detail="2FA is not enabled for this user")
+        
+        secret_key = user.get("twofa_secret")
+        if not secret_key:
+            raise HTTPException(status_code=500, detail="2FA secret not found")
+        
+        # Verify TOTP code or backup code
+        totp = pyotp.TOTP(secret_key)
+        is_valid_totp = totp.verify(verify_data.totp_code, valid_window=1)
+        is_valid_backup = False
+        
+        if not is_valid_totp:
+            # Check if it's a backup code
+            backup_codes = user.get("twofa_backup_codes", [])
+            is_valid_backup = verify_backup_code(verify_data.totp_code, backup_codes)
+            
+            if is_valid_backup:
+                # Remove used backup code
+                remaining_codes = [code for code in backup_codes 
+                                 if not bcrypt.checkpw(verify_data.totp_code.replace('-', '').encode('utf-8'), 
+                                                      code.encode('utf-8'))]
+                users_collection.update_one(
+                    {"_id": user["_id"]},
+                    {"$set": {"twofa_backup_codes": remaining_codes}}
+                )
+        
+        if not (is_valid_totp or is_valid_backup):
+            raise HTTPException(status_code=400, detail="Invalid 2FA code")
+        
+        # Update last 2FA verification
+        users_collection.update_one(
+            {"_id": user["_id"]},
+            {"$set": {"last_2fa_verification": datetime.utcnow()}}
+        )
+        
+        # Generate full JWT token
+        token = create_jwt_token(
+            user["_id"], 
+            user["tenant_id"], 
+            user.get("is_owner", False),
+            twofa_verified=True
+        )
+        
+        return {
+            "token": token,
+            "user": {
+                "id": user["_id"],
+                "email": user["email"],
+                "tenant_id": user["tenant_id"],
+                "is_owner": user.get("is_owner", False),
+                "twofa_enabled": True
+            },
+            "message": "2FA verification successful"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to verify 2FA: {str(e)}")
+
+@app.post("/api/auth/2fa/disable")
+async def disable_2fa(disable_data: TwoFADisable, current_user: dict = Depends(get_current_user)):
+    """Disable 2FA for user"""
+    try:
+        user_id = current_user["user_id"]
+        user = users_collection.find_one({"_id": user_id})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if not user.get("twofa_enabled"):
+            raise HTTPException(status_code=400, detail="2FA is not enabled")
+        
+        secret_key = user.get("twofa_secret")
+        if not secret_key:
+            raise HTTPException(status_code=500, detail="2FA secret not found")
+        
+        # Verify current TOTP code before disabling
+        totp = pyotp.TOTP(secret_key)
+        if not totp.verify(disable_data.totp_code, valid_window=1):
+            raise HTTPException(status_code=400, detail="Invalid TOTP code")
+        
+        # Disable 2FA and remove secrets
+        users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "twofa_enabled": False,
+                    "twofa_verified": False,
+                    "twofa_disabled_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                },
+                "$unset": {
+                    "twofa_secret": "",
+                    "twofa_backup_codes": ""
+                }
+            }
+        )
+        
+        return {"message": "2FA has been disabled for your account"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to disable 2FA: {str(e)}")
+
+@app.get("/api/auth/2fa/status")
+async def get_2fa_status(current_user: dict = Depends(get_current_user)):
+    """Get 2FA status for current user"""
+    try:
+        user_id = current_user["user_id"]
+        user = users_collection.find_one({"_id": user_id})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        backup_codes_count = len(user.get("twofa_backup_codes", []))
+        
+        return {
+            "enabled": user.get("twofa_enabled", False),
+            "verified": user.get("twofa_verified", False),
+            "backup_codes_remaining": backup_codes_count,
+            "enabled_at": user.get("twofa_enabled_at"),
+            "last_verification": user.get("last_2fa_verification")
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get 2FA status: {str(e)}")
+
+@app.post("/api/auth/2fa/regenerate-backup-codes")
+async def regenerate_backup_codes(current_user: dict = Depends(get_current_user)):
+    """Regenerate backup codes for user"""
+    try:
+        user_id = current_user["user_id"]
+        user = users_collection.find_one({"_id": user_id})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if not user.get("twofa_enabled"):
+            raise HTTPException(status_code=400, detail="2FA is not enabled")
+        
+        # Generate new backup codes
+        backup_codes = generate_backup_codes()
+        hashed_backup_codes = hash_backup_codes(backup_codes)
+        
+        # Update backup codes
+        users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "twofa_backup_codes": hashed_backup_codes,
+                    "backup_codes_regenerated_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        return {
+            "backup_codes": backup_codes,
+            "message": "New backup codes generated. Store them safely!"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to regenerate backup codes: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     # Initialize default roles on startup

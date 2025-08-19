@@ -488,8 +488,34 @@ async def login_user(login_data: UserLogin):
         {"$set": {"last_login": datetime.utcnow(), "otp": None, "otp_expires": None}}
     )
     
-    # Generate JWT token
-    token = create_jwt_token(user["_id"], user["tenant_id"], user.get("is_owner", False))
+    # Check if 2FA is enabled and verified
+    if user.get("twofa_enabled") and user.get("twofa_verified"):
+        # Return partial token that requires 2FA verification
+        partial_token = create_jwt_token(
+            user["_id"], 
+            user["tenant_id"], 
+            user.get("is_owner", False), 
+            twofa_verified=False
+        )
+        return {
+            "requires_2fa": True,
+            "partial_token": partial_token,
+            "user": {
+                "id": user["_id"],
+                "email": user["email"],
+                "tenant_id": user["tenant_id"],
+                "is_owner": user.get("is_owner", False),
+                "twofa_enabled": True
+            }
+        }
+    
+    # Generate full JWT token (no 2FA required)
+    token = create_jwt_token(
+        user["_id"], 
+        user["tenant_id"], 
+        user.get("is_owner", False),
+        twofa_verified=True
+    )
     
     return {
         "token": token,
@@ -497,7 +523,8 @@ async def login_user(login_data: UserLogin):
             "id": user["_id"],
             "email": user["email"],
             "tenant_id": user["tenant_id"],
-            "is_owner": user.get("is_owner", False)
+            "is_owner": user.get("is_owner", False),
+            "twofa_enabled": user.get("twofa_enabled", False)
         }
     }
 

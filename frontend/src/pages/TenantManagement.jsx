@@ -22,6 +22,8 @@ const TenantManagement = () => {
     notifications: true,
     api_access: false
   });
+  const [originalSettings, setOriginalSettings] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const openTenantSettings = (tenant) => {
     setSelectedTenant(tenant);

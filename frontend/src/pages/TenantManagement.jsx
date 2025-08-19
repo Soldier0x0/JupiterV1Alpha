@@ -39,6 +39,30 @@ const TenantManagement = () => {
     setShowSettingsModal(true);
   };
 
+  const closeSettingsModal = () => {
+    if (hasUnsavedChanges) {
+      if (confirm('You have unsaved changes. Are you sure you want to close without saving?')) {
+        setShowSettingsModal(false);
+        setHasUnsavedChanges(false);
+        setOriginalSettings(null);
+      }
+    } else {
+      setShowSettingsModal(false);
+      setOriginalSettings(null);
+    }
+  };
+
+  const handleModalBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeSettingsModal();
+    }
+  };
+
+  const updateTenantSettings = (newSettings) => {
+    setTenantSettings(newSettings);
+    setHasUnsavedChanges(JSON.stringify(newSettings) !== JSON.stringify(originalSettings));
+  };
+
   const saveTenantSettings = async () => {
     if (!selectedTenant) return;
     

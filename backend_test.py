@@ -697,6 +697,14 @@ class JupiterAPITester:
         self.test_ai_config_get()
         self.test_ai_intelligence_summary()
         
+        # OAuth Integration testing
+        print("\n🔐 Testing OAuth Integration...")
+        self.test_oauth_profile_endpoint_structure()
+        self.test_oauth_session_token_validation()
+        self.test_dual_authentication_support()
+        self.test_cors_configuration_for_cookies()
+        self.test_session_token_cookie_setting()
+        
         # Results summary
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")

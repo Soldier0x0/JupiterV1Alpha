@@ -848,6 +848,288 @@ async def get_system_health(current_user: dict = Depends(get_current_user)):
         "timestamp": datetime.utcnow().isoformat()
     }
 
+# Role-Based Access Control (RBAC) Endpoints
+
+@app.get("/api/roles")
+async def get_roles(current_user: dict = Depends(get_current_user)):
+    """Get all available roles - requires roles:manage or system:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not (has_permission(user_permissions, "roles:manage") or has_permission(user_permissions, "system:manage")):
+        raise HTTPException(status_code=403, detail="Permission required: roles:manage")
+    
+    try:
+        # Super admins can see all roles, others only tenant-scoped roles
+        if has_permission(user_permissions, "system:manage"):
+            query = {}
+        else:
+            query = {"tenant_scoped": True}
+        
+        roles = list(roles_collection.find(query).sort("level", 1))
+        
+        for role in roles:
+            role["_id"] = str(role["_id"])
+            if "created_at" in role and hasattr(role["created_at"], "isoformat"):
+                role["created_at"] = role["created_at"].isoformat()
+        
+        return {"roles": roles}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get roles: {str(e)}")
+
+@app.post("/api/roles")
+async def create_role(role_data: RoleCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new role - requires system:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "system:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: system:manage")
+    
+    try:
+        # Check if role name already exists
+        existing = roles_collection.find_one({"name": role_data.name})
+        if existing:
+            raise HTTPException(status_code=400, detail="Role name already exists")
+        
+        role_id = str(uuid.uuid4())
+        role = {
+            "_id": role_id,
+            "name": role_data.name,
+            "display_name": role_data.display_name,
+            "description": role_data.description,
+            "permissions": role_data.permissions,
+            "level": role_data.level,
+            "tenant_scoped": role_data.tenant_scoped,
+            "enabled": True,
+            "created_at": datetime.utcnow(),
+            "created_by": current_user["user_id"]
+        }
+        
+        roles_collection.insert_one(role)
+        return {"role_id": role_id, "message": "Role created successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create role: {str(e)}")
+
+@app.put("/api/roles/{role_id}")
+async def update_role(role_id: str, role_data: RoleUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a role - requires system:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "system:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: system:manage")
+    
+    try:
+        role = roles_collection.find_one({"_id": role_id})
+        if not role:
+            raise HTTPException(status_code=404, detail="Role not found")
+        
+        # Prevent modification of system default roles
+        if role.get("created_by") == "system":
+            raise HTTPException(status_code=400, detail="Cannot modify system default roles")
+        
+        update_data = {k: v for k, v in role_data.dict(exclude_unset=True).items()}
+        update_data["updated_at"] = datetime.utcnow()
+        update_data["updated_by"] = current_user["user_id"]
+        
+        roles_collection.update_one({"_id": role_id}, {"$set": update_data})
+        return {"message": "Role updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update role: {str(e)}")
+
+@app.delete("/api/roles/{role_id}")
+async def delete_role(role_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a role - requires system:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "system:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: system:manage")
+    
+    try:
+        role = roles_collection.find_one({"_id": role_id})
+        if not role:
+            raise HTTPException(status_code=404, detail="Role not found")
+        
+        # Prevent deletion of system default roles
+        if role.get("created_by") == "system":
+            raise HTTPException(status_code=400, detail="Cannot delete system default roles")
+        
+        # Check if any users have this role
+        users_with_role = users_collection.count_documents({"role_id": role_id})
+        if users_with_role > 0:
+            raise HTTPException(status_code=400, detail=f"Cannot delete role: {users_with_role} users still have this role")
+        
+        roles_collection.delete_one({"_id": role_id})
+        return {"message": "Role deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete role: {str(e)}")
+
+@app.post("/api/users/{user_id}/role")
+async def assign_user_role(user_id: str, assignment: UserRoleAssignment, current_user: dict = Depends(get_current_user)):
+    """Assign a role to a user - requires users:manage or roles:assign permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not (has_permission(user_permissions, "users:manage") or has_permission(user_permissions, "roles:assign")):
+        raise HTTPException(status_code=403, detail="Permission required: users:manage or roles:assign")
+    
+    try:
+        # Check if user exists and is in the same tenant (unless super admin)
+        user = users_collection.find_one({"_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Tenant scoping check (super admins can assign across tenants)
+        if not has_permission(user_permissions, "system:manage"):
+            if user.get("tenant_id") != current_user.get("tenant_id"):
+                raise HTTPException(status_code=403, detail="Cannot assign roles to users in other tenants")
+        
+        # Check if role exists
+        role = roles_collection.find_one({"_id": assignment.role_id, "enabled": True})
+        if not role:
+            raise HTTPException(status_code=404, detail="Role not found")
+        
+        # Check if user can assign this role level
+        current_user_role = roles_collection.find_one({"name": current_user.get("role", "viewer")})
+        current_user_level = current_user_role.get("level", 999) if current_user_role else 999
+        
+        # Users cannot assign roles higher than their own level
+        if role.get("level", 0) < current_user_level and not has_permission(user_permissions, "system:manage"):
+            raise HTTPException(status_code=403, detail="Cannot assign role with higher privileges")
+        
+        # Update user's role
+        users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "role_id": assignment.role_id,
+                    "role_assigned_at": datetime.utcnow(),
+                    "role_assigned_by": current_user["user_id"]
+                }
+            }
+        )
+        
+        return {"message": f"Role '{role['display_name']}' assigned to user successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to assign role: {str(e)}")
+
+@app.get("/api/users")
+async def get_users(current_user: dict = Depends(get_current_user)):
+    """Get users with role information - requires users:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "users:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: users:manage")
+    
+    try:
+        # Super admins can see all users, others only their tenant
+        if has_permission(user_permissions, "system:manage"):
+            query = {}
+        else:
+            query = {"tenant_id": current_user.get("tenant_id")}
+        
+        users = list(users_collection.find(query))
+        
+        # Enrich with role information
+        for user in users:
+            user["_id"] = str(user["_id"])
+            if "created_at" in user and hasattr(user["created_at"], "isoformat"):
+                user["created_at"] = user["created_at"].isoformat()
+            if "last_login" in user and user["last_login"] and hasattr(user["last_login"], "isoformat"):
+                user["last_login"] = user["last_login"].isoformat()
+            
+            # Add role information
+            if user.get("role_id"):
+                role = roles_collection.find_one({"_id": user["role_id"]})
+                if role:
+                    user["role_name"] = role["name"]
+                    user["role_display"] = role["display_name"]
+                    user["role_level"] = role["level"]
+            else:
+                # Legacy support
+                if user.get("is_owner", False):
+                    user["role_name"] = "tenant_owner"
+                    user["role_display"] = "Tenant Owner"
+                    user["role_level"] = 1
+                else:
+                    user["role_name"] = "viewer"
+                    user["role_display"] = "Viewer"
+                    user["role_level"] = 4
+            
+            # Remove sensitive data
+            user.pop("otp", None)
+            user.pop("otp_expires", None)
+        
+        return {"users": users}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get users: {str(e)}")
+
+@app.get("/api/permissions")
+async def get_available_permissions(current_user: dict = Depends(get_current_user)):
+    """Get all available permissions - requires roles:manage permission"""
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not has_permission(user_permissions, "roles:manage"):
+        raise HTTPException(status_code=403, detail="Permission required: roles:manage")
+    
+    permissions = [
+        # System level
+        {"name": "system:manage", "description": "Complete system administration", "category": "System"},
+        
+        # Tenant management
+        {"name": "tenants:create", "description": "Create new tenants", "category": "Tenants"},
+        {"name": "tenants:delete", "description": "Delete tenants", "category": "Tenants"},
+        {"name": "tenants:manage", "description": "Manage tenant settings", "category": "Tenants"},
+        
+        # User management
+        {"name": "users:create", "description": "Create new users", "category": "Users"},
+        {"name": "users:delete", "description": "Delete users", "category": "Users"},
+        {"name": "users:manage", "description": "Manage user accounts", "category": "Users"},
+        
+        # Role management
+        {"name": "roles:manage", "description": "Manage roles and permissions", "category": "Roles"},
+        {"name": "roles:assign", "description": "Assign roles to users", "category": "Roles"},
+        
+        # Dashboard access
+        {"name": "dashboards:view", "description": "View dashboards", "category": "Dashboards"},
+        {"name": "dashboards:manage", "description": "Customize and manage dashboards", "category": "Dashboards"},
+        
+        # Alerts
+        {"name": "alerts:view", "description": "View alerts", "category": "Alerts"},
+        {"name": "alerts:manage", "description": "Create and manage alerts", "category": "Alerts"},
+        
+        # Threat Intelligence
+        {"name": "intel:view", "description": "View threat intelligence", "category": "Threat Intelligence"},
+        {"name": "intel:create", "description": "Create threat intelligence entries", "category": "Threat Intelligence"},
+        {"name": "intel:manage", "description": "Full threat intelligence management", "category": "Threat Intelligence"},
+        
+        # Automations
+        {"name": "automations:view", "description": "View automation rules", "category": "Automations"},
+        {"name": "automations:manage", "description": "Create and manage automations", "category": "Automations"},
+        
+        # Cases
+        {"name": "cases:view", "description": "View cases", "category": "Cases"},
+        {"name": "cases:manage", "description": "Create and manage cases", "category": "Cases"},
+        
+        # Settings
+        {"name": "settings:view", "description": "View system settings", "category": "Settings"},
+        {"name": "settings:manage", "description": "Modify system settings", "category": "Settings"},
+        
+        # AI Features
+        {"name": "ai:view", "description": "Access AI features", "category": "AI"},
+        {"name": "ai:manage", "description": "Configure AI settings", "category": "AI"},
+        
+        # Reports
+        {"name": "reports:generate", "description": "Generate reports", "category": "Reports"}
+    ]
+    
+    return {"permissions": permissions}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

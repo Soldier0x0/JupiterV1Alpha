@@ -519,23 +519,29 @@ async def threat_intel_lookup(
     request: ThreatLookupRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    tenant_id = current_user["tenant_id"]
-    
-    # Get API keys for this tenant
-    api_keys = list(api_keys_collection.find({"tenant_id": tenant_id, "enabled": True}))
-    
-    results = {}
-    
-    for key_doc in api_keys:
-        service_name = key_doc["name"].lower()
-        api_key = key_doc["api_key"]
+    try:
+        tenant_id = current_user["tenant_id"]
         
-        if service_name == "abuseipdb" and request.ioc_type == "ip":
-            results["abuseipdb"] = await query_abuseipdb(request.indicator, api_key)
-        elif service_name == "virustotal":
-            results["virustotal"] = await query_virustotal(request.indicator, api_key)
-    
-    return {"indicator": request.indicator, "type": request.ioc_type, "results": results}
+        # Get API keys for this tenant
+        api_keys = list(api_keys_collection.find({"tenant_id": tenant_id, "enabled": True}))
+        
+        results = {}
+        
+        for key_doc in api_keys:
+            service_name = key_doc["name"].lower()
+            api_key = key_doc["api_key"]
+            
+            try:
+                if service_name == "abuseipdb" and request.ioc_type == "ip":
+                    results["abuseipdb"] = await query_abuseipdb(request.indicator, api_key)
+                elif service_name == "virustotal":
+                    results["virustotal"] = await query_virustotal(request.indicator, api_key)
+            except Exception as e:
+                results[service_name] = {"error": f"Service query failed: {str(e)}"}
+        
+        return {"indicator": request.indicator, "type": request.ioc_type, "results": results}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Threat intel lookup failed: {str(e)}")
 
 # Automation Engine
 async def trigger_automations(event_type: str, event_data: Dict[str, Any]):

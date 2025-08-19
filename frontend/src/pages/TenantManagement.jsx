@@ -102,6 +102,20 @@ const TenantManagement = () => {
     }
   };
 
+  const deleteTenant = async (tenantId) => {
+    if (!confirm('Are you sure you want to delete this tenant? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      setTenants(prev => prev.filter(tenant => tenant._id !== tenantId));
+      setMessage('Tenant deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete tenant:', error);
+      setMessage('Failed to delete tenant');
+    }
+  };
+
   const toggleTenantStatus = (tenantId, currentStatus) => {
     setTenants(prev => prev.map(tenant => 
       tenant._id === tenantId 

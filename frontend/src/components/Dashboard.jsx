@@ -34,8 +34,7 @@ const Dashboard = () => {
   }
 
   if (!user) {
-    window.location.href = '/login';
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   return (

@@ -21,8 +21,12 @@ const Login = () => {
     setMessage('');
 
     try {
-      const result = await requestOTP(formData.email, formData.tenant_id);
+      const result = await requestOTP(formData.email, formData.tenant_name || formData.tenant_id);
       if (result.success) {
+        // Store the resolved tenant ID for login
+        if (result.tenant_id) {
+          setFormData(prev => ({ ...prev, tenant_id: result.tenant_id }));
+        }
         setStep(2);
         // Show OTP in development mode
         if (result.dev_otp) {

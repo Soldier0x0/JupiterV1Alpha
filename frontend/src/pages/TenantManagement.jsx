@@ -78,6 +78,8 @@ const TenantManagement = () => {
       ));
       
       setShowSettingsModal(false);
+      setHasUnsavedChanges(false);
+      setOriginalSettings(null);
       setMessage('Tenant settings updated successfully');
     } catch (error) {
       setMessage('Failed to update tenant settings');

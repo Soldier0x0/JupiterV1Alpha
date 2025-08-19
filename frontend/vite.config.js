@@ -8,7 +8,8 @@ export default defineConfig({
     port: 3000,
     allowedHosts: [
       'secvisihub.preview.emergentagent.com',
-      'threatdefend.preview.emergentagent.com', 
+      'threatdefend.preview.emergentagent.com',
+      'threat-defender-2.preview.emergentagent.com',
       'localhost'
     ],
     proxy: {

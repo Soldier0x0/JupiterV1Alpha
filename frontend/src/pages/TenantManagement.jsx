@@ -313,7 +313,7 @@ const TenantManagement = () => {
                     </motion.button>
                     
                     <motion.button
-                      onClick={() => deleteModel(tenant._id)}
+                      onClick={() => deleteTenant(tenant._id)}
                       className="p-2 hover:bg-jupiter-danger/20 rounded-lg transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}

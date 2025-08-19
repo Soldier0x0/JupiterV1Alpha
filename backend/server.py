@@ -16,6 +16,9 @@ from bson import ObjectId
 import asyncio
 from dotenv import load_dotenv
 
+# Import AI routes
+from ai_routes import router as ai_router
+
 load_dotenv()
 
 app = FastAPI(title="Jupiter SIEM API", version="1.0.0")

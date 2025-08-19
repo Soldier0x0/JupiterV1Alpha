@@ -292,11 +292,35 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if user_id is None or tenant_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         
+        # Get user with role information
+        user = users_collection.find_one({"_id": user_id})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        
+        # Get user's role and permissions
+        role = None
+        permissions = []
+        
+        if user.get("role_id"):
+            role = roles_collection.find_one({"_id": user["role_id"], "enabled": True})
+            if role:
+                permissions = role.get("permissions", [])
+        else:
+            # Legacy support - convert is_owner to permissions
+            if user.get("is_owner", False):
+                # Find tenant_owner role for permissions
+                owner_role = roles_collection.find_one({"name": "tenant_owner"})
+                if owner_role:
+                    permissions = owner_role.get("permissions", [])
+        
         return {
             "user_id": user_id,
             "tenant_id": tenant_id,
             "email": payload.get("email"),
-            "is_owner": payload.get("is_owner", False)
+            "is_owner": payload.get("is_owner", False),  # Keep for backward compatibility
+            "role": role.get("name") if role else ("tenant_owner" if user.get("is_owner") else "viewer"),
+            "role_display": role.get("display_name") if role else ("Tenant Owner" if user.get("is_owner") else "Viewer"),
+            "permissions": permissions
         }
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")

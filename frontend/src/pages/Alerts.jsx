@@ -41,6 +41,8 @@ const Alerts = () => {
     setAlerts(prev => [testAlert, ...prev]);
     setShowCreateForm(false);
   };
+
+  const loadAlerts = async () => {
     setLoading(true);
     try {
       const response = await alertsAPI.getAlerts();

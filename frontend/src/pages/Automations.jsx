@@ -184,23 +184,29 @@ const Automations = () => {
                 
                 <div className="flex items-center space-x-2">
                   <motion.button
+                    onClick={() => toggleRuleStatus(rule.id)}
                     className="p-2 hover:bg-cosmic-gray rounded-lg transition-colors"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    title={rule.enabled ? 'Pause Rule' : 'Enable Rule'}
                   >
                     {rule.enabled ? <Pause className="w-4 h-4 text-jupiter-warning" /> : <Play className="w-4 h-4 text-jupiter-success" />}
                   </motion.button>
                   <motion.button
+                    onClick={() => editRule(rule)}
                     className="p-2 hover:bg-cosmic-gray rounded-lg transition-colors"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    title="Edit Rule"
                   >
                     <Settings className="w-4 h-4 text-zinc-400" />
                   </motion.button>
                   <motion.button
+                    onClick={() => deleteRule(rule.id)}
                     className="p-2 hover:bg-jupiter-danger/20 rounded-lg transition-colors"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    title="Delete Rule"
                   >
                     <Trash2 className="w-4 h-4 text-jupiter-danger" />
                   </motion.button>

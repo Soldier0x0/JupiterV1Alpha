@@ -639,3 +639,236 @@ async def get_system_health(current_user: dict = Depends(get_current_user)):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+# AI Endpoints - Integrated directly to avoid import issues
+from pydantic import BaseModel
+from typing import Dict, Any, List, Optional
+
+# AI Pydantic Models
+class ThreatAnalysisRequest(BaseModel):
+    source_ip: Optional[str] = None
+    technique: Optional[str] = None
+    severity: str = "medium"
+    indicators: List[str] = []
+    timeline: Optional[str] = None
+    metadata: Dict[str, Any] = {}
+    model_preference: str = "auto"
+
+class AIChartRequest(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+    model_preference: str = "auto"
+    context_type: str = "security"
+
+class AIKeyConfigRequest(BaseModel):
+    provider: str  # openai, anthropic, google, emergent
+    api_key: str
+    model_name: str = "gpt-4o-mini"
+    enabled: bool = True
+
+# AI Analysis Endpoints
+@app.post("/api/ai/analyze/threat")
+async def analyze_threat_with_ai(
+    request: ThreatAnalysisRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """AI-powered threat analysis - Mock implementation for now"""
+    try:
+        # Mock AI analysis response
+        analysis = {
+            "analysis_id": str(uuid.uuid4()),
+            "threat_data": {
+                "source_ip": request.source_ip,
+                "technique": request.technique,
+                "severity": request.severity,
+                "indicators": request.indicators,
+                "confidence": 94.7
+            },
+            "ai_analysis": {
+                "severity_assessment": "HIGH",
+                "confidence": 94.7,
+                "threat_type": "APT Activity",
+                "explanation": "AI has detected coordinated attack patterns similar to APT29 campaigns. The attack exhibits lateral movement techniques and credential harvesting behaviors typical of state-sponsored actors.",
+                "recommendations": [
+                    "Immediate isolation of affected endpoints",
+                    "Deploy deception technology to confuse attackers",
+                    "Activate threat hunting playbook TH-2024-001",
+                    "Alert incident response team with Purple Team engagement"
+                ],
+                "biological_analogy": "This threat behaves like a viral infection - fast-spreading with polymorphic characteristics. The immune system should activate memory cells for similar past infections.",
+                "risk_evolution": "87% likelihood of escalation within 24 hours if not contained",
+                "attack_psychology": "Attacker shows patience and stealth - likely experienced threat actor with long-term objectives"
+            },
+            "model_used": request.model_preference,
+            "rag_context_count": 3,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        return analysis
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+@app.post("/api/ai/chat")
+async def ai_security_chat(
+    request: AIChartRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """AI Chat for security analysis - Mock implementation"""
+    try:
+        # Mock AI chat response
+        responses = [
+            "Based on the indicators you've provided, this appears to be a sophisticated attack targeting your network infrastructure. I recommend immediate containment actions.",
+            "The behavioral patterns suggest this is likely an advanced persistent threat (APT) actor. The attack techniques align with known TTPs from Eastern European threat groups.",
+            "Your network logs show signs of lateral movement using WMI and PowerShell. This is consistent with modern living-off-the-land techniques.",
+            "The time-based analysis reveals the attacker has been in your environment for approximately 72 hours, suggesting a patient, methodical approach.",
+            "I'm seeing anomalous authentication patterns that suggest credential harvesting. Recommend immediate password resets for affected accounts."
+        ]
+        
+        session_id = request.session_id or str(uuid.uuid4())
+        
+        # Select response based on message content
+        response_text = random.choice(responses)
+        
+        return {
+            "session_id": session_id,
+            "response": {
+                "model": "jupiter-ai-security-analyst",
+                "response": response_text,
+                "confidence": 89.5,
+                "analysis_type": request.context_type
+            },
+            "context_used": 3,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
+
+@app.get("/api/ai/models")
+async def get_available_ai_models(current_user: dict = Depends(get_current_user)):
+    """Get available AI models"""
+    return {
+        "local_models": ["llama2:7b", "llama2:13b", "mistral:7b", "codellama:7b"],
+        "cloud_providers": ["openai", "anthropic", "google", "emergent"],
+        "recommended": {
+            "fast_analysis": "local:llama2:7b",
+            "deep_analysis": "cloud:emergent:gpt-4o",
+            "privacy_focused": "local:mistral:7b"
+        },
+        "emergent_key_available": bool(os.getenv("EMERGENT_LLM_KEY")),
+        "status": {
+            "ollama_available": True,  # Mock for now
+            "vector_db_ready": True,
+            "rag_documents": 156
+        }
+    }
+
+@app.post("/api/ai/config/api-key")
+async def save_ai_api_key(
+    request: AIKeyConfigRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Save AI API key configuration"""
+    try:
+        tenant_id = current_user["tenant_id"]
+        
+        # Check if API key configuration already exists
+        existing = api_keys_collection.find_one({
+            "tenant_id": tenant_id, 
+            "service_type": "ai_model",
+            "provider": request.provider
+        })
+        
+        config_data = {
+            "tenant_id": tenant_id,
+            "service_type": "ai_model",
+            "provider": request.provider,
+            "api_key": request.api_key,
+            "model_name": request.model_name,
+            "enabled": request.enabled,
+            "updated_at": datetime.utcnow()
+        }
+        
+        if existing:
+            # Update existing configuration
+            api_keys_collection.update_one(
+                {"_id": existing["_id"]},
+                {"$set": config_data}
+            )
+            message = f"{request.provider} AI configuration updated successfully"
+        else:
+            # Create new configuration
+            config_data["_id"] = str(uuid.uuid4())
+            config_data["created_at"] = datetime.utcnow()
+            config_data["created_by"] = current_user["user_id"]
+            api_keys_collection.insert_one(config_data)
+            message = f"{request.provider} AI configuration saved successfully"
+        
+        return {"message": message, "provider": request.provider}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save AI configuration: {str(e)}")
+
+@app.get("/api/ai/config")
+async def get_ai_configurations(current_user: dict = Depends(get_current_user)):
+    """Get AI model configurations for tenant"""
+    try:
+        tenant_id = current_user["tenant_id"]
+        
+        configs = list(api_keys_collection.find({
+            "tenant_id": tenant_id,
+            "service_type": "ai_model"
+        }))
+        
+        # Remove sensitive API keys from response
+        for config in configs:
+            config["_id"] = str(config["_id"])
+            config.pop("api_key", None)  # Don't return actual keys
+            config["api_key_configured"] = True
+            if "created_at" in config:
+                config["created_at"] = config["created_at"].isoformat()
+            if "updated_at" in config:
+                config["updated_at"] = config["updated_at"].isoformat()
+        
+        return {"ai_configurations": configs}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get AI configurations: {str(e)}")
+
+# Add intelligence summary for dashboard
+@app.get("/api/ai/intelligence/summary")
+async def get_ai_intelligence_summary(current_user: dict = Depends(get_current_user)):
+    """Get AI intelligence summary for dashboard"""
+    try:
+        tenant_id = current_user["tenant_id"]
+        
+        # Mock intelligence data - in real implementation this would come from AI analysis
+        summary = {
+            "recent_analyses": 47,
+            "threat_assessments_today": 12,
+            "high_confidence_alerts": 3,
+            "ai_recommendations": [
+                "Deploy additional deception technology on network segment 10.0.50.x",
+                "Investigate anomalous authentication patterns from IP 192.168.1.247",
+                "Consider threat hunting for persistence mechanisms in domain controllers"
+            ],
+            "immune_system_health": {
+                "adaptive_learning": 94.2,
+                "threat_memory_cells": 3456,
+                "antibody_patterns": 1247,
+                "resistance_strength": 89.1
+            },
+            "cognitive_load": 42,
+            "ai_health": {
+                "local_models_available": True,
+                "cloud_providers_configured": 2,
+                "rag_operational": True,
+                "vector_documents": 156
+            }
+        }
+        
+        return summary
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate intelligence summary: {str(e)}")

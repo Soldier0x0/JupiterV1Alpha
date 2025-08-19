@@ -9,21 +9,41 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('JWT');
-    const tenantId = localStorage.getItem('TENANT_ID');
-    const userData = localStorage.getItem('USER_DATA');
-
-    if (token && tenantId && userData) {
+    const initAuth = async () => {
       try {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setTenant(tenantId);
+        // Priority 1: Check URL fragment for OAuth session (immediately after redirect)
+        const fragment = window.location.hash.substring(1);
+        const params = new URLSearchParams(fragment);
+        const sessionId = params.get('session_id');
+        
+        if (sessionId && window.location.pathname === '/profile') {
+          // OAuth callback in progress - let Profile component handle it
+          setLoading(false);
+          return;
+        }
+
+        // Priority 2: Check existing localStorage auth data
+        const token = localStorage.getItem('JWT');
+        const tenantId = localStorage.getItem('TENANT_ID');
+        const userData = localStorage.getItem('USER_DATA');
+
+        if (token && tenantId && userData) {
+          const user = JSON.parse(userData);
+          setUser(user);
+          console.log('User authenticated from localStorage:', user);
+        }
       } catch (error) {
-        console.error('Error parsing user data:', error);
-        logout();
+        console.error('Auth initialization error:', error);
+        // Clear corrupted data
+        localStorage.removeItem('JWT');
+        localStorage.removeItem('TENANT_ID');
+        localStorage.removeItem('USER_DATA');
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email, otp, tenantId) => {

@@ -26,7 +26,7 @@ numpy==1.26.4
 pandas==2.2.3
 scikit-learn==1.6.0
 # Cloud LLM support
-openai==1.58.1
+openai==1.99.9
 anthropic==0.44.0
 google-generativeai==0.8.3
 # Local LLM support

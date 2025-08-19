@@ -6,16 +6,27 @@ import { settingsAPI } from '../utils/api';
 
 const Settings = () => {
   const [apiKeys, setApiKeys] = useState([]);
+  const [aiConfigs, setAiConfigs] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddAIForm, setShowAddAIForm] = useState(false);
   const [newApiKey, setNewApiKey] = useState({
     name: '',
     api_key: '',
     endpoint: '',
     enabled: true
   });
+  const [newAIConfig, setNewAIConfig] = useState({
+    provider: '',
+    api_key: '',
+    model_name: 'gpt-4o-mini',
+    enabled: true
+  });
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [aiMessage, setAiMessage] = useState('');
   const [showKeys, setShowKeys] = useState({});
+  const [showAIKeys, setShowAIKeys] = useState({});
 
   const threatIntelServices = [
     {

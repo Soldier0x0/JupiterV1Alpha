@@ -31,9 +31,50 @@ const Automations = () => {
     { value: 'create_case', label: 'Create Case', icon: FileText },
   ];
 
-  useEffect(() => {
-    loadRules();
-  }, []);
+  const toggleRuleStatus = async (ruleId) => {
+    try {
+      setRules(prev => prev.map(rule => 
+        rule.id === ruleId 
+          ? { ...rule, enabled: !rule.enabled, updated_at: new Date().toISOString() }
+          : rule
+      ));
+    } catch (error) {
+      console.error('Error toggling rule status:', error);
+    }
+  };
+
+  const editRule = (rule) => {
+    setSelectedRule(rule);
+    setShowEditModal(true);
+  };
+
+  const deleteRule = async (ruleId) => {
+    if (!confirm('Are you sure you want to delete this automation rule? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      setRules(prev => prev.filter(rule => rule.id !== ruleId));
+    } catch (error) {
+      console.error('Error deleting rule:', error);
+    }
+  };
+
+  const saveEditedRule = async () => {
+    if (!selectedRule) return;
+    
+    try {
+      setRules(prev => prev.map(rule => 
+        rule.id === selectedRule.id 
+          ? { ...selectedRule, updated_at: new Date().toISOString() }
+          : rule
+      ));
+      setShowEditModal(false);
+      setSelectedRule(null);
+    } catch (error) {
+      console.error('Error saving rule:', error);
+    }
+  };
 
   const loadRules = async () => {
     try {

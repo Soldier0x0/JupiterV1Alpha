@@ -26,7 +26,21 @@ const Alerts = () => {
     applyFilters();
   }, [alerts, filters, searchTerm]);
 
-  const loadAlerts = async () => {
+  const createTestAlert = async () => {
+    const testAlert = {
+      _id: Date.now().toString(),
+      severity: 'high',
+      source: 'Test System',
+      entity: 'Test Host',
+      message: `Test alert generated at ${new Date().toLocaleTimeString()}`,
+      timestamp: new Date().toISOString(),
+      status: 'open',
+      isTest: true
+    };
+    
+    setAlerts(prev => [testAlert, ...prev]);
+    setShowCreateForm(false);
+  };
     setLoading(true);
     try {
       const response = await alertsAPI.getAlerts();

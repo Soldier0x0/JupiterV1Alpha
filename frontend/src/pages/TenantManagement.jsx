@@ -532,7 +532,7 @@ const TenantManagement = () => {
 
               <div className="flex space-x-3 mt-8">
                 <button
-                  onClick={() => setShowSettingsModal(false)}
+                  onClick={closeSettingsModal}
                   className="flex-1 bg-zinc-600 hover:bg-zinc-500 text-white py-2 px-4 rounded-lg transition-colors"
                 >
                   Cancel

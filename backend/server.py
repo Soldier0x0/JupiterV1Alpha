@@ -152,11 +152,12 @@ def hash_password(password: str) -> str:
 def verify_password(password: str, hashed: str) -> bool:
     return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
-def create_jwt_token(user_id: str, tenant_id: str, is_owner: bool = False) -> str:
+def create_jwt_token(user_id: str, tenant_id: str, is_owner: bool = False, twofa_verified: bool = False) -> str:
     payload = {
         "user_id": user_id,
         "tenant_id": tenant_id,
         "is_owner": is_owner,
+        "twofa_verified": twofa_verified,
         "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)

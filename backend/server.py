@@ -45,6 +45,7 @@ api_keys_collection = db.api_keys
 logs_collection = db.logs
 cases_collection = db.cases
 sessions_collection = db.sessions  # New collection for OAuth sessions
+roles_collection = db.roles  # New collection for RBAC
 
 # JWT Configuration
 JWT_SECRET = os.getenv("JWT_SECRET", "your-super-secret-jwt-key")

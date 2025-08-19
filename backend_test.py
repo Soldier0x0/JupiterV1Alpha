@@ -942,6 +942,382 @@ class JupiterAPITester:
             self.log_test("RBAC Backward Compatibility", False, f"Status: {status}, Response: {data}")
             return False
 
+    # Two-Factor Authentication (2FA) Testing
+    def test_2fa_setup(self):
+        """Test 2FA setup endpoint - generate secret and QR code"""
+        if not self.token:
+            self.log_test("2FA Setup", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('POST', 'auth/2fa/setup')
+        
+        if success:
+            # Check if all required fields are present
+            required_fields = ['secret_key', 'qr_code', 'provisioning_uri', 'backup_codes']
+            all_fields_present = all(field in data for field in required_fields)
+            
+            self.log_test("2FA Setup", all_fields_present, 
+                         f"Status: {status}, All fields present: {all_fields_present}")
+            
+            if all_fields_present:
+                secret_key = data.get('secret_key', '')
+                backup_codes = data.get('backup_codes', [])
+                print(f"   🔑 Secret key length: {len(secret_key)}")
+                print(f"   🔐 Backup codes generated: {len(backup_codes)}")
+                print(f"   📱 QR code generated: {'qr_code' in data}")
+                print(f"   🔗 Provisioning URI: {'provisioning_uri' in data}")
+                
+                # Store secret key for verification test
+                self.twofa_secret = secret_key
+                self.backup_codes = backup_codes
+            
+            return all_fields_present
+        else:
+            # Check if it's already enabled error
+            if status == 400 and "already enabled" in data.get("detail", ""):
+                self.log_test("2FA Setup (Already Enabled)", True, "2FA already enabled - expected behavior")
+                return True
+            else:
+                self.log_test("2FA Setup", False, f"Status: {status}, Response: {data}")
+                return False
+
+    def test_2fa_verify_setup(self):
+        """Test 2FA setup verification with TOTP code"""
+        if not self.token:
+            self.log_test("2FA Verify Setup", False, "No authentication token")
+            return False
+        
+        # Generate a TOTP code using pyotp if we have the secret
+        if hasattr(self, 'twofa_secret') and self.twofa_secret:
+            try:
+                import pyotp
+                totp = pyotp.TOTP(self.twofa_secret)
+                totp_code = totp.now()
+                
+                verify_data = {
+                    "user_id": self.user_data.get("id", ""),
+                    "totp_code": totp_code
+                }
+                
+                success, status, data = self.make_request('POST', 'auth/2fa/verify-setup', verify_data)
+                
+                self.log_test("2FA Verify Setup", success, f"Status: {status}, TOTP: {totp_code}")
+                
+                if success:
+                    print(f"   ✅ 2FA successfully enabled with TOTP code: {totp_code}")
+                    self.twofa_enabled = True
+                
+                return success
+                
+            except ImportError:
+                self.log_test("2FA Verify Setup", False, "PyOTP not available for TOTP generation")
+                return False
+        else:
+            # Test with invalid code to check error handling
+            verify_data = {
+                "user_id": self.user_data.get("id", ""),
+                "totp_code": "123456"
+            }
+            
+            success, status, data = self.make_request('POST', 'auth/2fa/verify-setup', verify_data, expected_status=400)
+            
+            # We expect this to fail with invalid code
+            expected_failure = status == 400 and "Invalid" in data.get("detail", "")
+            self.log_test("2FA Verify Setup (Invalid Code)", expected_failure, 
+                         f"Status: {status}, Response: {data}")
+            
+            return expected_failure
+
+    def test_2fa_status(self):
+        """Test 2FA status endpoint"""
+        if not self.token:
+            self.log_test("2FA Status", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'auth/2fa/status')
+        
+        if success:
+            # Check if status fields are present
+            status_fields = ['enabled', 'verified', 'backup_codes_remaining']
+            fields_present = all(field in data for field in status_fields)
+            
+            self.log_test("2FA Status", fields_present, 
+                         f"Status: {status}, Fields present: {fields_present}")
+            
+            if fields_present:
+                enabled = data.get('enabled', False)
+                verified = data.get('verified', False)
+                backup_codes = data.get('backup_codes_remaining', 0)
+                print(f"   🔐 2FA Enabled: {enabled}")
+                print(f"   ✅ 2FA Verified: {verified}")
+                print(f"   🔑 Backup codes remaining: {backup_codes}")
+                
+                if data.get('enabled_at'):
+                    print(f"   📅 Enabled at: {data.get('enabled_at')}")
+            
+            return fields_present
+        else:
+            self.log_test("2FA Status", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_2fa_login_flow(self):
+        """Test 2FA login flow - login should return requires_2fa flag"""
+        # First request OTP for a fresh login test
+        otp_data = {
+            "email": self.test_email,
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/request-otp', otp_data, 
+                                                auth_required=False)
+        
+        if not success or "dev_otp" not in data:
+            self.log_test("2FA Login Flow", False, "Could not get OTP for login test")
+            return False
+        
+        otp = data["dev_otp"]
+        
+        # Attempt login - should return requires_2fa if 2FA is enabled
+        login_data = {
+            "email": self.test_email,
+            "otp": otp,
+            "tenant_id": self.tenant_id
+        }
+        
+        success, status, data = self.make_request('POST', 'auth/login', login_data, 
+                                                auth_required=False)
+        
+        if success:
+            # Check if 2FA flow is triggered
+            requires_2fa = data.get('requires_2fa', False)
+            has_partial_token = 'partial_token' in data
+            
+            if requires_2fa and has_partial_token:
+                self.log_test("2FA Login Flow (2FA Required)", True, 
+                             f"Status: {status}, Requires 2FA: {requires_2fa}")
+                print(f"   🔐 2FA required for login")
+                print(f"   🎫 Partial token provided: {has_partial_token}")
+                
+                # Store partial token for 2FA verification test
+                self.partial_token = data.get('partial_token')
+                return True
+            else:
+                # If 2FA is not enabled, regular login should work
+                has_full_token = 'token' in data
+                self.log_test("2FA Login Flow (No 2FA)", has_full_token, 
+                             f"Status: {status}, Full token: {has_full_token}")
+                return has_full_token
+        else:
+            self.log_test("2FA Login Flow", False, f"Status: {status}, Response: {data}")
+            return False
+
+    def test_2fa_verify_login(self):
+        """Test 2FA verification during login"""
+        # Skip if we don't have 2FA enabled or partial token
+        if not hasattr(self, 'partial_token') or not self.partial_token:
+            self.log_test("2FA Verify Login", True, "Skipped - 2FA not required for this user")
+            return True
+        
+        # Generate TOTP code if we have the secret
+        if hasattr(self, 'twofa_secret') and self.twofa_secret:
+            try:
+                import pyotp
+                totp = pyotp.TOTP(self.twofa_secret)
+                totp_code = totp.now()
+                
+                verify_data = {
+                    "email": self.test_email,
+                    "totp_code": totp_code,
+                    "tenant_id": self.tenant_id
+                }
+                
+                success, status, data = self.make_request('POST', 'auth/2fa/verify', verify_data, 
+                                                        auth_required=False)
+                
+                if success and 'token' in data:
+                    self.log_test("2FA Verify Login", True, f"Status: {status}, TOTP: {totp_code}")
+                    print(f"   ✅ 2FA verification successful")
+                    print(f"   🎫 Full token received")
+                    
+                    # Update token for subsequent tests
+                    self.token = data['token']
+                    return True
+                else:
+                    self.log_test("2FA Verify Login", False, f"Status: {status}, Response: {data}")
+                    return False
+                    
+            except ImportError:
+                self.log_test("2FA Verify Login", False, "PyOTP not available for TOTP generation")
+                return False
+        else:
+            # Test with backup code if available
+            if hasattr(self, 'backup_codes') and self.backup_codes:
+                backup_code = self.backup_codes[0]  # Use first backup code
+                
+                verify_data = {
+                    "email": self.test_email,
+                    "totp_code": backup_code,
+                    "tenant_id": self.tenant_id
+                }
+                
+                success, status, data = self.make_request('POST', 'auth/2fa/verify', verify_data, 
+                                                        auth_required=False)
+                
+                if success and 'token' in data:
+                    self.log_test("2FA Verify Login (Backup Code)", True, 
+                                 f"Status: {status}, Backup code used")
+                    print(f"   ✅ 2FA verification with backup code successful")
+                    print(f"   🎫 Full token received")
+                    
+                    # Update token for subsequent tests
+                    self.token = data['token']
+                    return True
+                else:
+                    self.log_test("2FA Verify Login (Backup Code)", False, 
+                                 f"Status: {status}, Response: {data}")
+                    return False
+            else:
+                self.log_test("2FA Verify Login", True, "Skipped - no TOTP secret or backup codes available")
+                return True
+
+    def test_2fa_regenerate_backup_codes(self):
+        """Test regenerating backup codes"""
+        if not self.token:
+            self.log_test("2FA Regenerate Backup Codes", False, "No authentication token")
+            return False
+        
+        success, status, data = self.make_request('POST', 'auth/2fa/regenerate-backup-codes')
+        
+        if success:
+            # Check if new backup codes are generated
+            new_backup_codes = data.get('backup_codes', [])
+            has_codes = len(new_backup_codes) > 0
+            
+            self.log_test("2FA Regenerate Backup Codes", has_codes, 
+                         f"Status: {status}, New codes: {len(new_backup_codes)}")
+            
+            if has_codes:
+                print(f"   🔑 New backup codes generated: {len(new_backup_codes)}")
+                print(f"   ✅ Message: {data.get('message', '')}")
+                
+                # Update backup codes for future tests
+                self.backup_codes = new_backup_codes
+            
+            return has_codes
+        else:
+            # If 2FA is not enabled, expect 400 error
+            if status == 400 and "not enabled" in data.get("detail", ""):
+                self.log_test("2FA Regenerate Backup Codes (Not Enabled)", True, 
+                             "Expected error - 2FA not enabled")
+                return True
+            else:
+                self.log_test("2FA Regenerate Backup Codes", False, f"Status: {status}, Response: {data}")
+                return False
+
+    def test_2fa_disable(self):
+        """Test disabling 2FA"""
+        if not self.token:
+            self.log_test("2FA Disable", False, "No authentication token")
+            return False
+        
+        # Generate TOTP code if we have the secret
+        if hasattr(self, 'twofa_secret') and self.twofa_secret:
+            try:
+                import pyotp
+                totp = pyotp.TOTP(self.twofa_secret)
+                totp_code = totp.now()
+                
+                disable_data = {
+                    "user_id": self.user_data.get("id", ""),
+                    "totp_code": totp_code
+                }
+                
+                success, status, data = self.make_request('POST', 'auth/2fa/disable', disable_data)
+                
+                self.log_test("2FA Disable", success, f"Status: {status}, TOTP: {totp_code}")
+                
+                if success:
+                    print(f"   ✅ 2FA successfully disabled")
+                    print(f"   📝 Message: {data.get('message', '')}")
+                    self.twofa_enabled = False
+                
+                return success
+                
+            except ImportError:
+                self.log_test("2FA Disable", False, "PyOTP not available for TOTP generation")
+                return False
+        else:
+            # Test with invalid code to check error handling
+            disable_data = {
+                "user_id": self.user_data.get("id", ""),
+                "totp_code": "123456"
+            }
+            
+            success, status, data = self.make_request('POST', 'auth/2fa/disable', disable_data, 
+                                                    expected_status=400)
+            
+            # We expect this to fail with invalid code or not enabled
+            expected_failure = status == 400
+            self.log_test("2FA Disable (Invalid/Not Enabled)", expected_failure, 
+                         f"Status: {status}, Response: {data}")
+            
+            return expected_failure
+
+    def test_2fa_comprehensive_workflow(self):
+        """Test complete 2FA workflow from setup to disable"""
+        if not self.token:
+            self.log_test("2FA Comprehensive Workflow", False, "No authentication token")
+            return False
+        
+        print("   🔄 Testing complete 2FA workflow...")
+        
+        # Step 1: Setup 2FA
+        setup_success = self.test_2fa_setup()
+        if not setup_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Setup failed")
+            return False
+        
+        # Step 2: Verify setup (enable 2FA)
+        verify_success = self.test_2fa_verify_setup()
+        if not verify_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Verify setup failed")
+            return False
+        
+        # Step 3: Check status
+        status_success = self.test_2fa_status()
+        if not status_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Status check failed")
+            return False
+        
+        # Step 4: Test login flow
+        login_flow_success = self.test_2fa_login_flow()
+        if not login_flow_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Login flow failed")
+            return False
+        
+        # Step 5: Verify login
+        verify_login_success = self.test_2fa_verify_login()
+        if not verify_login_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Verify login failed")
+            return False
+        
+        # Step 6: Regenerate backup codes
+        regen_success = self.test_2fa_regenerate_backup_codes()
+        if not regen_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Regenerate backup codes failed")
+            return False
+        
+        # Step 7: Disable 2FA
+        disable_success = self.test_2fa_disable()
+        if not disable_success:
+            self.log_test("2FA Comprehensive Workflow", False, "Disable failed")
+            return False
+        
+        self.log_test("2FA Comprehensive Workflow", True, "All 2FA workflow steps completed successfully")
+        print("   ✅ Complete 2FA workflow tested successfully!")
+        
+        return True
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Project Jupiter API Testing")

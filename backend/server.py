@@ -16,6 +16,11 @@ from bson import ObjectId
 import asyncio
 import aiohttp
 from dotenv import load_dotenv
+import pyotp
+import qrcode
+from io import BytesIO
+import base64
+import secrets
 
 load_dotenv()
 

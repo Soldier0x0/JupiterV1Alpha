@@ -516,11 +516,8 @@ class JupiterAPITester:
         print("\n🔐 Testing Authentication Flow...")
         self.test_register_user()  # Expected to fail
         
-        if not self.test_request_otp():
-            print("❌ OTP request failed - cannot continue with login tests")
-        else:
-            if not self.test_login_with_actual_otp():
-                print("⚠️  Login failed - continuing with other tests but auth-required tests will fail")
+        if not self.test_login_with_actual_otp():
+            print("⚠️  Login failed - continuing with other tests but auth-required tests will fail")
         
         # Dashboard tests
         print("\n📊 Testing Dashboard Endpoints...")

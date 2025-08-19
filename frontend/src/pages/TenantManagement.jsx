@@ -13,6 +13,46 @@ const TenantManagement = () => {
     description: '',
     enabled: true
   });
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState(null);
+  const [tenantSettings, setTenantSettings] = useState({
+    enabled_features: [],
+    permissions: {},
+    notifications: true,
+    api_access: false
+  });
+
+  const openTenantSettings = (tenant) => {
+    setSelectedTenant(tenant);
+    setTenantSettings({
+      enabled_features: tenant.enabled_features || [],
+      permissions: tenant.permissions || {},
+      notifications: tenant.notifications !== false,
+      api_access: tenant.api_access || false
+    });
+    setShowSettingsModal(true);
+  };
+
+  const saveTenantSettings = async () => {
+    if (!selectedTenant) return;
+    
+    try {
+      const updatedTenant = {
+        ...selectedTenant,
+        ...tenantSettings,
+        updated_at: new Date().toISOString()
+      };
+      
+      setTenants(prev => prev.map(t => 
+        t.id === selectedTenant.id ? updatedTenant : t
+      ));
+      
+      setShowSettingsModal(false);
+      setMessage('Tenant settings updated successfully');
+    } catch (error) {
+      setMessage('Failed to update tenant settings');
+    }
+  };
 
   useEffect(() => {
     loadTenants();

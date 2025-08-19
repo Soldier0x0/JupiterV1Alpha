@@ -181,6 +181,14 @@ async def register_user(user_data: UserRegister):
     
     return {"message": "User registered successfully", "user_id": user_id, "tenant_id": tenant_id}
 
+@app.get("/api/auth/tenant/{tenant_name}")
+async def get_tenant_by_name(tenant_name: str):
+    """Get tenant ID by tenant name for authentication"""
+    tenant = tenants_collection.find_one({"name": tenant_name})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    return {"tenant_id": tenant["_id"], "name": tenant["name"]}
+
 @app.post("/api/auth/request-otp")
 async def request_otp(otp_request: OTPRequest):
     user = users_collection.find_one({"email": otp_request.email, "tenant_id": otp_request.tenant_id})

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 import TopBar from './TopBar';
 import SideNav from './SideNav';

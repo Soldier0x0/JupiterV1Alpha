@@ -60,6 +60,33 @@ const Intel = () => {
     }
   };
 
+  const deleteIOC = async (iocId, event) => {
+    event.stopPropagation(); // Prevent triggering the lookup
+    
+    if (!confirm('Are you sure you want to delete this IOC? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      setIocs(prev => prev.filter(ioc => ioc._id !== iocId));
+    } catch (error) {
+      console.error('Error deleting IOC:', error);
+    }
+  };
+
+  const editIOC = async (ioc, event) => {
+    event.stopPropagation(); // Prevent triggering the lookup
+    
+    setNewIOC({
+      ioc_type: ioc.ioc_type,
+      value: ioc.value,
+      threat_level: ioc.threat_level,
+      tags: ioc.tags,
+      description: ioc.description
+    });
+    setShowAddForm(true);
+  };
+
   const getIOCIcon = (type) => {
     switch (type) {
       case 'ip': return Globe;

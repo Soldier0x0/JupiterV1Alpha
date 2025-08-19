@@ -372,7 +372,7 @@ const DeceptionCenter = () => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <Trap className="w-5 h-5 text-amber-400" />
+              <Shield className="w-5 h-5 text-amber-400" />
               <h3 className="font-semibold">Honeypot Deployment Center</h3>
             </div>
             <div className="text-sm text-zinc-400">

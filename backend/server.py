@@ -652,11 +652,13 @@ async def create_automation_rule(rule_data: AutomationRule, current_user: dict =
     automations_collection.insert_one(rule)
     return {"rule_id": rule_id, "message": "Automation rule created successfully"}
 
-# Tenant Management (Owner only)
+# Tenant Management (Permission-based access)
 @app.get("/api/admin/tenants")
 async def get_tenants(current_user: dict = Depends(get_current_user)):
-    if not current_user["is_owner"]:
-        raise HTTPException(status_code=403, detail="Admin access required")
+    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+    
+    if not (has_permission(user_permissions, "tenants:manage") or has_permission(user_permissions, "system:manage")):
+        raise HTTPException(status_code=403, detail="Permission required: tenants:manage")
     
     tenants = list(tenants_collection.find({}))
     

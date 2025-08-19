@@ -467,6 +467,132 @@ const Settings = () => {
         )}
       </Card>
 
+      {/* Interface Customization */}
+      <Card>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="display-text text-xl flex items-center space-x-2">
+            <Monitor className="w-5 h-5 text-blue-400" />
+            <span>Interface & Appearance</span>
+          </h2>
+        </div>
+
+        <div className="space-y-6">
+          {/* Font Settings */}
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-3">Font Settings</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-zinc-400 mb-2">UI Font Family</label>
+                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                  <option>Inter (Default)</option>
+                  <option>System Font</option>
+                  <option>Arial</option>
+                  <option>Helvetica</option>
+                  <option>Roboto</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-2">Monospace Font</label>
+                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                  <option>JetBrains Mono (Default)</option>
+                  <option>Monaco</option>
+                  <option>Consolas</option>
+                  <option>Source Code Pro</option>
+                  <option>Courier New</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Font Sizes */}
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-3">Font Sizes</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs text-zinc-400 mb-2">Base Font Size</label>
+                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                  <option>Small</option>
+                  <option>Medium (Default)</option>
+                  <option>Large</option>
+                  <option>Extra Large</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-2">Code Font Size</label>
+                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                  <option>Small</option>
+                  <option>Medium (Default)</option>
+                  <option>Large</option>
+                  <option>Extra Large</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-2">Heading Scale</label>
+                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                  <option>Compact</option>
+                  <option>Normal (Default)</option>
+                  <option>Comfortable</option>
+                  <option>Spacious</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Color Theme */}
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-3">Color Theme</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { name: 'Jupiter Dark', colors: ['bg-red-500', 'bg-zinc-800'], active: true },
+                { name: 'Ocean Blue', colors: ['bg-blue-500', 'bg-blue-900'] },
+                { name: 'Forest Green', colors: ['bg-green-500', 'bg-green-900'] },
+                { name: 'Purple Night', colors: ['bg-purple-500', 'bg-purple-900'] },
+              ].map((theme) => (
+                <div
+                  key={theme.name}
+                  className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                    theme.active 
+                      ? 'border-red-500/50 bg-red-500/10' 
+                      : 'border-zinc-700 hover:border-zinc-600'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2 mb-2">
+                    {theme.colors.map((color, i) => (
+                      <div key={i} className={`w-4 h-4 rounded-full ${color}`}></div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-zinc-300">{theme.name}</p>
+                  {theme.active && <CheckCircle className="w-3 h-3 text-red-400 mt-1" />}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Display Options */}
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-3">Display Options</label>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-zinc-300">Reduce Motion</label>
+                <input type="checkbox" className="w-4 h-4 text-red-500" />
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-zinc-300">High Contrast</label>
+                <input type="checkbox" className="w-4 h-4 text-red-500" />
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-zinc-300">Compact Mode</label>
+                <input type="checkbox" className="w-4 h-4 text-red-500" />
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-zinc-300">Show Grid Lines</label>
+                <input type="checkbox" className="w-4 h-4 text-red-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* System Configuration */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 

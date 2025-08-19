@@ -522,12 +522,20 @@ async def threat_intel_lookup(
     try:
         tenant_id = current_user["tenant_id"]
         
-        # Get API keys for this tenant
-        api_keys = list(api_keys_collection.find({"tenant_id": tenant_id, "enabled": True}))
+        # Get API keys for this tenant (exclude AI model configs)
+        api_keys = list(api_keys_collection.find({
+            "tenant_id": tenant_id, 
+            "enabled": True,
+            "service_type": {"$ne": "ai_model"}  # Exclude AI model configurations
+        }))
         
         results = {}
         
         for key_doc in api_keys:
+            # Check if this is a threat intel API key (has 'name' field)
+            if 'name' not in key_doc:
+                continue
+                
             service_name = key_doc["name"].lower()
             api_key = key_doc["api_key"]
             

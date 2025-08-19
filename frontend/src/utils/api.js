@@ -41,6 +41,7 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   requestOTP: (data) => api.post('/auth/request-otp', data),
   login: (data) => api.post('/auth/login', data),
+  getTenantByName: (tenantName) => api.get(`/auth/tenant/${tenantName}`),
 };
 
 export const dashboardAPI = {

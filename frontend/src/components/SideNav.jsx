@@ -13,7 +13,9 @@ import {
   Building,
   GraduationCap,
   Eye,
-  Brain
+  Brain,
+  Database,
+  HardDrive
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';

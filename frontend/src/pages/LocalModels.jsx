@@ -447,7 +447,7 @@ const LocalModels = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {availableModels.map((model, index) => {
               const isInstalled = localModels.some(m => m.name === model.name);
-              const isDownloading = isDownloading[model.name];
+              const downloadState = isDownloading[model.name];
               const CategoryIcon = getCategoryIcon(model.category);
               
               return (

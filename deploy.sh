@@ -58,8 +58,18 @@ log "Starting JupiterEmerge deployment for domain: $DOMAIN"
 # 1. Update system and install dependencies
 log "Updating system and installing dependencies..."
 {
+    # Add MongoDB Repository
+    log "Adding MongoDB repository..."
+    curl -fsSL https://pgp.mongodb.com/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian $(lsb_release -cs)/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+    # Add NodeSource repository for Node.js
+    log "Adding NodeSource repository..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+
+    # Update and install dependencies
     apt update && apt upgrade -y
-    apt install -y python3-pip nodejs npm nginx certbot python3-certbot-nginx mongodb supervisor git
+    apt install -y python3-pip nodejs nginx certbot python3-certbot-nginx mongodb-org supervisor git curl gnupg
 } || {
     error "Failed to install dependencies"
     exit 1
@@ -67,8 +77,8 @@ log "Updating system and installing dependencies..."
 
 # 2. Set up MongoDB
 log "Setting up MongoDB..."
-systemctl start mongodb
-systemctl enable mongodb
+systemctl start mongod
+systemctl enable mongod
 check_status "MongoDB service setup"
 
 # Create MongoDB user and database

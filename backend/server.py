@@ -32,8 +32,8 @@ async def startup_event():
     initialize_default_roles()
 
 # Import routes
-from .auth_routes import router as auth_router
-app.include_router(auth_router)
+# from .auth_routes import router as auth_router
+# app.include_router(auth_router)
 
 # CORS configuration
 app.add_middleware(

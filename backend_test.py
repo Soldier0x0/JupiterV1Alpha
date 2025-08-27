@@ -18,7 +18,7 @@ class JupiterAPITester:
         self.user_data = None
         self.tests_run = 0
         self.tests_passed = 0
-        self.tenant_id = "b48d69da-51a1-4d08-9f0a-deb736a23c25"  # From test data
+        self.tenant_id = "70d9c900-af02-4d81-9c6c-97ecf4ecf786"  # From test data
         self.test_email = "admin@jupiter.com"  # From test data
         # 2FA testing variables
         self.twofa_secret = None

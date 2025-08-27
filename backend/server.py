@@ -461,7 +461,13 @@ async def request_otp(otp_request: OTPRequest):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    otp = generate_otp()
+    # Use fixed OTP for development mode
+    environment = os.getenv("ENVIRONMENT", "development")
+    if environment == "development":
+        otp = "123456"  # Fixed OTP for easy testing
+    else:
+        otp = generate_otp()
+    
     otp_expires = datetime.utcnow() + timedelta(minutes=10)
     
     # Update user with OTP
@@ -474,7 +480,6 @@ async def request_otp(otp_request: OTPRequest):
     await send_otp_email(otp_request.email, otp)
     
     # For development/testing - include OTP in response
-    environment = os.getenv("ENVIRONMENT", "development")
     if environment == "development":
         return {"message": "OTP sent successfully", "dev_otp": otp}
     else:

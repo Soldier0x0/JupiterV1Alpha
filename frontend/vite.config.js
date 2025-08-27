@@ -10,6 +10,7 @@ export default defineConfig({
       'secvisihub.preview.emergentagent.com',
       'threatdefend.preview.emergentagent.com',
       'threat-defender-2.preview.emergentagent.com',
+      'pending-review-1.preview.emergentagent.com',
       'localhost'
     ],
     proxy: {

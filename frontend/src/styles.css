@@ -77,22 +77,22 @@
 @layer components {
   /* Button System - Professional & Accessible */
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+    @apply bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500;
     font-family: var(--font-sans);
   }
   
   .btn-secondary {
-    @apply bg-neutral-700 hover:bg-neutral-600 text-neutral-200 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+    @apply bg-zinc-700 hover:bg-zinc-600 text-zinc-200 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-zinc-500;
     font-family: var(--font-sans);
   }
   
   .btn-ghost {
-    @apply bg-transparent hover:bg-neutral-800 text-neutral-300 hover:text-neutral-100 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border border-neutral-700 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+    @apply bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-zinc-100 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border border-zinc-700 hover:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500;
     font-family: var(--font-sans);
   }
   
   .btn-danger {
-    @apply bg-danger-500 hover:bg-danger-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+    @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500;
     font-family: var(--font-sans);
   }
   

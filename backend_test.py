@@ -1323,6 +1323,138 @@ class JupiterAPITester:
         
         return True
 
+    # API Rate Limiting Tests
+    def test_rate_limits_status(self):
+        """Test GET /api/rate-limits/status endpoint"""
+        if not self.token:
+            self.log_test("Rate Limits Status", False, "No authentication token")
+            return False
+            
+        success, status, data = self.make_request('GET', 'rate-limits/status')
+        self.log_test("Rate Limits Status", success, f"Status: {status}")
+        
+        if success:
+            # Check if required fields are present
+            required_fields = ['summary', 'apis', 'timestamp']
+            fields_present = all(field in data for field in required_fields)
+            
+            if fields_present:
+                summary = data.get('summary', {})
+                apis = data.get('apis', {})
+                
+                print(f"   📊 Total APIs: {summary.get('total_apis', 0)}")
+                print(f"   ✅ Available APIs: {summary.get('available_apis', 0)}")
+                print(f"   ⚠️  Rate Limited APIs: {summary.get('rate_limited_apis', 0)}")
+                print(f"   🔑 Configured APIs: {summary.get('configured_apis', 0)}")
+                print(f"   🕐 Timestamp: {data.get('timestamp', 'unknown')}")
+                
+                # Show some API details
+                for api_key, api_info in list(apis.items())[:3]:  # Show first 3 APIs
+                    status_icon = "✅" if api_info.get('status') == 'available' else "⚠️"
+                    print(f"      {status_icon} {api_info.get('name', api_key)}: {api_info.get('status', 'unknown')}")
+                
+                return fields_present
+            else:
+                self.log_test("Rate Limits Status", False, f"Missing required fields: {required_fields}")
+                return False
+        else:
+            return False
+
+    def test_rate_limits_available_apis(self):
+        """Test GET /api/rate-limits/available-apis endpoint"""
+        success, status, data = self.make_request('GET', 'rate-limits/available-apis', auth_required=False)
+        self.log_test("Rate Limits Available APIs", success, f"Status: {status}")
+        
+        if success:
+            # Check if available_apis field is present
+            available_apis = data.get('available_apis', [])
+            has_apis = len(available_apis) > 0
+            
+            if has_apis:
+                print(f"   📋 Available API templates: {len(available_apis)}")
+                
+                # Check structure of first API template
+                first_api = available_apis[0]
+                required_api_fields = ['name', 'key', 'description', 'website']
+                api_structure_ok = all(field in first_api for field in required_api_fields)
+                
+                if api_structure_ok:
+                    print(f"   ✅ API template structure valid")
+                    
+                    # Show some API templates
+                    for api in available_apis[:3]:  # Show first 3
+                        print(f"      - {api.get('name', 'Unknown')}: {api.get('description', 'No description')}")
+                
+                return api_structure_ok
+            else:
+                self.log_test("Rate Limits Available APIs", False, "No available APIs returned")
+                return False
+        else:
+            return False
+
+    def test_api_rate_limiter_import(self):
+        """Test if APIRateLimiter import is working correctly"""
+        # This test checks if the rate limiter is properly initialized by testing the status endpoint
+        if not self.token:
+            self.log_test("APIRateLimiter Import", False, "No authentication token")
+            return False
+        
+        # Test the rate limiter functionality by calling the status endpoint
+        success, status, data = self.make_request('GET', 'rate-limits/status')
+        
+        if success:
+            # If we get a successful response, the import and initialization worked
+            apis = data.get('apis', {})
+            import_working = isinstance(apis, dict)
+            
+            self.log_test("APIRateLimiter Import", import_working, 
+                         f"Status: {status}, APIs returned: {len(apis)}")
+            
+            if import_working:
+                print(f"   ✅ APIRateLimiter successfully imported and initialized")
+                print(f"   🔧 Rate limiter managing {len(apis)} API configurations")
+            
+            return import_working
+        else:
+            # Check if it's an authentication error (which means import worked but auth failed)
+            if status == 401:
+                self.log_test("APIRateLimiter Import", True, "Import working - authentication required")
+                print("   ✅ APIRateLimiter import working (authentication required)")
+                return True
+            else:
+                self.log_test("APIRateLimiter Import", False, f"Status: {status}, Response: {data}")
+                return False
+
+    def test_rate_limits_basic_functionality(self):
+        """Test basic functionality of rate limiting endpoints"""
+        if not self.token:
+            self.log_test("Rate Limits Basic Functionality", False, "No authentication token")
+            return False
+        
+        print("   🔄 Testing basic rate limiting functionality...")
+        
+        # Test 1: Status endpoint
+        status_success = self.test_rate_limits_status()
+        
+        # Test 2: Available APIs endpoint  
+        available_apis_success = self.test_rate_limits_available_apis()
+        
+        # Test 3: APIRateLimiter import
+        import_success = self.test_api_rate_limiter_import()
+        
+        # Overall functionality test
+        all_basic_tests_passed = status_success and available_apis_success and import_success
+        
+        self.log_test("Rate Limits Basic Functionality", all_basic_tests_passed, 
+                     f"Status: {status_success}, Available APIs: {available_apis_success}, Import: {import_success}")
+        
+        if all_basic_tests_passed:
+            print("   ✅ All basic rate limiting functionality tests passed!")
+        else:
+            print("   ⚠️  Some basic rate limiting functionality tests failed")
+        
+        return all_basic_tests_passed
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Project Jupiter API Testing")

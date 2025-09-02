@@ -11,7 +11,7 @@
 
 @layer base {
   * {
-    @apply border-neutral-800;
+    @apply border-zinc-800;
   }
   
   body {

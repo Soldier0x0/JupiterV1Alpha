@@ -43,7 +43,7 @@
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.25;
-    color: theme('colors.neutral.100');
+    color: theme('colors.zinc.100');
   }
   
   h1 {

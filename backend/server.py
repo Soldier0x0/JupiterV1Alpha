@@ -1771,3 +1771,228 @@ async def get_ai_intelligence_summary(current_user: dict = Depends(get_current_u
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate intelligence summary: {str(e)}")
+
+# API Rate Limiting Endpoints
+
+class CustomAPIRequest(BaseModel):
+    name: str
+    api_key: str
+    rate_limits: Optional[Dict[str, Any]] = None
+    notes: Optional[str] = None
+
+@app.get("/api/rate-limits/status")
+async def get_rate_limits_status(current_user: dict = Depends(get_current_user)):
+    """Get current rate limit status for all configured APIs"""
+    try:
+        user_id = current_user["user_id"]
+        status = rate_limiter.get_all_api_status(user_id)
+        
+        # Add summary statistics
+        total_apis = len(status)
+        available_apis = sum(1 for api in status.values() if api["status"] == "available")
+        rate_limited_apis = sum(1 for api in status.values() if api["status"] == "rate_limited")
+        
+        return {
+            "summary": {
+                "total_apis": total_apis,
+                "available_apis": available_apis,
+                "rate_limited_apis": rate_limited_apis,
+                "configured_apis": sum(1 for api in status.values() if api["config"]["has_key"])
+            },
+            "apis": status,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get rate limit status: {str(e)}")
+
+@app.get("/api/rate-limits/usage/{api_name}")
+async def get_api_usage_history(
+    api_name: str, 
+    current_user: dict = Depends(get_current_user),
+    hours: int = 24
+):
+    """Get usage history for a specific API"""
+    try:
+        user_id = current_user["user_id"]
+        
+        # Get usage data from the last specified hours
+        start_time = datetime.utcnow() - timedelta(hours=hours)
+        
+        usage_query = {
+            "api_name": api_name,
+            "user_id": user_id,
+            "timestamp": {"$gte": start_time}
+        }
+        
+        usage_records = list(rate_limiter.usage_collection.find(usage_query).sort("timestamp", 1))
+        
+        # Convert ObjectId to string and format timestamps
+        for record in usage_records:
+            record["_id"] = str(record["_id"])
+            record["timestamp"] = record["timestamp"].isoformat()
+        
+        # Calculate hourly aggregations
+        hourly_usage = {}
+        for record in usage_records:
+            hour_key = record["timestamp"][:13]  # YYYY-MM-DDTHH
+            if hour_key not in hourly_usage:
+                hourly_usage[hour_key] = {"successful": 0, "failed": 0, "total": 0}
+            
+            hourly_usage[hour_key]["total"] += 1
+            if record["response_code"] < 400:
+                hourly_usage[hour_key]["successful"] += 1
+            else:
+                hourly_usage[hour_key]["failed"] += 1
+        
+        return {
+            "api_name": api_name,
+            "usage_records": usage_records,
+            "hourly_aggregation": hourly_usage,
+            "total_requests": len(usage_records),
+            "time_range_hours": hours
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get usage history: {str(e)}")
+
+@app.post("/api/rate-limits/custom-api")
+async def add_custom_api(
+    request: CustomAPIRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Add a new custom API configuration"""
+    try:
+        # Check if user has permission to manage APIs
+        user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+        
+        if not (has_permission(user_permissions, "settings:manage") or has_permission(user_permissions, "system:manage")):
+            raise HTTPException(status_code=403, detail="Permission required: settings:manage")
+        
+        success = rate_limiter.add_custom_api(
+            name=request.name,
+            api_key=request.api_key,
+            rate_limits=request.rate_limits
+        )
+        
+        if success:
+            return {"message": f"Custom API '{request.name}' added successfully"}
+        else:
+            raise HTTPException(status_code=400, detail="No available custom API slots (maximum 3)")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to add custom API: {str(e)}")
+
+@app.delete("/api/rate-limits/custom-api/{api_key}")
+async def remove_custom_api(
+    api_key: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Remove a custom API configuration"""
+    try:
+        # Check permissions
+        user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
+        
+        if not (has_permission(user_permissions, "settings:manage") or has_permission(user_permissions, "system:manage")):
+            raise HTTPException(status_code=403, detail="Permission required: settings:manage")
+        
+        # Check if it's a custom API
+        if not api_key.startswith('custom_'):
+            raise HTTPException(status_code=400, detail="Can only remove custom APIs")
+        
+        if api_key in rate_limiter.apis:
+            del rate_limiter.apis[api_key]
+            
+            # Clean up environment variables
+            slot_num = api_key.split('_')[1]
+            env_vars_to_remove = [
+                f'CUSTOM_API_{slot_num}_NAME',
+                f'CUSTOM_API_{slot_num}_KEY',
+                f'CUSTOM_API_{slot_num}_RATE_LIMIT'
+            ]
+            
+            for env_var in env_vars_to_remove:
+                if env_var in os.environ:
+                    del os.environ[env_var]
+            
+            return {"message": f"Custom API removed successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Custom API not found")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to remove custom API: {str(e)}")
+
+@app.get("/api/rate-limits/available-apis")
+async def get_available_api_templates():
+    """Get list of available API templates for easy configuration"""
+    templates = [
+        {
+            "name": "VirusTotal",
+            "key": "virustotal",
+            "description": "File and URL reputation analysis",
+            "website": "https://www.virustotal.com/",
+            "default_limits": {
+                "free_tier": {"per_minute": 4, "per_day": 500},
+                "premium": {"per_minute": 300, "per_day": 60000}
+            },
+            "env_vars": ["VT_API_KEY", "VT_RATE_LIMIT_PER_MIN", "VT_RATE_LIMIT_PER_DAY"]
+        },
+        {
+            "name": "AbuseIPDB",
+            "key": "abuseipdb", 
+            "description": "IP address reputation and abuse reports",
+            "website": "https://www.abuseipdb.com/",
+            "default_limits": {
+                "free_tier": {"per_day": 1000},
+                "premium": {"per_day": 10000}
+            },
+            "env_vars": ["ABUSEIPDB_API_KEY", "ABUSEIPDB_RATE_LIMIT_CHECKS_PER_DAY"]
+        },
+        {
+            "name": "AlienVault OTX",
+            "key": "otx",
+            "description": "Open Threat Exchange intelligence",
+            "website": "https://otx.alienvault.com/",
+            "default_limits": {"note": "Reasonable use policy - no strict limits"},
+            "env_vars": ["OTX_API_KEY"]
+        },
+        {
+            "name": "IntelligenceX",
+            "key": "intelx",
+            "description": "Search engine for leaked data and breaches",
+            "website": "https://intelx.io/",
+            "default_limits": {
+                "free_tier": {"per_month": 50},
+                "premium": {"per_month": 500}
+            },
+            "env_vars": ["INTELX_API_KEY", "INTELX_RATE_LIMIT_SEARCH_PER_MONTH"]
+        },
+        {
+            "name": "LeakIX",
+            "key": "leakix",
+            "description": "Information disclosure search engine", 
+            "website": "https://leakix.net/",
+            "default_limits": {
+                "free_tier": {"per_month": 3000},
+                "premium": {"per_month": 30000}
+            },
+            "env_vars": ["LEAKIX_API_KEY", "LEAKIX_RATE_LIMIT_PER_MONTH"]
+        },
+        {
+            "name": "FOFA",
+            "key": "fofa",
+            "description": "Cyberspace mapping search engine",
+            "website": "https://fofa.info/",
+            "default_limits": {
+                "free_tier": {"per_month": 300},
+                "premium": {"per_month": 3000}
+            },
+            "env_vars": ["FOFA_KEY", "FOFA_RATE_LIMIT_PER_MONTH"]
+        }
+    ]
+    
+    return {"available_apis": templates}

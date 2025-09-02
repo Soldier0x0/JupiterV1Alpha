@@ -626,6 +626,21 @@ test_plan:
         agent: "testing"
         comment: "❌ FRONTEND RENDERING ISSUE - Backend API endpoints working perfectly (all 3 endpoints tested and functional), authentication system operational, navigation properly configured with 'API Limits' in sidebar, but frontend page shows blank screen due to CSS/JavaScript rendering issues. Root cause identified: APIRateLimits.jsx uses framer-motion imports (motion, AnimatePresence) that are not imported at top of file, preventing React component from rendering. Dashboard correctly imports APIRateLimitsSimple.jsx which should work, but page still not displaying content. Backend functionality 100% operational, frontend needs import/CSS fixes to render UI elements properly."
 
+  - task: "Tenant Credentials Investigation"
+    implemented: true
+    working: true
+    file: "backend/server.py, MongoDB database"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "URGENT investigation - user getting 'Tenant not found' error, need to find correct admin login credentials"
+      - working: true
+        agent: "testing"
+        comment: "✅ INVESTIGATION COMPLETE - Found root cause and 5 working credential combinations. Issue: dev_credentials.py contains outdated tenant ID not in database. Database has 4 valid tenants (AdminTenant, Jupiter Security, test-org, MainTenant) with 5 admin users. All tenant name resolution working correctly. WORKING CREDENTIALS: 1) admin@jupiter.com + tenant 'AdminTenant', 2) admin@projectjupiter.in + tenant 'test-org', 3) admin@projectjupiter.in + tenant 'MainTenant', 4) admin@jupiter.com + tenant 'Jupiter Security', 5) admin@projectjupiter.in + tenant 'Jupiter Security'. All use OTP: 123456 in development mode. Authentication system fully functional - user just needs correct tenant name."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive backend API testing for Project Jupiter SIEM platform"

@@ -203,12 +203,12 @@ const Login = () => {
             </div>
           )}
 
-          {/* Footer */}
+          {/* Admin-Only Notice */}
           <div className="mt-8 text-center">
-            <span className="text-zinc-400">New to Project Jupiter? </span>
-            <a href="/register" className="text-red-400 hover:underline font-medium">
-              Create account
-            </a>
+            <div className="bg-zinc-800 p-3 rounded-lg">
+              <p className="text-xs text-zinc-400">Admin-Controlled System</p>
+              <p className="text-xs text-zinc-500">Contact administrator for account access</p>
+            </div>
           </div>
         </div>
       </div>

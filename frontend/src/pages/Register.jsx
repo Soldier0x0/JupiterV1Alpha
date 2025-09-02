@@ -72,6 +72,9 @@ const Register = () => {
             </div>
           </div>
         </div>
+      </motion.div>
+    </div>
+  );
           {/* Header */}
           <div className="text-center mb-8">
             <motion.div 

@@ -98,7 +98,7 @@
   
   /* Card System - Clean & Modern */
   .card {
-    @apply bg-background-secondary border border-neutral-800 rounded-xl p-6 transition-all duration-200 hover:border-neutral-700;
+    @apply bg-zinc-800 border border-zinc-700 rounded-xl p-6 transition-all duration-200 hover:border-zinc-600;
   }
   
   .card-elevated {

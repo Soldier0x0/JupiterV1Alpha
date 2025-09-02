@@ -15,7 +15,8 @@ export default defineConfig({
     allowedHosts: [
       'projectjupiter.in',
       'www.projectjupiter.in',
-      'localhost'
+      'localhost',
+      'secureinsight-1.preview.emergentagent.com'
     ]
   },
   build: {

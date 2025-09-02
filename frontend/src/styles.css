@@ -15,7 +15,7 @@
   }
   
   body {
-    @apply bg-background-primary text-neutral-200 antialiased;
+    @apply bg-zinc-900 text-zinc-200 antialiased;
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }

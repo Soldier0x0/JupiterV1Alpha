@@ -331,7 +331,7 @@ OTX_API_KEY=fb20ae93a7af4e3341005b4d0bf09e16a0b958d2047d57c17b20d3aaaf8fd474
 OTX_RATE_LIMIT_NOTE="No strict limits - reasonable use"
 
 # IntelligenceX (FREE: 50 searches/month, 100 views)
-INTELX_API_KEY=ef5ed6f8-30da-4fbe-86ac-c5fd19210a12
+INTELX_API_KEY=secureinsight-1
 INTELX_URL=https://free.intelx.io/
 INTELX_RATE_LIMIT_SEARCH_PER_MONTH=50
 INTELX_RATE_LIMIT_VIEW_PER_MONTH=100

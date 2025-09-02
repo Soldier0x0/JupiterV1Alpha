@@ -63,7 +63,7 @@ ENVIRONMENT=development  # Enables fixed OTP
 ```env
 VITE_BACKEND_URL=/api
 VITE_DEV_EMAIL=admin@jupiter.com
-VITE_DEV_TENANT_ID=70d9c900-af02-4d81-9c6c-97ecf4ecf786
+VITE_DEV_TENANT_ID=secureinsight-1
 VITE_DEV_OTP=123456
 ```
 

@@ -263,6 +263,86 @@ const APIRateLimits = () => {
         </div>
       )}
 
+      {/* API Usage Analytics Charts */}
+      {rateLimitData && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* API Status Distribution Pie Chart */}
+          <div className="bg-[#111214] border border-zinc-700 rounded-xl p-6">
+            <h3 className="font-semibold mb-6 flex items-center space-x-2">
+              <PieChartIcon className="w-5 h-5 text-blue-400" />
+              <span>API Status Distribution</span>
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Available', value: rateLimitData.summary.available_apis, fill: '#22c55e' },
+                    { name: 'Rate Limited', value: rateLimitData.summary.rate_limited_apis, fill: '#ef4444' },
+                    { name: 'Unconfigured', value: rateLimitData.summary.total_apis - rateLimitData.summary.configured_apis, fill: '#6b7280' }
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={120}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  <Cell fill="#22c55e" />
+                  <Cell fill="#ef4444" />
+                  <Cell fill="#6b7280" />
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1f2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#e5e7eb'
+                  }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Mock Usage Timeline */}
+          <div className="bg-[#111214] border border-zinc-700 rounded-xl p-6">
+            <h3 className="font-semibold mb-6 flex items-center space-x-2">
+              <BarChart3 className="w-5 h-5 text-green-400" />
+              <span>API Usage Timeline (24h)</span>
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={[
+                { time: '00:00', requests: 45 },
+                { time: '04:00', requests: 23 },
+                { time: '08:00', requests: 67 },
+                { time: '12:00', requests: 89 },
+                { time: '16:00', requests: 156 },
+                { time: '20:00', requests: 134 }
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="time" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1f2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#e5e7eb'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="requests" 
+                  stroke="#22c55e" 
+                  strokeWidth={2}
+                  dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
       {/* API Status Cards */}
       {rateLimitData && (
         <div className="bg-[#111214] border border-zinc-700 rounded-xl p-6">

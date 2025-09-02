@@ -98,6 +98,25 @@ class JupiterAPITester:
                      f"Status: {status}, Response: {data}")
         return expected_failure
 
+    def test_tenant_name_resolution(self):
+        """Test tenant name resolution for jupiter-main-001"""
+        # First try to resolve tenant name to ID
+        success, status, data = self.make_request('GET', f'auth/tenant/jupiter-main-001', 
+                                                auth_required=False)
+        
+        if success and 'tenant_id' in data:
+            resolved_tenant_id = data['tenant_id']
+            self.tenant_id = resolved_tenant_id  # Update tenant_id for subsequent tests
+            self.log_test("Tenant Name Resolution", True, 
+                         f"jupiter-main-001 resolved to {resolved_tenant_id}")
+            print(f"   🏢 Tenant Name: jupiter-main-001")
+            print(f"   🆔 Tenant ID: {resolved_tenant_id}")
+            return True
+        else:
+            self.log_test("Tenant Name Resolution", False, 
+                         f"Status: {status}, Response: {data}")
+            return False
+
     def test_request_otp(self):
         """Test OTP request"""
         otp_data = {

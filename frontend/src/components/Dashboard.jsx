@@ -61,7 +61,7 @@ const Dashboard = () => {
               <Route path="/local-models" element={<LocalModels />} />
               <Route path="/mcp" element={<MCP />} />
               <Route path="/training" element={<Training />} />
-              <Route path="/api-rate-limits" element={<APIRateLimits />} />
+              <Route path="/api-rate-limits" element={<APIRateLimitsSimple />} />
               <Route path="/settings" element={<Settings />} />
               {user?.is_owner && (
                 <Route path="/admin/tenants" element={<TenantManagement />} />

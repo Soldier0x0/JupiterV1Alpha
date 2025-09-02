@@ -9,8 +9,25 @@ import {
   RefreshCw,
   Globe,
   TrendingUp,
-  ExternalLink
+  ExternalLink,
+  BarChart3,
+  PieChart as PieChartIcon
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line
+} from 'recharts';
 
 const APIRateLimits = () => {
   const [rateLimitData, setRateLimitData] = useState(null);

@@ -20,7 +20,7 @@ import KnowledgeBase from '../pages/KnowledgeBase';
 import LocalModels from '../pages/LocalModels';
 import MCP from '../pages/MCP';
 import RoleManagement from '../pages/RoleManagement';
-import APIRateLimits from '../pages/APIRateLimits';
+import APIRateLimits from '../pages/APIRateLimitsSimple';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();

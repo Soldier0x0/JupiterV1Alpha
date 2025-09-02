@@ -70,7 +70,7 @@
   code, pre, .mono {
     font-family: var(--font-mono);
     font-feature-settings: 'liga' 1, 'calt' 1;
-    color: theme('colors.neutral.200');
+    color: theme('colors.zinc.200');
   }
 }
 

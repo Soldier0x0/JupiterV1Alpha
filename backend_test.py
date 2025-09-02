@@ -99,17 +99,17 @@ class JupiterAPITester:
         return expected_failure
 
     def test_tenant_name_resolution(self):
-        """Test tenant name resolution for jupiter-main-001"""
+        """Test tenant name resolution for MainTenant"""
         # First try to resolve tenant name to ID
-        success, status, data = self.make_request('GET', f'auth/tenant/jupiter-main-001', 
+        success, status, data = self.make_request('GET', f'auth/tenant/MainTenant', 
                                                 auth_required=False)
         
         if success and 'tenant_id' in data:
             resolved_tenant_id = data['tenant_id']
             self.tenant_id = resolved_tenant_id  # Update tenant_id for subsequent tests
             self.log_test("Tenant Name Resolution", True, 
-                         f"jupiter-main-001 resolved to {resolved_tenant_id}")
-            print(f"   🏢 Tenant Name: jupiter-main-001")
+                         f"MainTenant resolved to {resolved_tenant_id}")
+            print(f"   🏢 Tenant Name: MainTenant")
             print(f"   🆔 Tenant ID: {resolved_tenant_id}")
             return True
         else:

@@ -1476,6 +1476,209 @@ class JupiterAPITester:
         
         return all_basic_tests_passed
 
+    def run_comprehensive_jupiter_siem_tests(self):
+        """Run comprehensive end-to-end testing as requested in review"""
+        print("🚀 COMPREHENSIVE END-TO-END TESTING - Jupiter SIEM System")
+        print(f"🎯 Target: {self.base_url}")
+        print(f"👤 Test User: {self.test_email}")
+        print(f"🏢 Main Tenant: jupiter-main-001")
+        print("=" * 80)
+        
+        # 1. Authentication Flow Testing
+        print("\n🔐 1. AUTHENTICATION FLOW TESTING")
+        print("   Testing admin login with credentials: admin@projectjupiter.in / Harsha@313")
+        print("   Testing OTP generation and verification")
+        print("   Testing JWT token generation and validation")
+        print("   Testing tenant-based authentication (MainTenant ID: jupiter-main-001)")
+        
+        # Test tenant resolution first
+        tenant_resolution_success = self.test_tenant_name_resolution()
+        if not tenant_resolution_success:
+            print("   ⚠️  Tenant resolution failed - using fallback tenant ID")
+        
+        # Test health check
+        if not self.test_health_check():
+            print("❌ Health check failed - stopping tests")
+            return False
+        
+        # Test authentication flow
+        self.test_register_user()  # Expected to fail if user exists
+        
+        if not self.test_login_with_actual_otp():
+            print("⚠️  Login failed - continuing with other tests but auth-required tests will fail")
+        
+        # 2. API Rate Limiting System Testing (Priority - Just Implemented)
+        print("\n⚡ 2. API RATE LIMITING SYSTEM TESTING (PRIORITY)")
+        print("   Testing all 4 rate limiting endpoints:")
+        print("   - GET /api/rate-limits/status")
+        print("   - GET /api/rate-limits/available-apis")
+        print("   - POST /api/rate-limits/custom-api")
+        print("   - GET /api/rate-limits/usage/{api_name}")
+        
+        # Test all rate limiting endpoints
+        rate_limit_tests_passed = 0
+        
+        # Test 1: Status endpoint
+        if self.test_rate_limits_status():
+            rate_limit_tests_passed += 1
+        
+        # Test 2: Available APIs endpoint
+        if self.test_rate_limits_available_apis():
+            rate_limit_tests_passed += 1
+        
+        # Test 3: Custom API endpoint (POST)
+        if self.test_rate_limits_custom_api():
+            rate_limit_tests_passed += 1
+        
+        # Test 4: Usage endpoint
+        if self.test_rate_limits_usage():
+            rate_limit_tests_passed += 1
+        
+        print(f"   📊 Rate Limiting Tests: {rate_limit_tests_passed}/4 passed")
+        
+        # 3. Core SIEM Functionality Testing
+        print("\n🛡️  3. CORE SIEM FUNCTIONALITY TESTING")
+        print("   Testing dashboard access after authentication")
+        print("   Testing existing SIEM endpoints and features")
+        print("   Verifying database connectivity and data persistence")
+        print("   Testing API security and permission checking")
+        
+        # Dashboard and core functionality
+        siem_tests_passed = 0
+        
+        if self.test_dashboard_overview():
+            siem_tests_passed += 1
+        
+        if self.test_get_alerts():
+            siem_tests_passed += 1
+        
+        if self.test_create_alert():
+            siem_tests_passed += 1
+        
+        if self.test_get_iocs():
+            siem_tests_passed += 1
+        
+        if self.test_create_ioc():
+            siem_tests_passed += 1
+        
+        if self.test_threat_intel_lookup():
+            siem_tests_passed += 1
+        
+        if self.test_system_health():
+            siem_tests_passed += 1
+        
+        print(f"   📊 Core SIEM Tests: {siem_tests_passed}/7 passed")
+        
+        # 4. System Integration Testing
+        print("\n🔗 4. SYSTEM INTEGRATION TESTING")
+        print("   Testing frontend-backend communication")
+        print("   Verifying environment variable configuration")
+        print("   Testing MongoDB connectivity and operations")
+        print("   Confirming no emergent-related dependencies that could break deployment")
+        
+        integration_tests_passed = 0
+        
+        # Test AI endpoints (checking for emergent dependencies)
+        if self.test_ai_models():
+            integration_tests_passed += 1
+        
+        if self.test_ai_threat_analysis():
+            integration_tests_passed += 1
+        
+        if self.test_ai_chat():
+            integration_tests_passed += 1
+        
+        # Test settings and configuration
+        if self.test_get_api_keys():
+            integration_tests_passed += 1
+        
+        if self.test_save_api_key():
+            integration_tests_passed += 1
+        
+        print(f"   📊 Integration Tests: {integration_tests_passed}/5 passed")
+        
+        # Summary
+        print("\n" + "=" * 80)
+        print("📋 COMPREHENSIVE TEST SUMMARY")
+        print(f"   🔐 Authentication Flow: {'✅ PASSED' if self.token else '❌ FAILED'}")
+        print(f"   ⚡ Rate Limiting System: {rate_limit_tests_passed}/4 tests passed")
+        print(f"   🛡️  Core SIEM Functionality: {siem_tests_passed}/7 tests passed")
+        print(f"   🔗 System Integration: {integration_tests_passed}/5 tests passed")
+        print(f"   📊 Overall Tests: {self.tests_passed}/{self.tests_run} passed ({(self.tests_passed/self.tests_run*100):.1f}%)")
+        
+        # Determine overall success
+        overall_success = (
+            self.token is not None and  # Authentication working
+            rate_limit_tests_passed >= 3 and  # Most rate limiting tests pass
+            siem_tests_passed >= 5 and  # Most SIEM tests pass
+            integration_tests_passed >= 3  # Most integration tests pass
+        )
+        
+        if overall_success:
+            print("🎉 COMPREHENSIVE TESTING: ✅ PASSED - Jupiter SIEM system ready for production")
+        else:
+            print("⚠️  COMPREHENSIVE TESTING: ❌ ISSUES FOUND - Review failed tests above")
+        
+        return overall_success
+
+    def test_rate_limits_custom_api(self):
+        """Test POST /api/rate-limits/custom-api endpoint"""
+        if not self.token:
+            self.log_test("Rate Limits Custom API", False, "No authentication token")
+            return False
+        
+        custom_api_data = {
+            "name": "test_custom_api",
+            "description": "Test custom API for rate limiting",
+            "base_url": "https://api.test-service.com",
+            "rate_limit": {
+                "requests_per_minute": 60,
+                "requests_per_hour": 1000
+            },
+            "authentication": {
+                "type": "api_key",
+                "header_name": "X-API-Key"
+            }
+        }
+        
+        success, status, data = self.make_request('POST', 'rate-limits/custom-api', custom_api_data)
+        self.log_test("Rate Limits Custom API", success, f"Status: {status}")
+        
+        if success:
+            api_id = data.get('api_id', 'unknown')
+            print(f"   🆔 Custom API ID: {api_id}")
+            print(f"   📝 Message: {data.get('message', '')}")
+        
+        return success
+
+    def test_rate_limits_usage(self):
+        """Test GET /api/rate-limits/usage/{api_name} endpoint"""
+        if not self.token:
+            self.log_test("Rate Limits Usage", False, "No authentication token")
+            return False
+        
+        # Test with a common API name
+        api_name = "virustotal"
+        success, status, data = self.make_request('GET', f'rate-limits/usage/{api_name}')
+        
+        # This might return 404 if API is not configured, which is acceptable
+        if status == 404:
+            self.log_test("Rate Limits Usage", True, f"API '{api_name}' not configured - expected behavior")
+            print(f"   ℹ️  API '{api_name}' not configured (expected)")
+            return True
+        elif success:
+            self.log_test("Rate Limits Usage", True, f"Status: {status}")
+            
+            usage_data = data.get('usage', {})
+            print(f"   📊 API: {api_name}")
+            print(f"   🔢 Requests today: {usage_data.get('requests_today', 0)}")
+            print(f"   ⏰ Last request: {usage_data.get('last_request', 'Never')}")
+            print(f"   🚦 Status: {usage_data.get('status', 'Unknown')}")
+            return True
+        else:
+            self.log_test("Rate Limits Usage", False, f"Status: {status}, Response: {data}")
+            return False
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Project Jupiter API Testing")

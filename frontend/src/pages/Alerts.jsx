@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Filter, Download, Search, Plus, Eye, CheckCircle, X } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Card from '../components/Card';
 import { alertsAPI } from '../utils/api';
 

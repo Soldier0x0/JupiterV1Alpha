@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, 
   Clock, 
@@ -18,12 +19,7 @@ import {
   EyeOff,
   Info
 } from 'lucide-react';
-// Simple card component replacement
-const Card = ({ children, className = "" }) => (
-  <div className={`bg-[#111214] border border-zinc-700 rounded-xl p-6 ${className}`}>
-    {children}
-  </div>
-);
+import { Card } from '../components/ui/card';
 
 const APIRateLimits = () => {
   const [rateLimitData, setRateLimitData] = useState(null);

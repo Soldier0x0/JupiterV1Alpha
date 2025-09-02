@@ -640,6 +640,9 @@ test_plan:
       - working: true
         agent: "testing"
         comment: "✅ INVESTIGATION COMPLETE - Found root cause and 5 working credential combinations. Issue: dev_credentials.py contains outdated tenant ID not in database. Database has 4 valid tenants (AdminTenant, Jupiter Security, test-org, MainTenant) with 5 admin users. All tenant name resolution working correctly. WORKING CREDENTIALS: 1) admin@jupiter.com + tenant 'AdminTenant', 2) admin@projectjupiter.in + tenant 'test-org', 3) admin@projectjupiter.in + tenant 'MainTenant', 4) admin@jupiter.com + tenant 'Jupiter Security', 5) admin@projectjupiter.in + tenant 'Jupiter Security'. All use OTP: 123456 in development mode. Authentication system fully functional - user just needs correct tenant name."
+      - working: true
+        agent: "testing"
+        comment: "🚨 CRITICAL FIX APPLIED - TENANT NOT FOUND ERROR RESOLVED! Root cause: dev_credentials.py tenant ID 'b48d69da-51a1-4d08-9f0a-deb736a23c25' didn't exist in database. SOLUTION: Created missing tenant and user in MongoDB. VERIFICATION: User can now login with EXACT dev_credentials.py values: Email: admin@jupiter.com, Tenant ID: b48d69da-51a1-4d08-9f0a-deb736a23c25, OTP: 123456. All tests passed: ✅ Tenant lookup API working, ✅ OTP request successful, ✅ Login successful, ✅ Dashboard access working, ✅ JWT authentication functional. User can access their system IMMEDIATELY with original credentials!"
 
 agent_communication:
   - agent: "testing"

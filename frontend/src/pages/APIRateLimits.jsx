@@ -190,12 +190,7 @@ const APIRateLimits = () => {
   }
 
   return (
-    <motion.div 
-      className="space-y-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

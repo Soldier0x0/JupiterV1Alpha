@@ -40,6 +40,7 @@ const SideNav = () => {
     { path: '/dashboard/mcp', label: 'MCP', icon: Zap },
     { path: '/dashboard/models', label: 'Models', icon: Cpu },
     { path: '/dashboard/training', label: 'Training', icon: GraduationCap },
+    { path: '/dashboard/api-rate-limits', label: 'API Limits', icon: Activity },
     { path: '/dashboard/settings', label: 'Settings', icon: Settings }
   ];
 

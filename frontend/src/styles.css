@@ -63,7 +63,7 @@
   p, span, div {
     font-family: var(--font-sans);
     line-height: 1.6;
-    color: theme('colors.neutral.300');
+    color: theme('colors.zinc.300');
   }
   
   /* Technical content styling */

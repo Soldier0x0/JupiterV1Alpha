@@ -1,57 +1,19 @@
 import React, { useState } from 'react';
-import { Shield, Mail, Building, Key, ArrowRight, Loader2 } from 'lucide-react';
+import { Shield, Mail, Building, Key, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Login() {
-  const [step, setStep] = useState<'credentials' | 'otp'>('credentials');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
-    email: 'harsha@projectjupiter.in',
-    tenant: 'MainTenant',
-    otp: ''
+    email: 'admin@projectjupiter.in',
+    password: '',
+    tenant_id: ''
   });
 
-  const requestOTP = async () => {
-    if (!formData.email || !formData.tenant) {
-      setMessage('Please fill in all fields');
-      return;
-    }
-
-    setLoading(true);
-    setMessage('');
-
-    try {
-      const response = await fetch('/api/auth/request-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          tenant_id: formData.tenant
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(`✅ ${data.message}${data.dev_otp ? ` (Dev OTP: ${data.dev_otp})` : ''}`);
-        setStep('otp');
-        if (data.dev_otp) {
-          setFormData(prev => ({ ...prev, otp: data.dev_otp }));
-        }
-      } else {
-        setMessage(`❌ ${data.detail || 'Failed to send OTP'}`);
-      }
-    } catch (error) {
-      setMessage('❌ Network error. Please check your connection.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const login = async () => {
-    if (!formData.otp) {
-      setMessage('Please enter the OTP code');
+    if (!formData.email || !formData.password) {
+      setMessage('Please enter both email and password');
       return;
     }
 
@@ -64,15 +26,15 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
-          tenant_id: formData.tenant,
-          otp: formData.otp
+          password: formData.password,
+          tenant_id: formData.tenant_id || undefined
         })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('jupiter_token', data.token);
+        localStorage.setItem('jupiter_token', data.access_token);
         localStorage.setItem('jupiter_user', JSON.stringify(data.user));
         setMessage('🎉 Login successful! Welcome to Jupiter SIEM');
         
@@ -89,10 +51,10 @@ export default function Login() {
     }
   };
 
-  const goBack = () => {
-    setStep('credentials');
-    setFormData(prev => ({ ...prev, otp: '' }));
-    setMessage('');
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      login();
+    }
   };
 
   return (
@@ -112,119 +74,97 @@ export default function Login() {
         {/* Login Form */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">
-              {step === 'credentials' ? 'Sign In to Your Account' : 'Enter Verification Code'}
-            </CardTitle>
+            <CardTitle className="text-center">Administrator Access</CardTitle>
+            <p className="text-sm muted text-center">
+              Enter your credentials to access the security platform
+            </p>
           </CardHeader>
           <CardContent className="space-y-4">
-            {step === 'credentials' ? (
-              <>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors"
-                    placeholder="Enter your email"
-                    disabled={loading}
-                  />
-                </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                onKeyPress={handleKeyPress}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors"
+                placeholder="Enter your email"
+                disabled={loading}
+              />
+            </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Building className="h-4 w-4" />
-                    Organization / Tenant
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.tenant}
-                    onChange={(e) => setFormData(prev => ({ ...prev, tenant: e.target.value }))}
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors"
-                    placeholder="Enter your organization name"
-                    disabled={loading}
-                  />
-                </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Key className="h-4 w-4" />
+                Password
+              </label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                onKeyPress={handleKeyPress}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors"
+                placeholder="Enter your password"
+                disabled={loading}
+              />
+            </div>
 
-                <button
-                  onClick={requestOTP}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand hover:bg-brand/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      Request OTP
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="text-center space-y-2 p-4 bg-white/5 rounded-lg border border-white/10">
-                  <p className="text-sm muted">OTP sent to</p>
-                  <p className="font-medium">{formData.email}</p>
-                  <p className="text-sm muted">Organization: {formData.tenant}</p>
-                </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Building className="h-4 w-4" />
+                Organization (Optional)
+              </label>
+              <input
+                type="text"
+                value={formData.tenant_id}
+                onChange={(e) => setFormData(prev => ({ ...prev, tenant_id: e.target.value }))}
+                onKeyPress={handleKeyPress}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors"
+                placeholder="Leave blank for default organization"
+                disabled={loading}
+              />
+            </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Key className="h-4 w-4" />
-                    Verification Code
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.otp}
-                    onChange={(e) => setFormData(prev => ({ ...prev, otp: e.target.value }))}
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-brand focus:outline-none transition-colors text-center text-lg tracking-widest"
-                    placeholder="000000"
-                    maxLength={6}
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <button
-                    onClick={login}
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand hover:bg-brand/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        Sign In
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={goBack}
-                    disabled={loading}
-                    className="w-full px-4 py-2 bg-white/5 hover:bg-white/10 text-muted hover:text-text rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    Back to Credentials
-                  </button>
-                </div>
-              </>
-            )}
+            <button
+              onClick={login}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand hover:bg-brand/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
 
             {/* Message */}
             {message && (
-              <div className={`p-3 rounded-lg text-sm ${
+              <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${
                 message.includes('✅') || message.includes('🎉')
                   ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20'
                   : 'bg-red-400/10 text-red-400 border border-red-400/20'
               }`}>
+                {message.includes('❌') && <AlertCircle className="h-4 w-4" />}
                 {message}
               </div>
             )}
+
+            {/* Admin Notice */}
+            <div className="p-3 bg-blue-400/10 border border-blue-400/20 rounded-lg">
+              <div className="flex items-center gap-2 text-blue-400 text-sm font-medium mb-1">
+                <Shield className="h-4 w-4" />
+                Admin Access Only
+              </div>
+              <p className="text-xs muted">
+                This system requires administrator credentials. New users must be created by an administrator from within the platform.
+              </p>
+            </div>
           </CardContent>
         </Card>
 

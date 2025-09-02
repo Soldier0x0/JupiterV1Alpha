@@ -191,6 +191,123 @@ const Alerts = () => {
         </div>
       </div>
 
+      {/* Alert Analytics Dashboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Alert Severity Distribution */}
+        <Card>
+          <div className="p-4">
+            <h3 className="font-semibold mb-4 flex items-center space-x-2">
+              <AlertTriangle className="w-5 h-5 text-red-400" />
+              <span>Severity Distribution</span>
+            </h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Critical', value: filteredAlerts.filter(a => a.severity === 'critical').length, fill: '#dc2626' },
+                    { name: 'High', value: filteredAlerts.filter(a => a.severity === 'high').length, fill: '#ea580c' },
+                    { name: 'Medium', value: filteredAlerts.filter(a => a.severity === 'medium').length, fill: '#ca8a04' },
+                    { name: 'Low', value: filteredAlerts.filter(a => a.severity === 'low').length, fill: '#16a34a' }
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={80}
+                  dataKey="value"
+                >
+                  <Cell fill="#dc2626" />
+                  <Cell fill="#ea580c" />
+                  <Cell fill="#ca8a04" />
+                  <Cell fill="#16a34a" />
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1f2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#e5e7eb'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Alert Status Overview */}
+        <Card>
+          <div className="p-4">
+            <h3 className="font-semibold mb-4 flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              <span>Status Overview</span>
+            </h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={[
+                { 
+                  status: 'Open', 
+                  count: filteredAlerts.filter(a => a.status === 'open').length,
+                  fill: '#ef4444'
+                },
+                { 
+                  status: 'Investigating', 
+                  count: filteredAlerts.filter(a => a.status === 'investigating').length,
+                  fill: '#f59e0b'
+                },
+                { 
+                  status: 'Resolved', 
+                  count: filteredAlerts.filter(a => a.status === 'resolved').length,
+                  fill: '#10b981'
+                }
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="status" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1f2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#e5e7eb'
+                  }}
+                />
+                <Bar dataKey="count" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Alert Sources */}
+        <Card>
+          <div className="p-4">
+            <h3 className="font-semibold mb-4 flex items-center space-x-2">
+              <Eye className="w-5 h-5 text-blue-400" />
+              <span>Top Sources</span>
+            </h3>
+            <div className="space-y-3">
+              {Array.from(new Set(filteredAlerts.map(a => a.source)))
+                .slice(0, 5)
+                .map((source, index) => {
+                  const count = filteredAlerts.filter(a => a.source === source).length;
+                  const percentage = (count / filteredAlerts.length) * 100;
+                  return (
+                    <div key={source} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-300 truncate">{source}</span>
+                        <span className="text-zinc-400">{count}</span>
+                      </div>
+                      <div className="w-full bg-zinc-700 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-500" 
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Filters & Search */}
       <Card>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

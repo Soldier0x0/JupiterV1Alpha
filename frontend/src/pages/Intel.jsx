@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Plus, AlertTriangle, Eye, Globe, Hash, Link, Edit, Trash2 } from 'lucide-react';
+import { Shield, Search, Plus, AlertTriangle, Eye, Globe, Hash, Link, Edit, Trash2, BarChart3, TrendingUp } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import Card from '../components/Card';
 import { threatIntelAPI } from '../utils/api';
 

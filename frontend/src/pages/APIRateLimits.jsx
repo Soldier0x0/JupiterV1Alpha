@@ -18,7 +18,12 @@ import {
   EyeOff,
   Info
 } from 'lucide-react';
-import { Card } from '../components/ui/card';
+// Simple card component replacement
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-[#111214] border border-zinc-700 rounded-xl p-6 ${className}`}>
+    {children}
+  </div>
+);
 
 const APIRateLimits = () => {
   const [rateLimitData, setRateLimitData] = useState(null);

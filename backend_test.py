@@ -18,8 +18,10 @@ class JupiterAPITester:
         self.user_data = None
         self.tests_run = 0
         self.tests_passed = 0
-        self.tenant_id = "70d9c900-af02-4d81-9c6c-97ecf4ecf786"  # From test data
-        self.test_email = "admin@jupiter.com"  # From test data
+        # Updated credentials from review request
+        self.tenant_id = "jupiter-main-001"  # MainTenant ID from review request
+        self.test_email = "admin@projectjupiter.in"  # From review request
+        self.test_password = "Harsha@313"  # From review request (though not used in OTP flow)
         # 2FA testing variables
         self.twofa_secret = None
         self.backup_codes = []

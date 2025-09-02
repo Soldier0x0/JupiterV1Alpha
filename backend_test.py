@@ -1544,6 +1544,13 @@ class JupiterAPITester:
         print("\n🔄 Testing Complete 2FA Workflow...")
         self.test_2fa_comprehensive_workflow()
         
+        # API Rate Limiting Tests
+        print("\n⚡ Testing API Rate Limiting System...")
+        self.test_rate_limits_status()
+        self.test_rate_limits_available_apis()
+        self.test_api_rate_limiter_import()
+        self.test_rate_limits_basic_functionality()
+        
         # Results summary
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")

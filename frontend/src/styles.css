@@ -139,7 +139,7 @@
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: theme('colors.neutral.100');
+    color: theme('colors.zinc.100');
   }
   
   .text-body {

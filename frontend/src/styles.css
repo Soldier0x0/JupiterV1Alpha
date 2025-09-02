@@ -165,11 +165,11 @@
 @layer utilities {
   /* Gradient utilities for subtle accents */
   .gradient-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600;
+    @apply bg-gradient-to-r from-yellow-500 to-yellow-600;
   }
   
   .gradient-text-primary {
-    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent;
   }
   
   /* Animation utilities - minimal and purposeful */

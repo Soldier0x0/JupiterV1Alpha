@@ -203,25 +203,21 @@ const APIRateLimits = () => {
           </p>
         </div>
         <div className="flex space-x-3">
-          <motion.button
+          <button
             onClick={refreshData}
             disabled={refreshing}
             className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             onClick={() => setShowAddModal(true)}
             className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <Plus className="w-4 h-4" />
             <span>Add Custom API</span>
-          </motion.button>
+          </button>
         </div>
       </div>
 

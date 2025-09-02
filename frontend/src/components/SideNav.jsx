@@ -15,7 +15,8 @@ import {
   Eye,
   Brain,
   Database,
-  HardDrive
+  HardDrive,
+  Activity
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';

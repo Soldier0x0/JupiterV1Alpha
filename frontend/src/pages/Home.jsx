@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomizableDashboard from '../components/CustomizableDashboard';
+// import CustomizableDashboard from '../components/CustomizableDashboard';
 
 const Home = () => {
   return <CustomizableDashboard />;

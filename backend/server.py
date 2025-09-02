@@ -29,6 +29,10 @@ load_dotenv()
 
 app = FastAPI(title="Jupiter SIEM API", version="1.0.0")
 
+# Initialize API Rate Limiter
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/jupiter_siem")
+rate_limiter = APIRateLimiter(MONGO_URL)
+
 # Initialize default roles on startup
 @app.on_event("startup")
 async def startup_event():

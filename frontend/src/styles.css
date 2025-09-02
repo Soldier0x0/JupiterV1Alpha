@@ -152,7 +152,7 @@
     font-family: var(--font-sans);
     font-size: 0.875rem;
     line-height: 1.4;
-    color: theme('colors.neutral.500');
+    color: theme('colors.zinc.500');
   }
   
   .text-code {

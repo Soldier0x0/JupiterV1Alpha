@@ -137,6 +137,127 @@ const Intel = () => {
         </motion.button>
       </div>
 
+      {/* Threat Intelligence Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* IOC Type Distribution */}
+        <Card>
+          <h3 className="font-semibold mb-4 flex items-center space-x-2">
+            <BarChart3 className="w-5 h-5 text-blue-400" />
+            <span>IOC Type Distribution</span>
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={[
+                  { name: 'IP Address', value: iocs.filter(ioc => ioc.ioc_type === 'ip').length, fill: '#3b82f6' },
+                  { name: 'Domain', value: iocs.filter(ioc => ioc.ioc_type === 'domain').length, fill: '#8b5cf6' },
+                  { name: 'URL', value: iocs.filter(ioc => ioc.ioc_type === 'url').length, fill: '#10b981' },
+                  { name: 'File Hash', value: iocs.filter(ioc => ioc.ioc_type === 'hash').length, fill: '#f59e0b' },
+                  { name: 'Email', value: iocs.filter(ioc => ioc.ioc_type === 'email').length, fill: '#ef4444' }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={80}
+                dataKey="value"
+              >
+                <Cell fill="#3b82f6" />
+                <Cell fill="#8b5cf6" />
+                <Cell fill="#10b981" />
+                <Cell fill="#f59e0b" />
+                <Cell fill="#ef4444" />
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#e5e7eb'
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Threat Level Analysis */}
+        <Card>
+          <h3 className="font-semibold mb-4 flex items-center space-x-2">
+            <AlertTriangle className="w-5 h-5 text-red-400" />
+            <span>Threat Level Analysis</span>
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={[
+              { 
+                level: 'Critical', 
+                count: iocs.filter(ioc => ioc.threat_level === 'critical').length,
+                fill: '#dc2626'
+              },
+              { 
+                level: 'High', 
+                count: iocs.filter(ioc => ioc.threat_level === 'high').length,
+                fill: '#ea580c'
+              },
+              { 
+                level: 'Medium', 
+                count: iocs.filter(ioc => ioc.threat_level === 'medium').length,
+                fill: '#ca8a04'
+              },
+              { 
+                level: 'Low', 
+                count: iocs.filter(ioc => ioc.threat_level === 'low').length,
+                fill: '#16a34a'
+              }
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="level" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#e5e7eb'
+                }}
+              />
+              <Bar dataKey="count" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Recent Activity Timeline */}
+        <Card>
+          <h3 className="font-semibold mb-4 flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-green-400" />
+            <span>IOC Activity (7 days)</span>
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={[
+              { day: 'Mon', added: 12, verified: 8 },
+              { day: 'Tue', added: 19, verified: 15 },
+              { day: 'Wed', added: 7, verified: 5 },
+              { day: 'Thu', added: 23, verified: 18 },
+              { day: 'Fri', added: 16, verified: 12 },
+              { day: 'Sat', added: 9, verified: 7 },
+              { day: 'Sun', added: 14, verified: 11 }
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="day" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#e5e7eb'
+                }}
+              />
+              <Line type="monotone" dataKey="added" stroke="#3b82f6" strokeWidth={2} name="Added" />
+              <Line type="monotone" dataKey="verified" stroke="#10b981" strokeWidth={2} name="Verified" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+
       {/* Search & Lookup */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* IOC Search */}

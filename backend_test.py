@@ -1789,15 +1789,29 @@ class JupiterAPITester:
 
 def main():
     """Main test execution"""
-    # Use the configured backend URL from environment
-    base_url = "/api"
+    import os
+    
+    # Get backend URL from environment or use default
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'http://localhost:8001/api')
+    
+    # Allow command line override
     if len(sys.argv) > 1:
-        base_url = sys.argv[1]
+        backend_url = sys.argv[1]
     
-    tester = JupiterAPITester(base_url)
-    success = tester.run_all_tests()
+    tester = JupiterAPITester(backend_url)
     
-    return 0 if success else 1
+    # Run comprehensive Jupiter SIEM testing as requested in review
+    success = tester.run_comprehensive_jupiter_siem_tests()
+    
+    print(f"\n🏁 Comprehensive Testing Complete!")
+    print(f"📊 Results: {tester.tests_passed}/{tester.tests_run} tests passed")
+    
+    if success:
+        print("✅ Jupiter SIEM system passed comprehensive testing - Ready for production!")
+        return 0
+    else:
+        print("❌ Some critical tests failed - Review output above for details")
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())

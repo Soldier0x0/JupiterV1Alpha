@@ -21,6 +21,9 @@ import qrcode
 from io import BytesIO
 import base64
 import secrets
+import sys
+sys.path.append('/app')
+from api_rate_limiter import APIRateLimiter
 
 load_dotenv()
 

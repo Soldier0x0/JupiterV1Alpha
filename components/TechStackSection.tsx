@@ -110,58 +110,45 @@ const TechStackSection = () => {
         </motion.div>
 
         {/* Tech Categories Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {techCategories.map((category, categoryIndex) => (
             <motion.div
               key={category.category}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
+              transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white dark:bg-dark-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700"
+              className="bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-jupiter-400/50 transition-all duration-300"
             >
               {/* Category Header */}
               <div className="flex items-center mb-6">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${category.color} flex items-center justify-center mr-4`}>
-                  <category.icon size={24} className="text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <category.icon size={20} className="text-jupiter-400 mr-3" />
+                <h3 className="text-lg font-semibold text-white">
                   {category.category}
                 </h3>
               </div>
 
-              {/* Technologies */}
-              <div className="space-y-4">
+              {/* Technologies Grid */}
+              <div className="grid grid-cols-2 gap-3">
                 {category.technologies.map((tech, techIndex) => (
                   <motion.div
                     key={tech.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: (categoryIndex * 0.1) + (techIndex * 0.1) }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: (categoryIndex * 0.1) + (techIndex * 0.05) }}
                     viewport={{ once: true }}
-                    className="group"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className="group bg-dark-deep/50 rounded-lg p-3 hover:bg-dark-deep transition-all duration-200 cursor-pointer"
                   >
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-jupiter-500 transition-colors duration-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-lg">{tech.icon}</span>
+                      <span className="font-medium text-gray-200 text-sm group-hover:text-jupiter-400 transition-colors">
                         {tech.name}
-                      </h4>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {tech.level}%
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                    <p className="text-xs text-gray-400 leading-relaxed">
                       {tech.description}
                     </p>
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${tech.level}%` }}
-                        transition={{ duration: 1, delay: (categoryIndex * 0.1) + (techIndex * 0.1) }}
-                        viewport={{ once: true }}
-                        className={`h-2 rounded-full bg-gradient-to-r ${category.color}`}
-                      />
-                    </div>
                   </motion.div>
                 ))}
               </div>

@@ -128,7 +128,7 @@ const HeroSection = () => {
               >
                 JUPITER
               </motion.div>
-            </div>
+            </motion.div>
 
             {/* Subtitle - Technical specs style */}
             <motion.div

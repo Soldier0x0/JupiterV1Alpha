@@ -186,7 +186,7 @@ const DevelopmentPhases = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-jupiter-500 to-cyber-500 bg-clip-text text-transparent">
+            <span className="text-jupiter-400 drop-shadow-[0_0_10px_rgba(237,118,17,0.5)]">
               Development Journey
             </span>
           </h2>

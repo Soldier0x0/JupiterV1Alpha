@@ -156,38 +156,42 @@ const TechStackSection = () => {
           ))}
         </div>
 
-        {/* AI Collaboration Section */}
+        {/* AI-Powered Development */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-jupiter-50 to-cyber-50 dark:from-dark-800 dark:to-dark-700 rounded-3xl p-8 mb-12"
+          className="bg-dark-cosmos/30 backdrop-blur-sm rounded-2xl p-8 mb-12 border border-gray-800"
         >
-          <h3 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+          <h3 className="text-2xl font-bold text-center mb-6 text-white">
             AI-Powered Development
           </h3>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            Project Jupiter is developed with cutting-edge AI collaboration, leveraging the latest in artificial intelligence 
-            to accelerate development and ensure best practices.
+          <p className="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
+            Leveraging cutting-edge AI collaboration to accelerate development and ensure best practices.
           </p>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
             {aiCollaboration.map((ai, index) => (
               <motion.div
                 key={ai.name}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-white dark:bg-dark-600 rounded-xl p-6 shadow-lg text-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ y: -5, scale: 1.05 }}
+                viewport={{ once: true }}
+                className="group bg-dark-deep/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-jupiter-400/50 transition-all duration-300 text-center min-w-[200px]"
               >
-                <div className="text-4xl mb-4">{ai.icon}</div>
-                <h4 className="font-bold text-jupiter-600 dark:text-jupiter-400 mb-2">
+                <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                  {ai.icon}
+                </div>
+                <h4 className="font-bold text-jupiter-400 mb-2 group-hover:text-jupiter-300 transition-colors">
                   {ai.name}
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                  {ai.description}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {ai.contribution}
+                <p className="text-xs text-gray-400 font-mono">
+                  {ai.name === 'Emergent (Claude)' ? 'System design & code generation' : 
+                   ai.name === 'GitHub Copilot' ? 'Code completion & optimization' : 
+                   'Research & planning assistance'}
                 </p>
               </motion.div>
             ))}

@@ -34,7 +34,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-6"
           >
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4">
               <span className="bg-gradient-to-r from-jupiter-500 via-jupiter-400 to-jupiter-600 bg-clip-text text-transparent">
                 Project
               </span>

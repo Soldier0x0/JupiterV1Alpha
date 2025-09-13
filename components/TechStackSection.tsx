@@ -6,69 +6,63 @@ import { Code, Database, Cloud, Zap, Shield, Brain, Cpu, Globe } from 'lucide-re
 const TechStackSection = () => {
   const techCategories = [
     {
-      category: 'Backend & Processing',
+      category: 'Backend',
       icon: Code,
-      color: 'from-blue-500 to-blue-600',
       technologies: [
-        { name: 'Python', description: 'Core backend logic and AI integration', level: 95 },
-        { name: 'Go', description: 'High-performance data processing', level: 85 },
-        { name: 'Rust', description: 'Critical path optimization', level: 80 },
-        { name: 'FastAPI', description: 'API framework for microservices', level: 90 }
+        { name: 'Python', description: 'Core backend logic and AI integration', icon: '🐍' },
+        { name: 'Go', description: 'High-performance data processing', icon: '⚡' },
+        { name: 'Rust', description: 'Critical path optimization', icon: '🦀' },
+        { name: 'FastAPI', description: 'API framework for microservices', icon: '🚀' }
       ]
     },
     {
-      category: 'Frontend & UI',
+      category: 'Frontend',
       icon: Globe,
-      color: 'from-green-500 to-teal-500',
       technologies: [
-        { name: 'React', description: 'Modern UI framework', level: 90 },
-        { name: 'TypeScript', description: 'Type-safe development', level: 85 },
-        { name: 'Next.js', description: 'Full-stack React framework', level: 88 },
-        { name: 'Tailwind CSS', description: 'Utility-first styling', level: 92 }
+        { name: 'React', description: 'Modern UI framework', icon: '⚛️' },
+        { name: 'TypeScript', description: 'Type-safe development', icon: '📘' },
+        { name: 'Next.js', description: 'Full-stack React framework', icon: '▲' },
+        { name: 'Tailwind CSS', description: 'Utility-first styling', icon: '🎨' }
       ]
     },
     {
       category: 'Data & Storage',
       icon: Database,
-      color: 'from-purple-500 to-pink-500',
       technologies: [
-        { name: 'PostgreSQL', description: 'Primary relational database', level: 88 },
-        { name: 'TimescaleDB', description: 'Time-series data optimization', level: 82 },
-        { name: 'OpenSearch', description: 'Log analytics and search', level: 85 },
-        { name: 'MinIO', description: 'Object storage solution', level: 80 }
+        { name: 'PostgreSQL', description: 'Primary relational database', icon: '🐘' },
+        { name: 'TimescaleDB', description: 'Time-series data optimization', icon: '⏰' },
+        { name: 'OpenSearch', description: 'Log analytics and search', icon: '🔍' },
+        { name: 'MinIO', description: 'Object storage solution', icon: '💾' }
       ]
     },
     {
-      category: 'AI & Machine Learning',
+      category: 'AI & ML',
       icon: Brain,
-      color: 'from-orange-500 to-red-500',
       technologies: [
-        { name: 'Langflow AI', description: 'AI workflow orchestration', level: 90 },
-        { name: 'OpenAI API', description: 'Large language model integration', level: 88 },
-        { name: 'Ollama', description: 'Local LLM deployment', level: 85 },
-        { name: 'Vector Search', description: 'Similarity and pattern matching', level: 83 }
+        { name: 'Langflow AI', description: 'AI workflow orchestration', icon: '🧠' },
+        { name: 'OpenAI API', description: 'Large language model integration', icon: '🤖' },
+        { name: 'Ollama', description: 'Local LLM deployment', icon: '🦙' },
+        { name: 'Vector Search', description: 'Similarity and pattern matching', icon: '🎯' }
       ]
     },
     {
       category: 'Infrastructure',
       icon: Cloud,
-      color: 'from-cyan-500 to-blue-500',
       technologies: [
-        { name: 'Docker', description: 'Containerization platform', level: 90 },
-        { name: 'Kubernetes', description: 'Container orchestration', level: 85 },
-        { name: 'Azure', description: 'Cloud infrastructure', level: 82 },
-        { name: 'Cloudflare', description: 'CDN and security', level: 88 }
+        { name: 'Docker', description: 'Containerization platform', icon: '🐳' },
+        { name: 'Kubernetes', description: 'Container orchestration', icon: '☸️' },
+        { name: 'Azure', description: 'Cloud infrastructure', icon: '☁️' },
+        { name: 'Cloudflare', description: 'CDN and security', icon: '🛡️' }
       ]
     },
     {
       category: 'Security & Monitoring',
       icon: Shield,
-      color: 'from-red-500 to-red-600',
       technologies: [
-        { name: 'Prometheus', description: 'Metrics collection and monitoring', level: 85 },
-        { name: 'Loki', description: 'Log aggregation system', level: 83 },
-        { name: 'Grafana', description: 'Observability dashboards', level: 88 },
-        { name: 'Apache NiFi', description: 'Data flow management', level: 80 }
+        { name: 'Prometheus', description: 'Metrics collection and monitoring', icon: '📊' },
+        { name: 'Loki', description: 'Log aggregation system', icon: '📝' },
+        { name: 'Grafana', description: 'Observability dashboards', icon: '📈' },
+        { name: 'Apache NiFi', description: 'Data flow management', icon: '🌊' }
       ]
     }
   ]

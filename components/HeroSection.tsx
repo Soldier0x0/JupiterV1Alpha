@@ -19,7 +19,7 @@ const HeroSection = () => {
   ]
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-16">
+    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-16 px-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Main Hero Content */}
         <motion.div

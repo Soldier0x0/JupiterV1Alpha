@@ -50,6 +50,11 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
+    
+    // Force a repaint to ensure theme changes are visible
+    root.style.display = 'none'
+    root.offsetHeight // Trigger reflow
+    root.style.display = ''
   }, [theme, enableSystem])
 
   const value = {

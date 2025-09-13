@@ -19,8 +19,8 @@
     @apply border-gray-200 dark:border-gray-700;
   }
   body {
-    @apply bg-dark-void dark:bg-dark-void text-gray-100 dark:text-gray-100;
-    background: radial-gradient(ellipse at center, #0a0a0f 0%, #000000 100%);
+    @apply bg-dark-cosmos dark:bg-dark-deep text-gray-100 dark:text-gray-100;
+    background: radial-gradient(ellipse at center, #0d1117 0%, #020617 50%, #000000 100%);
   }
 }
 

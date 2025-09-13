@@ -234,7 +234,7 @@ const ArchitectureSection = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <h3 className="text-2xl font-bold mb-8 text-white">
+          <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">
             Architecture Highlights
           </h3>
           <div className="grid md:grid-cols-3 gap-6">
@@ -263,18 +263,18 @@ const ArchitectureSection = () => {
                 whileHover={{ 
                   y: -8, 
                   scale: 1.02,
-                  boxShadow: '0 10px 40px rgba(237, 118, 17, 0.3)'
+                  boxShadow: '0 10px 40px rgba(237, 118, 17, 0.2)'
                 }}
                 viewport={{ once: true }}
-                className="group bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-jupiter-400/50 transition-all duration-300 cursor-pointer"
+                className="group bg-white dark:bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover:border-jupiter-500 dark:hover:border-jupiter-400/50 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
               >
                 <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <h4 className="font-bold text-jupiter-400 mb-3 group-hover:text-jupiter-300 transition-colors">
+                <h4 className="font-bold text-jupiter-600 dark:text-jupiter-400 mb-3 group-hover:text-jupiter-700 dark:group-hover:text-jupiter-300 transition-colors">
                   {feature.title}
                 </h4>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>

@@ -162,12 +162,12 @@ const TechStackSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-dark-cosmos/30 backdrop-blur-sm rounded-2xl p-8 mb-12 border border-gray-800"
+          className="bg-white dark:bg-dark-cosmos/30 backdrop-blur-sm rounded-2xl p-8 mb-12 border border-gray-200 dark:border-gray-800 shadow-lg"
         >
-          <h3 className="text-2xl font-bold text-center mb-6 text-white">
+          <h3 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
             AI-Powered Development
           </h3>
-          <p className="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
             Leveraging cutting-edge AI collaboration to accelerate development and ensure best practices.
           </p>
           
@@ -180,15 +180,15 @@ const TechStackSection = () => {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 whileHover={{ y: -5, scale: 1.05 }}
                 viewport={{ once: true }}
-                className="group bg-dark-deep/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-jupiter-400/50 transition-all duration-300 text-center min-w-[200px]"
+                className="group bg-gray-50 dark:bg-dark-deep/50 backdrop-blur-sm rounded-xl p-6 border border-gray-300 dark:border-gray-700 hover:border-jupiter-500 dark:hover:border-jupiter-400/50 transition-all duration-300 text-center min-w-[200px] shadow-md hover:shadow-lg"
               >
                 <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
                   {ai.icon}
                 </div>
-                <h4 className="font-bold text-jupiter-400 mb-2 group-hover:text-jupiter-300 transition-colors">
+                <h4 className="font-bold text-jupiter-600 dark:text-jupiter-400 mb-2 group-hover:text-jupiter-700 dark:group-hover:text-jupiter-300 transition-colors">
                   {ai.name}
                 </h4>
-                <p className="text-xs text-gray-400 font-mono">
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-mono">
                   {ai.name === 'Emergent (Claude)' ? 'System design & code generation' : 
                    ai.name === 'GitHub Copilot' ? 'Code completion & optimization' : 
                    'Research & planning assistance'}

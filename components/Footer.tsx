@@ -72,7 +72,6 @@ const Footer = () => {
         element.scrollIntoView({ behavior: 'smooth' })
       }
     }
-  }
 
   return (
     <div className="bg-white dark:bg-dark-950 border-t border-gray-200 dark:border-gray-800">

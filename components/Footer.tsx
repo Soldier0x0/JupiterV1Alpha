@@ -220,7 +220,7 @@ const Footer = () => {
           </div>
         </motion.div>
       </div>
-    </footer>
+    </div>
   )
 }
 

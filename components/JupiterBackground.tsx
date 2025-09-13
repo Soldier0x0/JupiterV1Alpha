@@ -65,124 +65,119 @@ export const JupiterBackground = () => {
         ))}
       </div>
 
-      {/* Photorealistic Jupiter with Rings */}
-      <div className="fixed top-20 right-20 w-40 h-40 z-10 pointer-events-none opacity-90 hidden lg:block">
+      {/* Enhanced Photorealistic Jupiter with Rings */}
+      <div className="fixed top-16 right-16 w-48 h-48 z-10 pointer-events-none opacity-80 hidden lg:block">
         <div className="relative w-full h-full">
-          {/* Jupiter's Rings - Multiple layers for realism */}
+          {/* Jupiter's Ring System - More accurate */}
           <div className="absolute inset-0 flex items-center justify-center">
-            {/* Ring 1 - Main ring */}
+            {/* Main ring */}
             <div 
-              className="absolute border border-orange-300/20 rounded-full animate-spin"
+              className="absolute border border-orange-200/30 rounded-full animate-spin"
               style={{ 
-                width: '200px', 
-                height: '200px',
-                animationDuration: '25s',
-                transform: 'rotateX(75deg)'
+                width: '240px', 
+                height: '240px',
+                animationDuration: '30s',
+                transform: 'rotateX(78deg) rotateY(5deg)'
               }}
             />
-            {/* Ring 2 - Outer ring */}
+            {/* Outer ring */}
             <div 
-              className="absolute border border-amber-400/15 rounded-full animate-spin"
+              className="absolute border border-amber-300/20 rounded-full animate-spin"
+              style={{ 
+                width: '260px', 
+                height: '260px',
+                animationDuration: '45s',
+                animationDirection: 'reverse',
+                transform: 'rotateX(78deg) rotateY(5deg)'
+              }}
+            />
+            {/* Inner ring */}
+            <div 
+              className="absolute border border-yellow-300/40 rounded-full animate-spin"
               style={{ 
                 width: '220px', 
                 height: '220px',
-                animationDuration: '35s',
-                animationDirection: 'reverse',
-                transform: 'rotateX(75deg)'
-              }}
-            />
-            {/* Ring 3 - Inner ring */}
-            <div 
-              className="absolute border border-yellow-400/25 rounded-full animate-spin"
-              style={{ 
-                width: '180px', 
-                height: '180px',
-                animationDuration: '20s',
-                transform: 'rotateX(75deg)'
+                animationDuration: '25s',
+                transform: 'rotateX(78deg) rotateY(5deg)'
               }}
             />
           </div>
           
-          {/* Photorealistic Jupiter Planet */}
+          {/* Enhanced Photorealistic Jupiter */}
           <div 
             className="w-full h-full rounded-full animate-rotate-slow shadow-2xl relative overflow-hidden"
             style={{
               background: `
-                radial-gradient(ellipse at 25% 25%, #f4d03f 0%, #dc7633 15%, #a04000 35%, #6c2c0a 65%, #4a1810 85%, #2c0e08 100%),
-                linear-gradient(90deg, transparent 0%, rgba(220, 118, 51, 0.4) 10%, transparent 20%, rgba(160, 64, 0, 0.3) 30%, transparent 40%, rgba(220, 118, 51, 0.4) 50%, transparent 60%, rgba(160, 64, 0, 0.3) 70%, transparent 80%, rgba(220, 118, 51, 0.4) 90%, transparent 100%),
-                linear-gradient(45deg, rgba(244, 208, 63, 0.6) 0%, transparent 15%, rgba(220, 118, 51, 0.4) 25%, transparent 35%, rgba(160, 64, 0, 0.3) 45%, transparent 55%, rgba(220, 118, 51, 0.4) 65%, transparent 75%, rgba(244, 208, 63, 0.6) 85%, transparent 100%)
+                radial-gradient(ellipse at 30% 20%, #f4d03f 0%, #e67e22 10%, #d35400 25%, #a04000 45%, #8b4513 65%, #654321 80%, #3e2723 95%),
+                linear-gradient(90deg, transparent 0%, rgba(230, 126, 34, 0.3) 8%, transparent 16%, rgba(211, 84, 0, 0.4) 24%, transparent 32%, rgba(230, 126, 34, 0.3) 40%, transparent 48%, rgba(211, 84, 0, 0.4) 56%, transparent 64%, rgba(230, 126, 34, 0.3) 72%, transparent 80%, rgba(211, 84, 0, 0.4) 88%, transparent 96%),
+                conic-gradient(from 0deg, rgba(244, 208, 63, 0.4) 0%, rgba(230, 126, 34, 0.3) 45%, rgba(211, 84, 0, 0.4) 90%, rgba(160, 64, 0, 0.3) 135%, rgba(139, 69, 19, 0.2) 180%, rgba(101, 67, 33, 0.3) 225%, rgba(62, 39, 35, 0.4) 270%, rgba(244, 208, 63, 0.4) 315%)
               `,
               boxShadow: `
-                inset -15px -15px 30px rgba(76, 24, 16, 0.9),
-                inset 15px 15px 30px rgba(244, 208, 63, 0.4),
-                inset 0px 0px 50px rgba(160, 64, 0, 0.3),
-                0 0 60px rgba(220, 118, 51, 0.5),
-                0 0 100px rgba(244, 208, 63, 0.2)
+                inset -20px -20px 40px rgba(62, 39, 35, 0.9),
+                inset 20px 20px 40px rgba(244, 208, 63, 0.3),
+                inset 0px 0px 60px rgba(160, 64, 0, 0.4),
+                0 0 80px rgba(230, 126, 34, 0.4),
+                0 0 120px rgba(244, 208, 63, 0.2)
               `,
-              animationDuration: '40s'
+              animationDuration: '50s'
             }}
           >
-            {/* Jupiter's Great Red Spot - More realistic */}
+            {/* Great Red Spot - Enhanced */}
             <div 
-              className="absolute opacity-90"
+              className="absolute opacity-95"
               style={{
-                top: '35%',
-                right: '20%',
-                width: '25px',
-                height: '18px',
+                top: '38%',
+                right: '22%',
+                width: '32px',
+                height: '24px',
                 borderRadius: '50%',
-                background: 'radial-gradient(ellipse, #dc2626 0%, #991b1b 30%, #7f1d1d 60%, #450a0a 100%)',
-                transform: 'rotate(-20deg)',
-                boxShadow: 'inset -3px -2px 8px rgba(69, 10, 10, 0.8), inset 2px 2px 6px rgba(220, 38, 38, 0.4)'
+                background: 'radial-gradient(ellipse, #dc2626 0%, #b91c1c 20%, #991b1b 40%, #7f1d1d 65%, #450a0a 85%, #1f2937 100%)',
+                transform: 'rotate(-18deg)',
+                boxShadow: 'inset -4px -3px 12px rgba(31, 41, 55, 0.8), inset 3px 3px 8px rgba(220, 38, 38, 0.4)'
               }}
             />
             
-            {/* Jupiter's atmospheric bands - More detailed */}
-            <div className="absolute inset-0 rounded-full opacity-60">
-              <div className="absolute top-[15%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orange-800/80 to-transparent" />
-              <div className="absolute top-[25%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-700/60 to-transparent" />
-              <div className="absolute top-[45%] left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-orange-900/90 to-transparent" />
-              <div className="absolute top-[60%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-800/70 to-transparent" />
-              <div className="absolute top-[75%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-orange-800/80 to-transparent" />
-              <div className="absolute top-[85%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-900/60 to-transparent" />
+            {/* Enhanced atmospheric bands */}
+            <div className="absolute inset-0 rounded-full opacity-70">
+              <div className="absolute top-[12%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orange-900/90 to-transparent" />
+              <div className="absolute top-[20%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-800/70 to-transparent" />
+              <div className="absolute top-[30%] left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-orange-800/95 to-transparent" />
+              <div className="absolute top-[42%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-900/80 to-transparent" />
+              <div className="absolute top-[55%] left-0 right-0 h-[4px] bg-gradient-to-r from-transparent via-orange-900/100 to-transparent" />
+              <div className="absolute top-[68%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-800/85 to-transparent" />
+              <div className="absolute top-[78%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-orange-800/90 to-transparent" />
+              <div className="absolute top-[88%] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-900/75 to-transparent" />
             </div>
             
-            {/* Atmospheric swirls and storms */}
-            <div className="absolute inset-0 rounded-full opacity-40">
-              <div 
-                className="absolute w-3 h-2 rounded-full bg-red-800/80"
-                style={{ top: '25%', left: '60%', transform: 'rotate(45deg)' }}
-              />
-              <div 
-                className="absolute w-2 h-1 rounded-full bg-orange-700/60"
-                style={{ top: '55%', left: '30%', transform: 'rotate(-30deg)' }}
-              />
-              <div 
-                className="absolute w-4 h-1 rounded-full bg-yellow-800/50"
-                style={{ top: '70%', left: '70%', transform: 'rotate(60deg)' }}
-              />
+            {/* Storm systems and atmospheric features */}
+            <div className="absolute inset-0 rounded-full opacity-50">
+              <div className="absolute w-4 h-3 rounded-full bg-red-900/90" style={{ top: '28%', left: '65%', transform: 'rotate(35deg)' }} />
+              <div className="absolute w-3 h-2 rounded-full bg-orange-800/80" style={{ top: '48%', left: '25%', transform: 'rotate(-25deg)' }} />
+              <div className="absolute w-5 h-2 rounded-full bg-yellow-900/70" style={{ top: '65%', left: '75%', transform: 'rotate(55deg)' }} />
+              <div className="absolute w-2 h-1 rounded-full bg-amber-800/60" style={{ top: '82%', left: '40%', transform: 'rotate(-45deg)' }} />
             </div>
           </div>
           
-          {/* Jupiter's atmospheric glow */}
+          {/* Enhanced atmospheric glow */}
           <div 
             className="absolute inset-0 rounded-full animate-pulse-slow pointer-events-none"
             style={{
-              background: 'radial-gradient(circle, rgba(244, 208, 63, 0.3) 0%, rgba(220, 118, 51, 0.2) 40%, rgba(160, 64, 0, 0.1) 70%, transparent 100%)',
-              transform: 'scale(1.4)',
-              animationDuration: '6s'
+              background: 'radial-gradient(circle, rgba(244, 208, 63, 0.25) 0%, rgba(230, 126, 34, 0.15) 30%, rgba(211, 84, 0, 0.08) 60%, transparent 85%)',
+              transform: 'scale(1.6)',
+              animationDuration: '8s'
             }}
           />
           
-          {/* Additional ring particles for realism */}
-          {[...Array(8)].map((_, i) => (
+          {/* Ring particle system */}
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-0.5 h-0.5 bg-orange-300 rounded-full opacity-40"
+              className="absolute w-0.5 h-0.5 bg-orange-200 rounded-full opacity-50 animate-twinkle"
               style={{
-                left: `${45 + Math.cos(i * 45 * Math.PI / 180) * 85}px`,
-                top: `${45 + Math.sin(i * 45 * Math.PI / 180) * 85 * 0.2}px`,
-                animationDelay: `${i * 0.5}s`
+                left: `${50 + Math.cos(i * 30 * Math.PI / 180) * 100}px`,
+                top: `${50 + Math.sin(i * 30 * Math.PI / 180) * 100 * 0.25}px`,
+                animationDelay: `${i * 0.4}s`,
+                animationDuration: `${3 + Math.random() * 2}s`
               }}
             />
           ))}

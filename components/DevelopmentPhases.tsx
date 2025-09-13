@@ -194,23 +194,27 @@ const DevelopmentPhases = () => {
             A comprehensive 23-phase development roadmap spanning from initial planning to full production deployment
           </p>
           
-          {/* Progress Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            <div className="bg-white dark:bg-dark-800 rounded-lg p-4 shadow-lg">
-              <div className="text-2xl font-bold text-green-500">1</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Completed</div>
-            </div>
-            <div className="bg-white dark:bg-dark-800 rounded-lg p-4 shadow-lg">
-              <div className="text-2xl font-bold text-yellow-500">1</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
-            </div>
-            <div className="bg-white dark:bg-dark-800 rounded-lg p-4 shadow-lg">
-              <div className="text-2xl font-bold text-blue-500">{phases.length - 2}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Planned</div>
-            </div>
-            <div className="bg-white dark:bg-dark-800 rounded-lg p-4 shadow-lg">
-              <div className="text-2xl font-bold text-jupiter-500">23</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Total Phases</div>
+          {/* Progress Tracker */}
+          <div className="bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-400 text-lg">✅</span>
+                  <span className="text-sm font-medium text-green-400">1 Completed</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-yellow-400 text-lg">🔄</span>
+                  <span className="text-sm font-medium text-yellow-400">1 In Progress</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-blue-400 text-lg">⏳</span>
+                  <span className="text-sm font-medium text-blue-400">{phases.length - 2} Planned</span>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-jupiter-400">23</div>
+                <div className="text-xs text-gray-400">Total Phases</div>
+              </div>
             </div>
           </div>
         </motion.div>

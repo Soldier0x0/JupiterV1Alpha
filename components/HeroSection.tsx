@@ -272,13 +272,7 @@ const HeroSection = () => {
         </motion.div>
       </div>
 
-      {/* Custom CSS for vertical text */}
-      <style jsx>{`
-        .writing-mode-vertical {
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-        }
-      `}</style>
+      {/* Vertical text handled by Tailwind */}
     </div>
   )
 }

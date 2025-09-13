@@ -77,17 +77,7 @@ const ArchitectureSection = () => {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
             A comprehensive, modular architecture designed for scalability, security, and performance
           </p>
-          
-          {/* View Toggle */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowDetailed(!showDetailed)}
-            className="flex items-center space-x-2 mx-auto px-6 py-3 bg-jupiter-100 dark:bg-jupiter-900/30 text-jupiter-600 dark:text-jupiter-400 rounded-full hover:bg-jupiter-200 dark:hover:bg-jupiter-900/50 transition-all duration-300"
-          >
-            {showDetailed ? <EyeOff size={20} /> : <Eye size={20} />}
-            <span>{showDetailed ? 'Simplified View' : 'Detailed View'}</span>
-          </motion.button>
+          {/* Spacer removed */}
         </motion.div>
 
         {/* View Toggle */}

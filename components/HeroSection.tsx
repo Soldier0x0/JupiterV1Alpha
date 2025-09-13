@@ -31,7 +31,7 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-gray-900 to-black">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-gray-900 to-black">
       {/* Floating cursor follower */}
       <motion.div
         className="fixed w-80 h-80 pointer-events-none z-0 mix-blend-screen"

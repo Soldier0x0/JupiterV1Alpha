@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import HeroSection from '@/components/HeroSection'
+import SimpleHeroSection from '@/components/SimpleHeroSection'
 import ArchitectureSection from '@/components/ArchitectureSection'
 import TechStackSection from '@/components/TechStackSection'
 import DevelopmentPhases from '@/components/DevelopmentPhases'

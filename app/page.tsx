@@ -23,7 +23,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-dark-void transition-colors duration-300">
+    <main className="min-h-screen bg-dark-cosmos transition-colors duration-300">
       <JupiterBackground />
       <Header />
       

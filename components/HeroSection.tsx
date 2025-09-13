@@ -63,24 +63,13 @@ const HeroSection = () => {
             transition={{ duration: 1.2, delay: 0.5 }}
             className="mb-8"
           >
-            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-audiowide font-bold mb-6 leading-tight">
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-jupiter-400 to-neon-purple text-glow animate-fade-in">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-audiowide font-bold mb-6 leading-tight">
+              <span className="block text-white mb-2">
                 project
               </span>
-              <motion.span 
-                className="block text-transparent bg-clip-text bg-gradient-to-r from-jupiter-400 via-neon-orange to-neon-pink text-neon"
-                animate={{ 
-                  backgroundImage: [
-                    'linear-gradient(90deg, #ed7611, #ff8500, #ff10f0)',
-                    'linear-gradient(90deg, #00f5ff, #bf00ff, #ed7611)',
-                    'linear-gradient(90deg, #ff8500, #00f5ff, #39ff14)',
-                    'linear-gradient(90deg, #ed7611, #ff8500, #ff10f0)'
-                  ]
-                }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-              >
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-jupiter-400 via-neon-orange to-neon-pink">
                 Jupiter
-              </motion.span>
+              </span>
             </h1>
             
             {/* Orbital ring around title */}

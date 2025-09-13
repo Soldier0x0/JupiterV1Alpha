@@ -8,7 +8,7 @@ import { useTheme } from './ThemeProvider'
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { theme, setTheme } = useTheme()
+  // Theme is always dark, no toggle needed
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,18 +79,8 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Theme toggle - Minimal */}
+          {/* Mobile menu button */}
           <div className="flex items-center space-x-4">
-            <motion.button
-              whileHover={{ rotate: 180 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 text-gray-500 hover:text-gray-300 transition-colors"
-            >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </motion.button>
-
-            {/* Mobile menu button */}
             <motion.button
               whileHover={{ scale: 1.1 }}
               onClick={() => setIsOpen(!isOpen)}

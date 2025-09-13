@@ -80,31 +80,7 @@ const ArchitectureSection = () => {
           {/* Spacer removed */}
         </motion.div>
 
-        {/* View Toggle */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-gray-100 dark:bg-dark-deep border border-gray-300 dark:border-gray-700 rounded-full p-1 flex">
-            <button
-              onClick={() => setShowDetailed(false)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                !showDetailed 
-                  ? 'bg-jupiter-500 text-white shadow-lg' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              Simple
-            </button>
-            <button
-              onClick={() => setShowDetailed(true)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                showDetailed 
-                  ? 'bg-jupiter-500 text-white shadow-lg' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              Detailed
-            </button>
-          </div>
-        </div>
+        {/* View Toggle removed: always show detailed */}
 
         {/* Architecture Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">

@@ -2,14 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'dark' | 'light' | 'system'
+type Theme = 'dark'
 
 type ThemeProviderProps = {
   children: React.ReactNode
   attribute?: string
-  defaultTheme?: Theme
-  enableSystem?: boolean
-  disableTransitionOnChange?: boolean
 }
 
 type ThemeProviderState = {
@@ -18,7 +15,7 @@ type ThemeProviderState = {
 }
 
 const initialState: ThemeProviderState = {
-  theme: 'system',
+  theme: 'dark',
   setTheme: () => null,
 }
 
@@ -32,36 +29,17 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [theme] = useState<Theme>('dark')
 
   useEffect(() => {
     const root = window.document.documentElement
-
-    root.classList.remove('light', 'dark')
-
-    if (theme === 'system' && enableSystem) {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light'
-
-      root.classList.add(systemTheme)
-      return
-    }
-
-    root.classList.add(theme)
-    
-    // Force a repaint to ensure theme changes are visible
-    root.style.display = 'none'
-    root.offsetHeight // Trigger reflow
-    root.style.display = ''
-  }, [theme, enableSystem])
+    root.classList.remove('light')
+    root.classList.add('dark')
+  }, [])
 
   const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      setTheme(theme)
-    },
+    theme: 'dark',
+    setTheme: () => {},
   }
 
   return (

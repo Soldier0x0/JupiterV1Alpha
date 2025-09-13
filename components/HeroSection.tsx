@@ -87,10 +87,10 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="mb-6"
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-100 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-white mb-4">
               Orbit-Scale Security Visibility
             </h2>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 font-rajdhani font-light leading-relaxed max-w-4xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 font-rajdhani font-light leading-relaxed max-w-4xl mx-auto">
               AI-powered analytics and real-time detection,{' '}
               <span className="text-neon-cyan font-medium">designed for defenders of tomorrow</span>
             </p>

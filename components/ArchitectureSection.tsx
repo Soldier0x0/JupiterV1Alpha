@@ -227,7 +227,7 @@ const ArchitectureSection = () => {
           </div>
         </motion.div>
 
-        {/* Key Features */}
+        {/* Architecture Highlights */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -235,33 +235,47 @@ const ArchitectureSection = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">
+          <h3 className="text-2xl font-bold mb-8 text-white">
             Architecture Highlights
           </h3>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 title: 'Scalable & Modular',
-                description: 'Each component can scale independently based on load requirements'
+                description: 'Each component can scale independently based on load requirements',
+                icon: '🔧'
               },
               {
                 title: 'AI-First Design',
-                description: 'Built from ground up with AI/ML capabilities as core components'
+                description: 'Built from ground up with AI/ML capabilities as core components',
+                icon: '🤖'
               },
               {
                 title: 'Zero-Trust Security',
-                description: 'Every component authenticated and encrypted by default'
+                description: 'Every component authenticated and encrypted by default',
+                icon: '🛡️'
               }
             ].map((feature, index) => (
               <motion.div
                 key={feature.title}
-                whileHover={{ y: -5 }}
-                className="bg-white dark:bg-dark-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.02,
+                  boxShadow: '0 10px 40px rgba(237, 118, 17, 0.3)'
+                }}
+                viewport={{ once: true }}
+                className="group bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-jupiter-400/50 transition-all duration-300 cursor-pointer"
               >
-                <h4 className="font-bold text-jupiter-600 dark:text-jupiter-400 mb-2">
+                <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                  {feature.icon}
+                </div>
+                <h4 className="font-bold text-jupiter-400 mb-3 group-hover:text-jupiter-300 transition-colors">
                   {feature.title}
                 </h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                <p className="text-gray-300 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>

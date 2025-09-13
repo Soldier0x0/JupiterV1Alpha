@@ -1,9 +1,13 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Shield, Zap, Brain, Globe, ChevronDown } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ChevronDown, Satellite, Zap, Brain, Shield, Globe, Radar, Orbit } from 'lucide-react'
 
 const HeroSection = () => {
+  const { scrollY } = useScroll()
+  const y = useTransform(scrollY, [0, 1000], [0, -200])
+  const opacity = useTransform(scrollY, [0, 300], [1, 0])
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
@@ -11,84 +15,155 @@ const HeroSection = () => {
     }
   }
 
+  // Space-themed features with cyber/orbital icons
   const features = [
-    { icon: Shield, text: 'Advanced Security', color: 'text-red-500' },
-    { icon: Brain, text: 'AI-Powered Analytics', color: 'text-purple-500' },
-    { icon: Zap, text: 'Real-time Processing', color: 'text-yellow-500' },
-    { icon: Globe, text: 'Global Threat Intelligence', color: 'text-blue-500' },
+    { 
+      icon: Satellite, 
+      text: 'Orbit-Scale Security Visibility', 
+      color: 'text-neon-cyan',
+      glow: 'drop-shadow-[0_0_8px_rgba(0,245,255,0.8)]'
+    },
+    { 
+      icon: Brain, 
+      text: 'AI-Assisted Threat Hunting', 
+      color: 'text-neon-purple',
+      glow: 'drop-shadow-[0_0_8px_rgba(191,0,255,0.8)]'
+    },
+    { 
+      icon: Zap, 
+      text: 'Streaming Detection at Wire Speed', 
+      color: 'text-jupiter-400',
+      glow: 'drop-shadow-[0_0_8px_rgba(237,118,17,0.8)]'
+    },
+    { 
+      icon: Orbit, 
+      text: 'Global Threat Intel Constellations', 
+      color: 'text-neon-green',
+      glow: 'drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]'
+    },
   ]
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-16 px-4">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-16 px-4 overflow-hidden">
+      <motion.div 
+        style={{ y, opacity }}
+        className="max-w-7xl mx-auto text-center relative z-10"
+      >
         {/* Main Hero Content */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 1, delay: 0.3 }}
           className="mb-8"
         >
+          {/* Project Jupiter Title with Cool Fonts */}
           <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-6"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.5 }}
+            className="mb-8"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-jupiter-500 via-jupiter-400 to-jupiter-600 bg-clip-text text-transparent">
-                Project
+            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-audiowide font-bold mb-6 leading-tight">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-jupiter-400 to-neon-purple text-glow animate-fade-in">
+                project
               </span>
-              <br />
-              <span className="bg-gradient-to-r from-cyber-500 via-cyber-400 to-cyber-600 bg-clip-text text-transparent">
+              <motion.span 
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-jupiter-400 via-neon-orange to-neon-pink text-neon"
+                animate={{ 
+                  backgroundImage: [
+                    'linear-gradient(90deg, #ed7611, #ff8500, #ff10f0)',
+                    'linear-gradient(90deg, #00f5ff, #bf00ff, #ed7611)',
+                    'linear-gradient(90deg, #ff8500, #00f5ff, #39ff14)',
+                    'linear-gradient(90deg, #ed7611, #ff8500, #ff10f0)'
+                  ]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+              >
                 Jupiter
-              </span>
+              </motion.span>
             </h1>
-            <div className="w-24 h-1 bg-jupiter-gradient mx-auto mb-6"></div>
+            
+            {/* Orbital ring around title */}
+            <motion.div 
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-neon-cyan/20 rounded-full opacity-40 pointer-events-none"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+            />
           </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-4xl mx-auto leading-relaxed px-4"
+          {/* Subtitle with space theme */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mb-6"
           >
-            Next-Generation <span className="font-semibold text-jupiter-500">SIEM Platform</span>
-            <br />
-            End-to-End Security Information and Event Management
-          </motion.p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-100 mb-4">
+              Orbit-Scale Security Visibility
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 font-rajdhani font-light leading-relaxed max-w-4xl mx-auto">
+              AI-powered analytics and real-time detection,{' '}
+              <span className="text-neon-cyan font-medium">designed for defenders of tomorrow</span>
+            </p>
+          </motion.div>
 
+          {/* Developer attribution */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="text-lg text-gray-500 dark:text-gray-400 mb-8"
+            transition={{ duration: 0.8, delay: 1.0 }}
+            className="text-base text-gray-500 mb-12 font-rajdhani"
           >
-            Designed & Developed by{' '}
-            <span className="font-semibold text-jupiter-500">Harsha Vardhan</span>
+            Engineered by{' '}
+            <span className="font-semibold text-jupiter-400">Harsha Vardhan</span>
             <br />
-            <span className="text-sm">
-              Built with AI collaboration • Started August 2025 • Phase 0 Complete
+            <span className="text-sm text-gray-600">
+              Built with AI collaboration • Phase 0 Complete • Active Development
             </span>
           </motion.div>
         </motion.div>
 
-        {/* Feature Icons */}
+        {/* Feature Icons Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto"
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 max-w-5xl mx-auto"
         >
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="flex flex-col items-center p-6 bg-white/50 dark:bg-dark-800/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 jupiter-glow"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -8,
+                transition: { duration: 0.6, ease: 'easeOut' }
+              }}
+              className="group"
             >
-              <feature.icon size={32} className={`${feature.color} mb-3`} />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                {feature.text}
-              </span>
+              <div className="relative p-6 bg-dark-cosmos/40 backdrop-blur-sm rounded-2xl border border-gray-800 hover:border-neon-cyan/50 transition-all duration-700 cyber-glow hover-slow">
+                {/* Icon with orbital ring */}
+                <div className="relative mb-4 flex justify-center">
+                  <motion.div
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 1, ease: 'easeInOut' }}
+                    className={`w-12 h-12 ${feature.color} ${feature.glow} group-hover:scale-110 transition-all duration-500`}
+                  >
+                    <feature.icon size={48} />
+                  </motion.div>
+                  {/* Orbital ring around icon */}
+                  <div className="absolute inset-0 w-16 h-16 border border-gray-700 group-hover:border-neon-cyan/40 rounded-full -m-2 group-hover:scale-125 transition-all duration-700" />
+                </div>
+                
+                <p className="text-sm font-rajdhani font-medium text-gray-300 group-hover:text-gray-100 text-center leading-relaxed transition-colors duration-500">
+                  {feature.text}
+                </p>
+
+                {/* Hover shimmer effect */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer" />
+              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -97,26 +172,40 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+          transition={{ duration: 0.8, delay: 1.6 }}
+          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20"
         >
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.05, 
+              boxShadow: '0 0 40px rgba(0, 245, 255, 0.6), 0 0 80px rgba(0, 245, 255, 0.3)' 
+            }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.6 }}
             onClick={() => scrollToSection('architecture')}
-            className="px-8 py-4 bg-jupiter-gradient text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 jupiter-glow"
+            className="group relative px-10 py-4 bg-gradient-to-r from-neon-cyan to-neon-purple text-dark-void font-orbitron font-bold text-lg rounded-full shadow-2xl hover:shadow-neon-cyan/50 transition-all duration-600 overflow-hidden"
           >
-            Explore Architecture
+            <span className="relative z-10">Explore Architecture</span>
+            {/* Button glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-purple opacity-0 group-hover:opacity-20 transition-opacity duration-600" />
           </motion.button>
+          
           <motion.a
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.05,
+              borderColor: 'rgba(0, 245, 255, 1)',
+              boxShadow: '0 0 30px rgba(0, 245, 255, 0.4)'
+            }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.6 }}
             href="https://github.com/Soldier0x0/JupiterEmerge"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 border-2 border-jupiter-500 text-jupiter-500 hover:bg-jupiter-500 hover:text-white rounded-full font-semibold transition-all duration-300"
+            className="group px-10 py-4 border-2 border-neon-cyan/60 text-neon-cyan hover:text-dark-void hover:bg-neon-cyan font-orbitron font-bold text-lg rounded-full transition-all duration-600 relative overflow-hidden"
           >
-            View on GitHub
+            <span className="relative z-10">View on GitHub</span>
+            {/* Fill effect on hover */}
+            <div className="absolute inset-0 bg-neon-cyan transform translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
           </motion.a>
         </motion.div>
 
@@ -124,35 +213,28 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.3 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer"
+          transition={{ duration: 1, delay: 2 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer group"
           onClick={() => scrollToSection('architecture')}
         >
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="flex flex-col items-center text-gray-400 dark:text-gray-500 hover:text-jupiter-500 transition-colors duration-300"
+            animate={{ y: [0, 15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="flex flex-col items-center text-gray-400 group-hover:text-neon-cyan transition-colors duration-500"
           >
-            <span className="text-sm mb-2">Scroll to explore</span>
-            <ChevronDown size={24} />
+            <span className="text-sm font-rajdhani mb-2 group-hover:text-glow">Navigate to Mission Control</span>
+            <div className="relative">
+              <ChevronDown size={24} className="group-hover:drop-shadow-[0_0_8px_rgba(0,245,255,0.8)]" />
+              <div className="absolute inset-0 w-8 h-8 border border-neon-cyan/30 rounded-full -m-2 group-hover:border-neon-cyan/80 transition-colors duration-500" />
+            </div>
           </motion.div>
         </motion.div>
 
-        {/* Jupiter Planet Animation */}
-        <motion.div
-          className="absolute top-20 right-10 w-32 h-32 opacity-20 pointer-events-none hidden lg:block"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            rotate: { duration: 20, repeat: Infinity, ease: 'linear' },
-            scale: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        >
-          <div className="w-full h-full bg-jupiter-gradient rounded-full shadow-2xl opacity-60"></div>
-        </motion.div>
-      </div>
+        {/* Background decorative elements */}
+        <div className="absolute top-1/4 right-10 w-2 h-2 bg-neon-cyan rounded-full animate-twinkle opacity-60" />
+        <div className="absolute top-1/3 left-10 w-1 h-1 bg-jupiter-400 rounded-full animate-twinkle opacity-40" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-1.5 h-1.5 bg-neon-purple rounded-full animate-twinkle opacity-50" style={{ animationDelay: '2s' }} />
+      </motion.div>
     </section>
   )
 }

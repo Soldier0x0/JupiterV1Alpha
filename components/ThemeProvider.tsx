@@ -24,9 +24,6 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   attribute = 'class',
-  defaultTheme = 'system',
-  enableSystem = true,
-  disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
   const [theme] = useState<Theme>('dark')
@@ -37,7 +34,7 @@ export function ThemeProvider({
     root.classList.add('dark')
   }, [])
 
-  const value = {
+  const value: ThemeProviderState = {
     theme: 'dark',
     setTheme: () => {},
   }

@@ -217,8 +217,7 @@ const Footer = () => {
                 </p>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
       </div>
     </div>
   )

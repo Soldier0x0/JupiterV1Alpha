@@ -118,12 +118,12 @@ const TechStackSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
               viewport={{ once: true }}
-              className="bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-jupiter-400/50 transition-all duration-300"
+              className="bg-white dark:bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover:border-jupiter-400/50 transition-all duration-300 shadow-lg"
             >
               {/* Category Header */}
               <div className="flex items-center mb-6">
-                <category.icon size={20} className="text-jupiter-400 mr-3" />
-                <h3 className="text-lg font-semibold text-white">
+                <category.icon size={20} className="text-jupiter-500 dark:text-jupiter-400 mr-3" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {category.category}
                 </h3>
               </div>
@@ -138,15 +138,15 @@ const TechStackSection = () => {
                     transition={{ duration: 0.3, delay: (categoryIndex * 0.1) + (techIndex * 0.05) }}
                     viewport={{ once: true }}
                     whileHover={{ scale: 1.05, y: -2 }}
-                    className="group bg-dark-deep/50 rounded-lg p-3 hover:bg-dark-deep transition-all duration-200 cursor-pointer"
+                    className="group bg-gray-50 dark:bg-dark-deep/50 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-dark-deep transition-all duration-200 cursor-pointer"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-lg">{tech.icon}</span>
-                      <span className="font-medium text-gray-200 text-sm group-hover:text-jupiter-400 transition-colors">
+                      <span className="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-jupiter-500 dark:group-hover:text-jupiter-400 transition-colors">
                         {tech.name}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                       {tech.description}
                     </p>
                   </motion.div>

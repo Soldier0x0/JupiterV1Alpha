@@ -159,9 +159,9 @@ const ArchitectureSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-dark-cosmos/30 backdrop-blur-sm rounded-2xl p-8 mb-12 border border-gray-800"
+          className="bg-white dark:bg-dark-cosmos/30 backdrop-blur-sm rounded-2xl p-8 mb-12 border border-gray-200 dark:border-gray-800 shadow-lg"
         >
-          <h3 className="text-2xl font-bold text-center mb-8 text-white">
+          <h3 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">
             Data Flow Architecture
           </h3>
           
@@ -196,18 +196,18 @@ const ArchitectureSection = () => {
               <div key={stage.name} className="flex items-center">
                 <motion.div
                   whileHover={{ scale: 1.1, y: -5 }}
-                  className="group relative bg-dark-deep border border-gray-700 hover:border-jupiter-400 rounded-xl p-4 shadow-lg transition-all duration-300 cursor-pointer"
+                  className="group relative bg-gray-50 dark:bg-dark-deep border border-gray-300 dark:border-gray-700 hover:border-jupiter-500 dark:hover:border-jupiter-400 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
                   title={stage.tooltip}
                 >
                   <div className="flex flex-col items-center space-y-2">
                     <span className="text-2xl">{stage.icon}</span>
-                    <span className="text-sm font-medium text-gray-300 group-hover:text-jupiter-400 transition-colors text-center">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-jupiter-600 dark:group-hover:text-jupiter-400 transition-colors text-center">
                       {stage.name}
                     </span>
                   </div>
                   
                   {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-dark-void text-xs text-gray-300 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-dark-void text-xs text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                     {stage.tooltip}
                   </div>
                 </motion.div>
@@ -216,7 +216,7 @@ const ArchitectureSection = () => {
                   <motion.div
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
-                    className="hidden md:block mx-3 text-jupiter-400"
+                    className="hidden md:block mx-3 text-jupiter-500 dark:text-jupiter-400"
                   >
                     <ChevronRight size={20} />
                   </motion.div>

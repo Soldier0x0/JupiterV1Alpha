@@ -33,7 +33,7 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         className="relative z-10"
       >
-        <HeroSection />
+        <SimpleHeroSection />
         <ArchitectureSection />
         <TechStackSection />
         <DevelopmentPhases />

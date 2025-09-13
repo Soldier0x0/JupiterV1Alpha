@@ -40,7 +40,7 @@ export default function Home() {
         <ContactSection />
       </motion.div>
       
-      <Footer />
+      {/* <Footer /> */}
     </main>
   )
 }

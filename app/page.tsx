@@ -23,8 +23,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white dark:bg-dark-950 transition-colors duration-300">
-      <BackgroundEffects />
+    <main className="min-h-screen bg-dark-void transition-colors duration-300">
+      <JupiterBackground />
       <Header />
       
       <motion.div

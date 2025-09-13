@@ -3,117 +3,32 @@
 import { useEffect, useRef } from 'react'
 
 export const JupiterBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const jupiterRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    // Set canvas size
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
-
-    // Stars animation
-    const stars: Array<{
-      x: number
-      y: number
-      size: number
-      opacity: number
-      twinkleSpeed: number
-      twinkleOffset: number
-    }> = []
-
-    // Create stars
-    for (let i = 0; i < 200; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.8 + 0.2,
-        twinkleSpeed: Math.random() * 0.02 + 0.01,
-        twinkleOffset: Math.random() * Math.PI * 2
-      })
-    }
-
-    let time = 0
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      
-      // Draw deep space gradient
-      const gradient = ctx.createRadialGradient(
-        canvas.width / 2, canvas.height / 2, 0,
-        canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
-      )
-      gradient.addColorStop(0, '#0a0a0f')
-      gradient.addColorStop(0.5, '#000510')
-      gradient.addColorStop(1, '#000000')
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      // Draw twinkling stars
-      stars.forEach((star, index) => {
-        const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * 0.3 + 0.7
-        ctx.beginPath()
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(0, 245, 255, ${star.opacity * twinkle})`
-        ctx.fill()
-
-        // Add glow effect for larger stars
-        if (star.size > 1.5) {
-          ctx.beginPath()
-          ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(0, 245, 255, ${star.opacity * twinkle * 0.1})`
-          ctx.fill()
-        }
-      })
-
-      // Draw orbital rings around Jupiter position
-      const jupiterElement = jupiterRef.current
-      if (jupiterElement) {
-        const rect = jupiterElement.getBoundingClientRect()
-        const centerX = rect.left + rect.width / 2 + window.scrollX
-        const centerY = rect.top + rect.height / 2 + window.scrollY
-        
-        if (centerX > -100 && centerX < canvas.width + 100 && centerY > -100 && centerY < canvas.height + 100) {
-          // Draw orbital rings
-          for (let i = 1; i <= 3; i++) {
-            ctx.beginPath()
-            ctx.arc(centerX, centerY, 80 + i * 20, 0, Math.PI * 2)
-            ctx.strokeStyle = `rgba(237, 118, 17, ${0.1 + Math.sin(time * 0.01 + i) * 0.05})`
-            ctx.lineWidth = 1
-            ctx.stroke()
-          }
-        }
-      }
-
-      time += 1
-      requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
-    }
-  }, [])
-
   return (
     <>
-      {/* WebGL-style background canvas */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 z-0 pointer-events-none"
-        style={{ background: 'transparent' }}
-      />
+      {/* Simplified space background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Deep space gradient */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse at center, #0d1117 0%, #020617 50%, #000411 100%)'
+          }}
+        />
+        
+        {/* Static stars */}
+        {[...Array(100)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-60 animate-twinkle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
       
       {/* Realistic Jupiter Planet - positioned in top-left */}
       <div

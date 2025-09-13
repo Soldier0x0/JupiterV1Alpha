@@ -74,23 +74,26 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-dark-cosmos/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-800 h-fit"
+            className="bg-white dark:bg-dark-cosmos/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-800 h-fit shadow-lg"
           >
             {/* Profile Header */}
             <div className="flex items-center mb-8">
-              <div className="w-20 h-20 bg-jupiter-gradient rounded-full flex items-center justify-center mr-6 shadow-lg">
-                <span className="text-white font-bold text-2xl">HV</span>
+              <div className="w-20 h-20 bg-jupiter-gradient rounded-full flex items-center justify-center mr-6 shadow-lg relative">
+                {/* Project Jupiter Logo/Emblem */}
+                <div className="text-white text-center">
+                  <div className="text-lg font-bold">PJ</div>
+                  <div className="w-8 h-0.5 bg-white/60 rounded-full mt-1"></div>
+                </div>
+                {/* Orbital ring */}
+                <div className="absolute inset-0 border-2 border-jupiter-300/30 rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white mb-1">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                   {contactInfo.name}
                 </h3>
-                <p className="text-jupiter-400 font-medium">
+                <p className="text-jupiter-600 dark:text-jupiter-400 font-medium">
                   Cybersecurity Engineer | AI Security Architect
                 </p>
-                <div className="mt-2 px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full inline-block">
-                  Open for Collaboration
-                </div>
               </div>
             </div>
 
@@ -99,19 +102,19 @@ const ContactSection = () => {
               <motion.a
                 href={`mailto:${contactInfo.email}`}
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-deep transition-all duration-200 group"
+                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-deep transition-all duration-200 group"
               >
-                <Mail size={18} className="text-jupiter-400" />
-                <span className="text-gray-300 group-hover:text-white transition-colors">
+                <Mail size={18} className="text-jupiter-500 dark:text-jupiter-400" />
+                <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                   {contactInfo.email}
                 </span>
               </motion.a>
 
               <div className="flex items-center space-x-3 p-3">
-                <MapPin size={18} className="text-jupiter-400" />
+                <MapPin size={18} className="text-jupiter-500 dark:text-jupiter-400" />
                 <div>
-                  <span className="text-gray-300">{contactInfo.location}</span>
-                  <span className="text-gray-500 text-sm ml-2">({contactInfo.timezone})</span>
+                  <span className="text-gray-700 dark:text-gray-300">{contactInfo.location}</span>
+                  <span className="text-gray-500 dark:text-gray-500 text-sm ml-2">({contactInfo.timezone})</span>
                 </div>
               </div>
             </div>
@@ -125,7 +128,7 @@ const ContactSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
-                  className={`w-12 h-12 rounded-full bg-dark-deep border border-gray-700 hover:border-jupiter-400 flex items-center justify-center transition-all duration-200 group ${social.color}`}
+                  className={`w-12 h-12 rounded-full bg-gray-100 dark:bg-dark-deep border border-gray-300 dark:border-gray-700 hover:border-jupiter-500 dark:hover:border-jupiter-400 flex items-center justify-center transition-all duration-200 group ${social.color}`}
                 >
                   <social.icon size={20} className="group-hover:scale-110 transition-transform" />
                 </motion.a>
@@ -142,8 +145,8 @@ const ContactSection = () => {
             className="space-y-8"
           >
             {/* Project Status Timeline */}
-            <div className="bg-dark-cosmos/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-800">
-              <h4 className="text-xl font-bold text-white mb-6">
+            <div className="bg-white dark:bg-dark-cosmos/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-lg">
+              <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
                 Project Status Timeline
               </h4>
               <div className="space-y-4">
@@ -155,15 +158,15 @@ const ContactSection = () => {
                   <div key={item.phase} className="flex items-center space-x-4">
                     <span className="text-2xl">{item.icon}</span>
                     <div>
-                      <div className="text-jupiter-400 font-medium">{item.phase}</div>
-                      <div className="text-gray-300 text-sm">{item.status}</div>
+                      <div className="text-jupiter-600 dark:text-jupiter-400 font-medium">{item.phase}</div>
+                      <div className="text-gray-700 dark:text-gray-300 text-sm">{item.status}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTAs */}
+            {/* CTA */}
             <div className="space-y-4">
               <motion.a
                 href={`mailto:${contactInfo.email}?subject=Project Jupiter Inquiry`}
@@ -174,22 +177,10 @@ const ContactSection = () => {
                 <Send size={20} />
                 <span>Send Email</span>
               </motion.a>
-              
-              <motion.a
-                href={contactInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center space-x-2 w-full px-8 py-4 border-2 border-jupiter-400 text-jupiter-400 hover:bg-jupiter-400 hover:text-dark-void rounded-xl font-semibold transition-all duration-300"
-              >
-                <Github size={20} />
-                <span>View Repository</span>
-              </motion.a>
             </div>
 
             {/* Caption */}
-            <p className="text-center text-gray-400 text-sm">
+            <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
               Follow Project Jupiter's journey into next-gen SIEM.
             </p>
           </motion.div>

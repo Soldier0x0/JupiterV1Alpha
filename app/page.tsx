@@ -9,7 +9,7 @@ import DevelopmentPhases from '@/components/DevelopmentPhases'
 import ContactSection from '@/components/ContactSection'
 import Header from '@/components/Header'
 // import Footer from '@/components/Footer'
-import { BackgroundEffects } from '@/components/BackgroundEffects'
+import { JupiterBackground } from '@/components/JupiterBackground'
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)

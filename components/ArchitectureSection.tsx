@@ -82,13 +82,13 @@ const ArchitectureSection = () => {
 
         {/* View Toggle */}
         <div className="flex justify-center mb-8">
-          <div className="bg-dark-deep border border-gray-700 rounded-full p-1 flex">
+          <div className="bg-gray-100 dark:bg-dark-deep border border-gray-300 dark:border-gray-700 rounded-full p-1 flex">
             <button
               onClick={() => setShowDetailed(false)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 !showDetailed 
                   ? 'bg-jupiter-500 text-white shadow-lg' 
-                  : 'text-gray-400 hover:text-gray-200'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
             >
               Simple
@@ -98,7 +98,7 @@ const ArchitectureSection = () => {
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 showDetailed 
                   ? 'bg-jupiter-500 text-white shadow-lg' 
-                  : 'text-gray-400 hover:text-gray-200'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
             >
               Detailed
@@ -116,7 +116,7 @@ const ArchitectureSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -5, scale: 1.02 }}
-              className="group bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-jupiter-400/50 transition-all duration-300"
+              className="group bg-white dark:bg-dark-cosmos/40 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover:border-jupiter-500 dark:hover:border-jupiter-400/50 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               {/* Icon and Title */}
               <div className="flex items-start space-x-4 mb-4">
@@ -124,10 +124,10 @@ const ArchitectureSection = () => {
                   <component.icon size={24} className="text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-jupiter-300 transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-jupiter-600 dark:group-hover:text-jupiter-300 transition-colors">
                     {component.title}
                   </h3>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-700 dark:text-gray-400 text-sm">
                     {showDetailed ? component.details : component.description}
                   </p>
                 </div>
@@ -138,13 +138,13 @@ const ArchitectureSection = () => {
                 {component.technologies.slice(0, showDetailed ? 4 : 2).map((tech, techIndex) => (
                   <span
                     key={techIndex}
-                    className="px-2 py-1 bg-dark-deep text-gray-300 text-xs rounded-md border border-gray-700"
+                    className="px-2 py-1 bg-gray-100 dark:bg-dark-deep text-gray-700 dark:text-gray-300 text-xs rounded-md border border-gray-300 dark:border-gray-700"
                   >
                     {tech}
                   </span>
                 ))}
                 {!showDetailed && component.technologies.length > 2 && (
-                  <span className="px-2 py-1 text-gray-500 text-xs">
+                  <span className="px-2 py-1 text-gray-500 dark:text-gray-500 text-xs">
                     +{component.technologies.length - 2} more
                   </span>
                 )}

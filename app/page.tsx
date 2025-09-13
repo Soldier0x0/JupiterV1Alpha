@@ -8,7 +8,7 @@ import TechStackSection from '@/components/TechStackSection'
 import DevelopmentPhases from '@/components/DevelopmentPhases'
 import ContactSection from '@/components/ContactSection'
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+// import Footer from '@/components/Footer'
 import { BackgroundEffects } from '@/components/BackgroundEffects'
 
 export default function Home() {

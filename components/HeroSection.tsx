@@ -279,7 +279,7 @@ const HeroSection = () => {
           text-orientation: mixed;
         }
       `}</style>
-    </section>
+    </div>
   )
 }
 

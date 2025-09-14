@@ -145,7 +145,7 @@ const HeroSection = () => {
                 <span className="text-cyan-400 font-medium">orbit-scale visibility</span>
                 {' '}and AI-powered threat detection
               </p>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Stats display - Terminal style */}

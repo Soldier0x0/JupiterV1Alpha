@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Mail, Github, Linkedin, Twitter, MapPin, Calendar, ExternalLink, Send } from 'lucide-react'
 
 const ContactSection = () => {
@@ -80,10 +81,14 @@ const ContactSection = () => {
             <div className="flex items-center mb-8">
               <div className="w-20 h-20 rounded-full flex items-center justify-center mr-6 shadow-lg relative overflow-hidden bg-jupiter-gradient">
                 {/* Avatar image replacing PJ icon */}
-                <img
+                <Image
                   src="/mypic.jpg"
-                  alt="Harsha Vardhan"
+                  alt="Harsha Vardhan profile photo"
+                  width={80}
+                  height={80}
                   className="w-full h-full object-cover rounded-full border-2 border-jupiter-300"
+                  aria-label="Profile photo of Harsha Vardhan"
+                  priority
                 />
                 {/* Orbital ring */}
                 <div className="absolute inset-0 border-2 border-jupiter-300/30 rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>

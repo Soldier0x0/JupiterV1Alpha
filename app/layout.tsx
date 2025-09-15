@@ -53,6 +53,24 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Harsha Vardhan",
+              "url": "https://projectjupiter.in",
+              "image": "https://projectjupiter.in/mypic.jpg",
+              "jobTitle": "Cybersecurity Engineer | AI Security Architect",
+              "sameAs": [
+                "https://github.com/Soldier0x0",
+                "https://www.linkedin.com/in/sai-harsha-vardhan/",
+                "https://twitter.com/Soldier0x00"
+              ]
+            })
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider attribute="class">

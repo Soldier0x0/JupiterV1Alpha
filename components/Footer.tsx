@@ -197,7 +197,7 @@ const Footer = () => {
                   PROJECT STATUS
                 </span>
                 <p className="text-sm text-jupiter-500 font-semibold">
-                  Phase 0 Complete • Active Development
+                  Phase 0 Complete (Blueprinting) • Active Development
                 </p>
               </div>
               <div>

@@ -13,7 +13,7 @@ const Footer = () => {
         { name: 'Architecture', href: '#architecture' },
         { name: 'Tech Stack', href: '#tech-stack' },
         { name: 'Development', href: '#development' },
-        { name: 'GitHub Repository', href: 'https://github.com/Soldier0x0/JupiterEmerge', external: true }
+  // { name: 'GitHub Repository', href: 'https://github.com/Soldier0x0/JupiterEmerge', external: true } // Temporarily hidden
       ]
     },
     {

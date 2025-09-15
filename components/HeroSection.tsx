@@ -243,7 +243,8 @@ const HeroSection = () => {
           ))}
         </div>
 
-        {/* Bottom right - GitHub link */}
+        {/*
+        Bottom right - GitHub link
         <motion.a
           href="https://github.com/Soldier0x0/JupiterEmerge"
           target="_blank"
@@ -255,6 +256,7 @@ const HeroSection = () => {
         >
           view_source.git →
         </motion.a>
+        */}
 
         {/* Scroll indicator - Minimal */}
         <motion.div

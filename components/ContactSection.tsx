@@ -78,12 +78,13 @@ const ContactSection = () => {
           >
             {/* Profile Header */}
             <div className="flex items-center mb-8">
-              <div className="w-20 h-20 bg-jupiter-gradient rounded-full flex items-center justify-center mr-6 shadow-lg relative">
-                {/* Project Jupiter Logo/Emblem */}
-                <div className="text-white text-center">
-                  <div className="text-lg font-bold">PJ</div>
-                  <div className="w-8 h-0.5 bg-white/60 rounded-full mt-1"></div>
-                </div>
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mr-6 shadow-lg relative overflow-hidden bg-jupiter-gradient">
+                {/* Avatar image replacing PJ icon */}
+                <img
+                  src="/mypic.jpg"
+                  alt="Harsha Vardhan"
+                  className="w-full h-full object-cover rounded-full border-2 border-jupiter-300"
+                />
                 {/* Orbital ring */}
                 <div className="absolute inset-0 border-2 border-jupiter-300/30 rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
               </div>

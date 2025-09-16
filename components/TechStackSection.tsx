@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Code, Database, Cloud, Zap, Shield, Brain, Cpu, Globe } from 'lucide-react'
+import { Code, Database, Cloud, Zap, Shield, Brain, Cpu, Globe, BarChart } from 'lucide-react'
 
 const TechStackSection = () => {
   const techCategories = [
@@ -9,7 +9,7 @@ const TechStackSection = () => {
       category: 'Backend',
       icon: Code,
       technologies: [
-        { name: 'Python', description: 'Core backend logic and AI pipeline integration', icon: '🐍' },
+        { name: 'Python', description: 'Core backend logic and AI integration', icon: '🐍' },
         { name: 'Go', description: 'High-performance event and log processing', icon: '⚡' },
         { name: 'Rust', description: 'Critical path optimization for low-latency tasks', icon: '🦀' },
         { name: 'FastAPI', description: 'Lightweight API framework for microservices', icon: '🚀' }
@@ -52,24 +52,30 @@ const TechStackSection = () => {
         { name: 'Docker', description: 'Containerization platform for services', icon: '🐳' },
         { name: 'Kubernetes', description: 'Scalable orchestration for containers', icon: '☸️' },
         { name: 'Azure', description: 'Always-free tier cloud infrastructure', icon: '☁️' },
-        { name: 'Cloudflare', description: 'Domain, DNS, and DDoS protection', icon: '🛡️' }
+        { name: 'Cloudflare', description: 'Domain, CDN, and DDoS protection', icon: '🛡️' }
       ]
     },
     {
-      category: 'Security & Monitoring',
-      icon: Shield,
+      category: 'Monitoring & Observability',
+      icon: BarChart,
       technologies: [
         { name: 'Prometheus', description: 'System metrics collection & alerts', icon: '📊' },
         { name: 'Loki', description: 'Log aggregation & query engine', icon: '📝' },
         { name: 'Grafana', description: 'Dashboards for observability', icon: '📈' },
-        { name: 'Apache NiFi', description: 'Data flow ingestion & orchestration', icon: '🌊' },
-  { name: 'Keycloak', description: 'Authentication & RBAC for multi-tenancy', icon: '🔑' },
-  { name: 'n8n', description: 'SOAR workflows for automated response', icon: '⚙️' },
-  { name: 'MISP', description: 'Threat intelligence platform integration', icon: '🛰️' },
-  { name: 'OpenCTI', description: 'Cyber threat intelligence management', icon: '🌐' }
+        { name: 'Apache NiFi', description: 'Data flow ingestion & orchestration', icon: '🌊' }
+      ]
+    },
+    {
+      category: 'Security & Threat Intel',
+      icon: Shield,
+      technologies: [
+        { name: 'Keycloak', description: 'Authentication & RBAC for multi-tenancy', icon: '🔑' },
+        { name: 'n8n', description: 'SOAR workflows for automated response', icon: '⚙️' },
+        { name: 'MISP', description: 'Threat intelligence platform integration', icon: '🛰️' },
+        { name: 'OpenCTI', description: 'Cyber threat intelligence management', icon: '🌐' }
       ]
     }
-  ]
+  ];
 
   const aiCollaboration = [
     {

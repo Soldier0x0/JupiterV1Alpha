@@ -109,7 +109,7 @@ const Header = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => scrollToSection(item.id)}
+                  onClick={() => item.id && scrollToSection(item.id)}
                   className="block w-full text-left font-mono text-sm text-gray-400 hover:text-cyan-400 py-2 transition-colors"
                 >
                   {item.name}

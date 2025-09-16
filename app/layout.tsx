@@ -53,6 +53,13 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Open Graph meta tags for social media previews */}
+        <meta property="og:title" content="Welcome to Project Jupiter" />
+        <meta property="og:description" content="Explore the SIEM tool and tech behind it" />
+        <meta property="og:image" content="/Jupiter-removebg-preview.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://projectjupiter.in" />
+        {/* JSON-LD structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

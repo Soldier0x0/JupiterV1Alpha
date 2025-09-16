@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Database, Cloud, Shield, Zap, Brain, Network, ChevronRight, Eye, EyeOff } from 'lucide-react'
 
 const ArchitectureSection = () => {
-  const [showDetailed, setShowDetailed] = useState(false)
+  // Always show detailed info for all components
 
   const architectureComponents = [
     {
@@ -104,14 +104,14 @@ const ArchitectureSection = () => {
                     {component.title}
                   </h3>
                   <p className="text-gray-700 dark:text-gray-400 text-sm">
-                    {showDetailed ? component.details : component.description}
+                    {component.details}
                   </p>
                 </div>
               </div>
 
               {/* Technologies */}
               <div className="flex flex-wrap gap-2">
-                {component.technologies.slice(0, showDetailed ? 4 : 2).map((tech, techIndex) => (
+                {component.technologies.map((tech, techIndex) => (
                   <span
                     key={techIndex}
                     className="px-2 py-1 bg-gray-100 dark:bg-dark-deep text-gray-700 dark:text-gray-300 text-xs rounded-md border border-gray-300 dark:border-gray-700"
@@ -119,11 +119,6 @@ const ArchitectureSection = () => {
                     {tech}
                   </span>
                 ))}
-                {!showDetailed && component.technologies.length > 2 && (
-                  <span className="px-2 py-1 text-gray-500 dark:text-gray-500 text-xs">
-                    +{component.technologies.length - 2} more
-                  </span>
-                )}
               </div>
             </motion.div>
           ))}

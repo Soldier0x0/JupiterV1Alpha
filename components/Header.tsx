@@ -31,7 +31,8 @@ const Header = () => {
     { name: 'TECH', id: 'tech-stack' },
     { name: 'DEV', id: 'development' },
     { name: 'CONTACT', id: 'contact' },
-  ]
+      { name: 'BLOG', external: true, url: 'https://blog.projectjupiter.in' },
+    ]
 
   return (
     <motion.header
@@ -71,7 +72,7 @@ const Header = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
                 whileHover={{ y: -2 }}
-                onClick={() => scrollToSection(item.id)}
+                  onClick={() => item.external ? window.open(item.url, '_blank') : item.id && scrollToSection(item.id)}
                 className="font-mono text-xs text-gray-500 hover:text-cyan-400 transition-colors duration-300 tracking-wider"
               >
                 {item.name}

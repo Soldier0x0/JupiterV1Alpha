@@ -9,60 +9,64 @@ const TechStackSection = () => {
       category: 'Backend',
       icon: Code,
       technologies: [
-        { name: 'Python', description: 'Core backend logic and AI integration', icon: '🐍' },
-        { name: 'Go', description: 'High-performance data processing', icon: '⚡' },
-        { name: 'Rust', description: 'Critical path optimization', icon: '🦀' },
-        { name: 'FastAPI', description: 'API framework for microservices', icon: '🚀' }
+        { name: 'Python', description: 'Core backend logic and AI pipeline integration', icon: '🐍' },
+        { name: 'Go', description: 'High-performance event and log processing', icon: '⚡' },
+        { name: 'Rust', description: 'Critical path optimization for low-latency tasks', icon: '🦀' },
+        { name: 'FastAPI', description: 'Lightweight API framework for microservices', icon: '🚀' }
       ]
     },
     {
       category: 'Frontend',
       icon: Globe,
       technologies: [
-        { name: 'React', description: 'Modern UI framework', icon: '⚛️' },
-        { name: 'TypeScript', description: 'Type-safe development', icon: '📘' },
-        { name: 'Next.js', description: 'Full-stack React framework', icon: '▲' },
-        { name: 'Tailwind CSS', description: 'Utility-first styling', icon: '🎨' }
+        { name: 'React', description: 'Modern UI for dashboards and controls', icon: '⚛️' },
+        { name: 'TypeScript', description: 'Type-safe, maintainable development', icon: '📘' },
+        { name: 'Next.js', description: 'Full-stack React framework powering the landing page', icon: '▲' },
+        { name: 'Tailwind CSS', description: 'Utility-first styling for responsive UI', icon: '🎨' }
       ]
     },
     {
       category: 'Data & Storage',
       icon: Database,
       technologies: [
-        { name: 'PostgreSQL', description: 'Primary relational database', icon: '🐘' },
-        { name: 'TimescaleDB', description: 'Time-series data optimization', icon: '⏰' },
-        { name: 'OpenSearch', description: 'Log analytics and search', icon: '🔍' },
-        { name: 'MinIO', description: 'Object storage solution', icon: '💾' }
+        { name: 'PostgreSQL', description: 'Relational database for core data', icon: '🐘' },
+        { name: 'TimescaleDB', description: 'Optimized time-series log storage', icon: '⏰' },
+        { name: 'OpenSearch', description: 'Full-text search & log analytics', icon: '🔍' },
+        { name: 'MinIO', description: 'S3-compatible object storage', icon: '💾' }
       ]
     },
     {
       category: 'AI & ML',
       icon: Brain,
       technologies: [
-        { name: 'Langflow AI', description: 'AI workflow orchestration', icon: '🧠' },
-        { name: 'OpenAI API', description: 'Large language model integration', icon: '🤖' },
-        { name: 'Ollama', description: 'Local LLM deployment', icon: '🦙' },
-        { name: 'Vector Search', description: 'Similarity and pattern matching', icon: '🎯' }
+        { name: 'Langflow AI', description: 'Visual AI orchestration for workflows', icon: '🧠' },
+        { name: 'OpenAI API', description: 'LLM integration for analytics & detection', icon: '🤖' },
+        { name: 'Ollama', description: 'Local deployment of LLM models', icon: '🦙' },
+        { name: 'Vector Search', description: 'Similarity & anomaly detection engine', icon: '🎯' }
       ]
     },
     {
       category: 'Infrastructure',
       icon: Cloud,
       technologies: [
-        { name: 'Docker', description: 'Containerization platform', icon: '🐳' },
-        { name: 'Kubernetes', description: 'Container orchestration', icon: '☸️' },
-        { name: 'Azure', description: 'Cloud infrastructure', icon: '☁️' },
-        { name: 'Cloudflare', description: 'CDN and security', icon: '🛡️' }
+        { name: 'Docker', description: 'Containerization platform for services', icon: '🐳' },
+        { name: 'Kubernetes', description: 'Scalable orchestration for containers', icon: '☸️' },
+        { name: 'Azure', description: 'Always-free tier cloud infrastructure', icon: '☁️' },
+        { name: 'Cloudflare', description: 'Domain, DNS, and DDoS protection', icon: '🛡️' }
       ]
     },
     {
       category: 'Security & Monitoring',
       icon: Shield,
       technologies: [
-        { name: 'Prometheus', description: 'Metrics collection and monitoring', icon: '📊' },
-        { name: 'Loki', description: 'Log aggregation system', icon: '📝' },
-        { name: 'Grafana', description: 'Observability dashboards', icon: '📈' },
-        { name: 'Apache NiFi', description: 'Data flow management', icon: '🌊' }
+        { name: 'Prometheus', description: 'System metrics collection & alerts', icon: '📊' },
+        { name: 'Loki', description: 'Log aggregation & query engine', icon: '📝' },
+        { name: 'Grafana', description: 'Dashboards for observability', icon: '📈' },
+        { name: 'Apache NiFi', description: 'Data flow ingestion & orchestration', icon: '🌊' },
+  { name: 'Keycloak', description: 'Authentication & RBAC for multi-tenancy', icon: '🔑' },
+  { name: 'n8n', description: 'SOAR workflows for automated response', icon: '⚙️' },
+  { name: 'MISP', description: 'Threat intelligence platform integration', icon: '🛰️' },
+  { name: 'OpenCTI', description: 'Cyber threat intelligence management', icon: '🌐' }
       ]
     }
   ]

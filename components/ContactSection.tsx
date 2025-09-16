@@ -37,12 +37,26 @@ const ContactSection = () => {
       icon: Twitter,
       color: 'hover:text-blue-400',
       description: 'Follow for project updates'
+    },
+    {
+      name: 'Medium',
+      url: 'https://soldier0x00.medium.com/list/project-jupiter-06668321e4c7',
+      icon: ExternalLink,
+      color: 'hover:text-green-600',
+      description: 'Follow my Project Jupiter journey on Medium'
+    },
+    {
+      name: 'Hashnode',
+      url: 'https://blog.projectjupiter.in',
+      icon: ExternalLink,
+      color: 'hover:text-purple-600',
+      description: 'Read my journey on Hashnode'
     }
   ]
 
   const projectStats = [
     { label: 'Project Start', value: 'August 2025' },
-    { label: 'Current Phase', value: 'Phase 0 Complete' },
+  { label: 'Current Phase', value: 'Phase 0 (Requirements Gathering & Blueprinting) Complete' },
     { label: 'Development Status', value: 'Active Development' },
     { label: 'Next Milestone', value: 'Infrastructure Setup' }
   ]
@@ -98,7 +112,7 @@ const ContactSection = () => {
                   {contactInfo.name}
                 </h3>
                 <p className="text-jupiter-600 dark:text-jupiter-400 font-medium">
-                  Cybersecurity Engineer | AI Security Architect
+                  Cybersecurity Engineer | AI Security Enthusiast
                 </p>
               </div>
             </div>
@@ -158,7 +172,7 @@ const ContactSection = () => {
               <div className="space-y-4">
                 {[
                   { phase: 'Start', status: 'August 2025', icon: '🚀' },
-                  { phase: 'Current Phase', status: 'Phase 0 Complete', icon: '✅' },
+                  { phase: 'Current Phase', status: 'Phase 0 (Requirements Gathering & Blueprinting) Complete', icon: '✅' },
                   { phase: 'Next Milestone', status: 'Infrastructure Setup', icon: '⏳' }
                 ].map((item, index) => (
                   <div key={item.phase} className="flex items-center space-x-4">

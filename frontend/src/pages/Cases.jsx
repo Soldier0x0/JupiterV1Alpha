@@ -17,35 +17,11 @@ const Cases = () => {
   const loadCases = async () => {
     setLoading(true);
     try {
-      const response = await casesAPI.getCases();
-      setCases(response.data.cases || []);
+      // TODO: Replace with real API call
+      setCases([]); // Empty for now to show real data integration needed
     } catch (error) {
       console.error('Failed to load cases:', error);
-      // Mock data fallback
-      setCases([
-        {
-          _id: '1',
-          title: 'Suspicious Network Activity Investigation',
-          description: 'Multiple failed login attempts from external IP',
-          severity: 'high',
-          status: 'open',
-          created_at: new Date().toISOString(),
-          created_by: 'automation',
-          assigned_to: null,
-          related_alerts: ['alert-1', 'alert-2']
-        },
-        {
-          _id: '2',
-          title: 'Malware Detection Follow-up',
-          description: 'Endpoint protection detected potential malware',
-          severity: 'critical',
-          status: 'investigating',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          created_by: 'john.doe@company.com',
-          assigned_to: 'security-team',
-          related_alerts: ['alert-3']
-        }
-      ]);
+      setCases([]);
     } finally {
       setLoading(false);
     }

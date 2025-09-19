@@ -1,334 +1,472 @@
-"""
-AI and RAG API Routes for Project Jupiter
-Provides endpoints for AI-powered security analysis and chat functionality
-"""
-
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Dict, Any, List, Optional, Union
+# AI Routes for JupiterEmerge SIEM
+from fastapi import APIRouter, HTTPException, Depends, Body, BackgroundTasks
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field
+import logging
 from datetime import datetime
-import json
-import uuid
 
-from .server import get_current_user
-from .ai_services import ai_service_manager
+from auth_middleware import get_current_user
+from models.user_management import User
+from ai_models import get_ai_system, initialize_ai_system
 
-# Create API router
-router = APIRouter(prefix="/api/ai", tags=["AI & Intelligence"])
+logger = logging.getLogger(__name__)
 
-# Pydantic Models
+router = APIRouter(prefix="/api/ai", tags=["ai"])
+
+# Pydantic models
+class QueryGenerationRequest(BaseModel):
+    user_input: str = Field(..., description="Natural language query request")
+    context: Optional[Dict[str, Any]] = Field(None, description="Additional context")
+    model_preference: Optional[str] = Field("query_generator", description="Preferred model")
+
+class QueryGenerationResponse(BaseModel):
+    success: bool
+    query: Optional[str] = None
+    confidence: Optional[float] = None
+    explanation: Optional[str] = None
+    error: Optional[str] = None
+
 class ThreatAnalysisRequest(BaseModel):
-    source_ip: Optional[str] = None
-    technique: Optional[str] = None
-    severity: str = "medium"
-    indicators: List[str] = []
-    timeline: Optional[str] = None
-    metadata: Dict[str, Any] = {}
-    model_preference: str = "auto"  # auto, local:model_name, cloud:provider:model
+    log_data: Dict[str, Any] = Field(..., description="Log data to analyze")
+    analysis_type: Optional[str] = Field("comprehensive", description="Type of analysis")
 
-class AIChartRequest(BaseModel):
-    message: str
-    session_id: Optional[str] = None
-    model_preference: str = "auto"
-    context_type: str = "security"  # security, general, threat_intel
+class ThreatAnalysisResponse(BaseModel):
+    success: bool
+    threat_level: Optional[str] = None
+    threat_type: Optional[str] = None
+    confidence: Optional[float] = None
+    recommendations: Optional[List[str]] = None
+    analysis: Optional[str] = None
+    error: Optional[str] = None
 
-class SecurityDocumentRequest(BaseModel):
-    content: str
-    document_type: str  # ioc, alert, report, policy, etc.
-    tags: List[str] = []
-    metadata: Dict[str, Any] = {}
+class LogAnalysisRequest(BaseModel):
+    logs: List[Dict[str, Any]] = Field(..., description="Logs to analyze")
+    analysis_type: Optional[str] = Field("pattern_detection", description="Type of analysis")
 
-class APIKeyConfigRequest(BaseModel):
-    provider: str  # openai, anthropic, google, emergent
-    api_key: str
-    model_config: Dict[str, Any] = {}
+class LogAnalysisResponse(BaseModel):
+    success: bool
+    patterns: Optional[List[str]] = None
+    anomalies: Optional[List[str]] = None
+    summary: Optional[str] = None
+    confidence: Optional[float] = None
+    error: Optional[str] = None
 
-class RAGSearchRequest(BaseModel):
-    query: str
-    limit: int = 5
-    document_types: List[str] = []
+class RAGRequest(BaseModel):
+    query: str = Field(..., description="Search query")
+    data_type: Optional[str] = Field("logs", description="Type of data to search")
+    n_results: Optional[int] = Field(5, description="Number of results to return")
 
-# AI Analysis Endpoints
-@router.post("/analyze/threat")
+class RAGResponse(BaseModel):
+    success: bool
+    results: Optional[List[Dict[str, Any]]] = None
+    total_found: Optional[int] = None
+    error: Optional[str] = None
+
+class TrainingRequest(BaseModel):
+    logs: List[Dict[str, Any]] = Field(..., description="Logs for training")
+    model_name: Optional[str] = Field("log_analyzer", description="Model to train")
+    training_type: Optional[str] = Field("fine_tune", description="Type of training")
+
+class TrainingResponse(BaseModel):
+    success: bool
+    message: Optional[str] = None
+    training_id: Optional[str] = None
+    error: Optional[str] = None
+
+@router.on_event("startup")
+async def startup_event():
+    """Initialize AI system on startup"""
+    try:
+        ai_system = initialize_ai_system()
+        if ai_system:
+            logger.info("AI system initialized successfully")
+        else:
+            logger.warning("AI system initialization failed - running in fallback mode")
+    except Exception as e:
+        logger.error(f"Failed to initialize AI system: {e}")
+
+@router.post("/generate-query", response_model=QueryGenerationResponse)
+async def generate_query(
+    request: QueryGenerationRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Generate OCSF query from natural language using AI
+    """
+    try:
+        ai_system = get_ai_system()
+        
+        if not ai_system:
+            # Fallback to rule-based generation
+            query = _fallback_query_generation(request.user_input)
+            return QueryGenerationResponse(
+                success=True,
+                query=query,
+                confidence=0.6,
+                explanation="Generated using rule-based fallback (AI not available)"
+            )
+        
+        # Generate query using AI
+        query = ai_system.generate_query(request.user_input, request.context)
+        
+        # Calculate confidence (simplified)
+        confidence = 0.8 if len(query) > 20 else 0.6
+        
+        return QueryGenerationResponse(
+            success=True,
+            query=query,
+            confidence=confidence,
+            explanation=f"Generated using {request.model_preference} model"
+        )
+        
+    except Exception as e:
+        logger.error(f"Query generation failed: {e}")
+        return QueryGenerationResponse(
+            success=False,
+            error=str(e)
+        )
+
+@router.post("/analyze-threat", response_model=ThreatAnalysisResponse)
 async def analyze_threat(
     request: ThreatAnalysisRequest,
-    current_user: Dict = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
-    """AI-powered threat analysis using RAG and LLM"""
+    """
+    Analyze log data for potential threats using AI
+    """
     try:
-        tenant_id = current_user["tenant_id"]
+        ai_system = get_ai_system()
         
-        threat_data = {
-            "source_ip": request.source_ip,
-            "technique": request.technique,
-            "severity": request.severity,
-            "indicators": request.indicators,
-            "timeline": request.timeline,
-            "metadata": request.metadata
-        }
+        if not ai_system:
+            # Fallback to rule-based analysis
+            analysis = _fallback_threat_analysis(request.log_data)
+            return ThreatAnalysisResponse(
+                success=True,
+                **analysis,
+                analysis="Rule-based analysis (AI not available)"
+            )
         
-        result = await ai_service_manager.ai_threat_analysis(
-            threat_data=threat_data,
-            tenant_id=tenant_id,
-            model_preference=request.model_preference
+        # Analyze threat using AI
+        analysis = ai_system.analyze_threat(request.log_data)
+        
+        return ThreatAnalysisResponse(
+            success=True,
+            **analysis
         )
-        
-        return result
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        logger.error(f"Threat analysis failed: {e}")
+        return ThreatAnalysisResponse(
+            success=False,
+            error=str(e)
+        )
 
-@router.post("/chat")
-async def ai_chat(
-    request: AIChartRequest,
-    current_user: Dict = Depends(get_current_user)
+@router.post("/analyze-logs", response_model=LogAnalysisResponse)
+async def analyze_logs(
+    request: LogAnalysisRequest,
+    current_user: User = Depends(get_current_user)
 ):
-    """Interactive AI chat for security analysis"""
+    """
+    Analyze multiple logs for patterns and anomalies using AI
+    """
     try:
-        tenant_id = current_user["tenant_id"]
-        session_id = request.session_id or str(uuid.uuid4())
+        ai_system = get_ai_system()
         
-        # Build context-aware prompt based on chat type
-        if request.context_type == "security":
-            system_context = """You are a cybersecurity expert AI assistant for Project Jupiter SIEM platform. 
-            Help users with threat analysis, security investigations, and incident response. 
-            Provide actionable insights and recommendations."""
-        elif request.context_type == "threat_intel":
-            system_context = """You are a threat intelligence analyst AI. 
-            Help users understand threat actors, attack techniques, and IOCs. 
-            Provide strategic intelligence and attribution analysis."""
-        else:
-            system_context = "You are a helpful AI assistant for security operations."
+        if not ai_system:
+            # Fallback to rule-based analysis
+            analysis = _fallback_log_analysis(request.logs)
+            return LogAnalysisResponse(
+                success=True,
+                **analysis,
+                summary="Rule-based analysis (AI not available)"
+            )
         
-        # RAG search for relevant context
-        rag_results = await ai_service_manager.rag_search(
-            query=request.message,
-            tenant_id=tenant_id,
-            limit=3
+        # Analyze logs using AI
+        analysis = ai_system.analyze_logs(request.logs)
+        
+        return LogAnalysisResponse(
+            success=True,
+            **analysis,
+            confidence=0.75
         )
         
-        # Build contextual prompt
-        context = "\n".join([doc['content'] for doc in rag_results[:2]])  # Limit context length
+    except Exception as e:
+        logger.error(f"Log analysis failed: {e}")
+        return LogAnalysisResponse(
+            success=False,
+            error=str(e)
+        )
+
+@router.post("/search-rag", response_model=RAGResponse)
+async def search_rag(
+    request: RAGRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Search RAG system for similar data
+    """
+    try:
+        ai_system = get_ai_system()
         
-        full_prompt = f"""
-        Context from security knowledge base:
-        {context}
+        if not ai_system:
+            return RAGResponse(
+                success=False,
+                error="RAG system not available"
+            )
         
-        User question: {request.message}
+        # Search RAG system
+        results = ai_system.retrieve_similar(
+            request.query,
+            request.data_type,
+            request.n_results
+        )
         
-        Please provide a helpful response based on the context and your security expertise.
-        """
+        return RAGResponse(
+            success=True,
+            results=results,
+            total_found=len(results)
+        )
         
-        # Choose analysis method
-        if request.model_preference == "auto":
-            if "emergent" in ai_service_manager.cloud_clients:
-                result = await ai_service_manager.analyze_with_cloud_llm(
-                    full_prompt, "emergent", "gpt-4o-mini"
-                )
-            elif ai_service_manager.local_models:
-                result = await ai_service_manager.analyze_with_local_llm(
-                    full_prompt, "llama2:7b"
-                )
-            else:
-                raise Exception("No AI models available")
-        else:
-            # Handle specific model preferences
-            if request.model_preference.startswith("local:"):
-                model_name = request.model_preference.replace("local:", "")
-                result = await ai_service_manager.analyze_with_local_llm(full_prompt, model_name)
-            elif request.model_preference.startswith("cloud:"):
-                parts = request.model_preference.replace("cloud:", "").split(":")
-                provider, model = parts[0], parts[1] if len(parts) > 1 else "gpt-4o-mini"
-                result = await ai_service_manager.analyze_with_cloud_llm(full_prompt, provider, model)
+    except Exception as e:
+        logger.error(f"RAG search failed: {e}")
+        return RAGResponse(
+            success=False,
+            error=str(e)
+        )
+
+@router.post("/add-to-rag")
+async def add_to_rag(
+    data: Dict[str, Any] = Body(...),
+    data_type: str = "logs",
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Add data to RAG system for future retrieval
+    """
+    try:
+        ai_system = get_ai_system()
         
-        # Store chat history
-        ai_service_manager.ai_chats_collection.insert_one({
-            "_id": str(uuid.uuid4()),
-            "tenant_id": tenant_id,
-            "session_id": session_id,
-            "type": "chat",
-            "user_message": request.message,
-            "ai_response": result,
-            "context_type": request.context_type,
-            "rag_context": rag_results,
-            "created_at": datetime.utcnow()
-        })
+        if not ai_system:
+            return {"success": False, "error": "RAG system not available"}
+        
+        # Add data to RAG
+        success = ai_system.add_to_rag(data, data_type)
         
         return {
-            "session_id": session_id,
-            "response": result,
-            "context_used": len(rag_results),
-            "timestamp": datetime.utcnow().isoformat()
+            "success": success,
+            "message": f"Data added to {data_type} collection" if success else "Failed to add data"
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
+        logger.error(f"Failed to add data to RAG: {e}")
+        return {"success": False, "error": str(e)}
 
-# RAG and Knowledge Management
-@router.post("/knowledge/add")
-async def add_security_document(
-    request: SecurityDocumentRequest,
-    current_user: Dict = Depends(get_current_user)
+@router.post("/train-model", response_model=TrainingResponse)
+async def train_model(
+    request: TrainingRequest,
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(get_current_user)
 ):
-    """Add security document to RAG knowledge base"""
+    """
+    Train/fine-tune AI model on new log data
+    """
     try:
-        tenant_id = current_user["tenant_id"]
+        ai_system = get_ai_system()
         
-        metadata = {
-            "document_type": request.document_type,
-            "tags": request.tags,
-            "added_by": current_user["user_id"],
-            **request.metadata
-        }
+        if not ai_system:
+            return TrainingResponse(
+                success=False,
+                error="AI system not available"
+            )
         
-        doc_id = await ai_service_manager.add_security_document(
-            content=request.content,
-            metadata=metadata,
-            tenant_id=tenant_id
+        # Generate training ID
+        training_id = f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # Add training task to background
+        background_tasks.add_task(
+            _train_model_background,
+            ai_system,
+            request.logs,
+            request.model_name,
+            training_id
         )
+        
+        return TrainingResponse(
+            success=True,
+            message="Training started in background",
+            training_id=training_id
+        )
+        
+    except Exception as e:
+        logger.error(f"Training request failed: {e}")
+        return TrainingResponse(
+            success=False,
+            error=str(e)
+        )
+
+@router.get("/models/status")
+async def get_models_status(current_user: User = Depends(get_current_user)):
+    """
+    Get status of AI models
+    """
+    try:
+        ai_system = get_ai_system()
+        
+        if not ai_system:
+            return {
+                "success": False,
+                "models": {},
+                "status": "AI system not initialized"
+            }
+        
+        # Get model status
+        model_status = {}
+        for name, model_info in ai_system.models.items():
+            model_status[name] = {
+                "loaded": True,
+                "device": model_info["config"].device,
+                "memory_usage": model_info["config"].memory_usage,
+                "max_tokens": model_info["config"].max_tokens
+            }
+        
+        # Add embedding model status
+        if ai_system.embeddings_model:
+            model_status["embedder"] = {
+                "loaded": True,
+                "device": ai_system.device,
+                "memory_usage": "low"
+            }
         
         return {
-            "document_id": doc_id,
-            "message": "Document added to knowledge base successfully"
+            "success": True,
+            "models": model_status,
+            "vector_store": {
+                "available": ai_system.chroma_client is not None,
+                "collections": list(ai_system.collections.keys()) if ai_system.collections else []
+            },
+            "device": ai_system.device
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to add document: {str(e)}")
+        logger.error(f"Failed to get model status: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
-@router.post("/knowledge/search")
-async def search_knowledge_base(
-    request: RAGSearchRequest,
-    current_user: Dict = Depends(get_current_user)
-):
-    """Search RAG knowledge base"""
+@router.get("/models/recommendations")
+async def get_model_recommendations(current_user: User = Depends(get_current_user)):
+    """
+    Get model recommendations based on hardware
+    """
     try:
-        tenant_id = current_user["tenant_id"]
+        import torch
         
-        results = await ai_service_manager.rag_search(
-            query=request.query,
-            tenant_id=tenant_id,
-            limit=request.limit
-        )
+        recommendations = {
+            "hardware": {
+                "gpu_available": torch.cuda.is_available(),
+                "gpu_memory": torch.cuda.get_device_properties(0).total_memory / 1024**3 if torch.cuda.is_available() else 0,
+                "cpu_cores": torch.get_num_threads()
+            },
+            "recommended_models": {
+                "query_generation": {
+                    "model": "microsoft/DialoGPT-medium",
+                    "reason": "Lightweight, good for query generation",
+                    "memory_usage": "Low (2-3GB VRAM)"
+                },
+                "threat_analysis": {
+                    "model": "microsoft/DialoGPT-large",
+                    "reason": "Better reasoning for threat analysis",
+                    "memory_usage": "Medium (4-6GB VRAM)"
+                },
+                "log_analysis": {
+                    "model": "distilbert-base-uncased",
+                    "reason": "Efficient for log classification",
+                    "memory_usage": "Low (1-2GB VRAM)"
+                },
+                "embeddings": {
+                    "model": "sentence-transformers/all-MiniLM-L6-v2",
+                    "reason": "Fast and accurate embeddings",
+                    "memory_usage": "Low (1GB VRAM)"
+                }
+            },
+            "optimization_tips": [
+                "Use 8-bit quantization to reduce memory usage",
+                "Load models on-demand to save memory",
+                "Use CPU for embedding model if GPU memory is limited",
+                "Consider model distillation for smaller models"
+            ]
+        }
         
         return {
-            "query": request.query,
-            "results": results,
-            "count": len(results)
+            "success": True,
+            "recommendations": recommendations
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        logger.error(f"Failed to get recommendations: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
-# Model Management
-@router.get("/models")
-async def get_available_models(current_user: Dict = Depends(get_current_user)):
-    """Get available AI models and configurations"""
+# Background task functions
+async def _train_model_background(ai_system, logs: List[Dict[str, Any]], model_name: str, training_id: str):
+    """Background task for model training"""
     try:
-        models = await ai_service_manager.get_available_models()
-        return models
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get models: {str(e)}")
-
-@router.post("/config/api-key")
-async def save_ai_api_key(
-    request: APIKeyConfigRequest,
-    current_user: Dict = Depends(get_current_user)
-):
-    """Save AI provider API key configuration"""
-    try:
-        tenant_id = current_user["tenant_id"]
+        logger.info(f"Starting background training {training_id}")
         
-        success = await ai_service_manager.save_api_key(
-            tenant_id=tenant_id,
-            provider=request.provider,
-            api_key=request.api_key,
-            model_config=request.model_config
-        )
+        # Train the model
+        success = ai_system.train_on_logs(logs, model_name)
         
         if success:
-            return {"message": f"{request.provider} API key saved successfully"}
+            logger.info(f"Training {training_id} completed successfully")
         else:
-            raise HTTPException(status_code=500, detail="Failed to save API key")
+            logger.error(f"Training {training_id} failed")
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Configuration failed: {str(e)}")
+        logger.error(f"Background training {training_id} failed: {e}")
 
-# Chat History
-@router.get("/chat/history")
-async def get_chat_history(
-    session_id: Optional[str] = None,
-    limit: int = 50,
-    current_user: Dict = Depends(get_current_user)
-):
-    """Get AI chat history"""
-    try:
-        tenant_id = current_user["tenant_id"]
-        
-        query = {"tenant_id": tenant_id, "type": "chat"}
-        if session_id:
-            query["session_id"] = session_id
-        
-        chats = list(
-            ai_service_manager.ai_chats_collection
-            .find(query)
-            .sort("created_at", -1)
-            .limit(limit)
-        )
-        
-        # Convert ObjectIds and dates to strings
-        for chat in chats:
-            chat["_id"] = str(chat["_id"])
-            if "created_at" in chat:
-                chat["created_at"] = chat["created_at"].isoformat()
-        
-        return {"chats": chats, "count": len(chats)}
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get chat history: {str(e)}")
+# Fallback functions
+def _fallback_query_generation(user_input: str) -> str:
+    """Fallback query generation without AI"""
+    user_lower = user_input.lower()
+    
+    if "failed login" in user_lower:
+        return 'activity_name = "failed_login"'
+    elif "suspicious" in user_lower and "process" in user_lower:
+        return 'process_name IN ("powershell.exe", "cmd.exe")'
+    elif "external" in user_lower and "connection" in user_lower:
+        return 'dst_endpoint_ip NOT IN ("192.168.0.0/16", "10.0.0.0/8")'
+    elif "high severity" in user_lower:
+        return 'severity IN ("high", "critical")'
+    else:
+        return 'activity_name = "unknown"'
 
-# System Intelligence
-@router.get("/intelligence/summary")
-async def get_ai_intelligence_summary(current_user: Dict = Depends(get_current_user)):
-    """Get AI-powered intelligence summary for dashboard"""
-    try:
-        tenant_id = current_user["tenant_id"]
-        
-        # Get recent AI analyses
-        recent_analyses = list(
-            ai_service_manager.ai_chats_collection
-            .find({"tenant_id": tenant_id})
-            .sort("created_at", -1)
-            .limit(10)
-        )
-        
-        # Get knowledge base stats
-        kb_stats = ai_service_manager.vector_documents_collection.count_documents(
-            {"tenant_id": tenant_id}
-        )
-        
-        # Get available models
-        models = await ai_service_manager.get_available_models()
-        
-        summary = {
-            "recent_analyses": len(recent_analyses),
-            "knowledge_documents": kb_stats,
-            "available_models": models,
-            "ai_health": {
-                "local_models_available": len(models.get("local_models", [])) > 0,
-                "cloud_providers_configured": len(models.get("cloud_providers", [])) > 0,
-                "rag_operational": kb_stats > 0
-            },
-            "recommendations": []
-        }
-        
-        # Add intelligent recommendations
-        if not models.get("local_models") and not models.get("cloud_providers"):
-            summary["recommendations"].append("Configure AI models for threat analysis")
-            
-        if kb_stats < 10:
-            summary["recommendations"].append("Add more security documents to knowledge base for better RAG performance")
-        
-        return summary
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate intelligence summary: {str(e)}")
+def _fallback_threat_analysis(log_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Fallback threat analysis without AI"""
+    severity = log_data.get('severity', 'low')
+    
+    threat_level = "low"
+    if severity in ["high", "critical"]:
+        threat_level = "high"
+    elif severity == "medium":
+        threat_level = "medium"
+    
+    return {
+        "threat_level": threat_level,
+        "threat_type": "rule_based_analysis",
+        "confidence": 0.6,
+        "recommendations": ["Review log manually"]
+    }
+
+def _fallback_log_analysis(logs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Fallback log analysis without AI"""
+    severities = [log.get('severity', 'low') for log in logs]
+    activities = [log.get('activity_name', 'unknown') for log in logs]
+    
+    return {
+        "patterns": ["rule_based_analysis"],
+        "anomalies": ["high_severity_count"] if severities.count('high') > len(logs) * 0.3 else [],
+        "summary": f"Analyzed {len(logs)} logs with {len(set(activities))} unique activities"
+    }

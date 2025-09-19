@@ -39,47 +39,13 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading dashboard data
+    // TODO: Replace with real API calls
     setTimeout(() => {
       setDashboardData({
-        alerts: {
-          total: 247,
-          high: 23,
-          medium: 156,
-          low: 68,
-          trend: [
-            { time: '00:00', alerts: 12 },
-            { time: '04:00', alerts: 8 },
-            { time: '08:00', alerts: 24 },
-            { time: '12:00', alerts: 18 },
-            { time: '16:00', alerts: 32 },
-            { time: '20:00', alerts: 15 }
-          ]
-        },
-        threats: {
-          blocked: 1247,
-          total: 1523,
-          sources: [
-            { name: 'Malware', value: 45, color: '#ef4444' },
-            { name: 'Phishing', value: 28, color: '#f97316' },
-            { name: 'DDoS', value: 15, color: '#eab308' },
-            { name: 'Intrusion', value: 12, color: '#8b5cf6' }
-          ]
-        },
-        system: {
-          uptime: '99.9%',
-          cpu: 45,
-          memory: 62,
-          network: 78
-        },
-        activity: [
-          { time: '1h', events: 156, threats: 23, alerts: 12 },
-          { time: '2h', events: 203, threats: 18, alerts: 15 },
-          { time: '3h', events: 178, threats: 31, alerts: 8 },
-          { time: '4h', events: 234, threats: 25, alerts: 19 },
-          { time: '5h', events: 189, threats: 14, alerts: 11 },
-          { time: '6h', events: 267, threats: 29, alerts: 16 }
-        ]
+        alerts: { total: 0, high: 0, medium: 0, low: 0, trend: [] },
+        threats: { blocked: 0, total: 0, sources: [] },
+        system: { uptime: '0%', cpu: 0, memory: 0, network: 0 },
+        activity: []
       });
       setLoading(false);
     }, 1000);
@@ -193,179 +159,34 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Alert Trend Chart */}
+      {/* Empty State - No Data Yet */}
+      {dashboardData.alerts.total === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-zinc-800 border border-zinc-700 rounded-xl p-6"
         >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-yellow-400" />
-              <span>Alert Trend (24h)</span>
-            </h3>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={dashboardData.alerts.trend}>
-              <defs>
-                <linearGradient id="alertGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#eab308" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#eab308" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="time" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="alerts" 
-                stroke="#eab308" 
-                fillOpacity={1} 
-                fill="url(#alertGradient)" 
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Threat Sources Pie Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-zinc-800 border border-zinc-700 rounded-xl p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <Shield className="w-5 h-5 text-red-400" />
-              <span>Threat Sources</span>
-            </h3>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dashboardData.threats.sources}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={120}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {dashboardData.threats.sources.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-              />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
-
-      {/* System Performance and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* System Performance */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-zinc-800 border border-zinc-700 rounded-xl p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <Zap className="w-5 h-5 text-blue-400" />
-              <span>System Performance</span>
-            </h3>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-zinc-400">CPU Usage</span>
-                <span className="text-sm font-medium">{dashboardData.system.cpu}%</span>
-              </div>
-              <div className="w-full bg-zinc-700 rounded-full h-2">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-500" 
-                  style={{ width: `${dashboardData.system.cpu}%` }}
-                ></div>
-              </div>
+          <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-12 text-center">
+            <div className="w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Eye className="w-8 h-8 text-zinc-400" />
             </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-zinc-400">Memory Usage</span>
-                <span className="text-sm font-medium">{dashboardData.system.memory}%</span>
-              </div>
-              <div className="w-full bg-zinc-700 rounded-full h-2">
-                <div 
-                  className="bg-green-500 h-2 rounded-full transition-all duration-500" 
-                  style={{ width: `${dashboardData.system.memory}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-zinc-400">Network Usage</span>
-                <span className="text-sm font-medium">{dashboardData.system.network}%</span>
-              </div>
-              <div className="w-full bg-zinc-700 rounded-full h-2">
-                <div 
-                  className="bg-yellow-500 h-2 rounded-full transition-all duration-500" 
-                  style={{ width: `${dashboardData.system.network}%` }}
-                ></div>
-              </div>
+            <h3 className="text-xl font-semibold text-white mb-2">No Data Yet</h3>
+            <p className="text-zinc-400 mb-6 max-w-md mx-auto">
+              Start monitoring by setting up log collection and configuring your first data sources.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <button className="btn-primary flex items-center space-x-2">
+                <Zap className="w-4 h-4" />
+                <span>Setup Log Collection</span>
+              </button>
+              <button className="btn-secondary flex items-center space-x-2">
+                <Shield className="w-4 h-4" />
+                <span>Configure Alerts</span>
+              </button>
             </div>
           </div>
         </motion.div>
-
-        {/* Activity Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="bg-zinc-800 border border-zinc-700 rounded-xl p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <Eye className="w-5 h-5 text-green-400" />
-              <span>Activity Overview (6h)</span>
-            </h3>
-          </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={dashboardData.activity}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="time" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-              />
-              <Legend />
-              <Bar dataKey="events" fill="#3b82f6" name="Events" />
-              <Bar dataKey="threats" fill="#ef4444" name="Threats" />
-              <Bar dataKey="alerts" fill="#eab308" name="Alerts" />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
+      )}
     </div>
   );
 };

@@ -11,12 +11,20 @@ from typing import Optional, Dict, List
 from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, validator
 import jwt
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from multiple sources
+load_dotenv()                    # Load root .env
+load_dotenv('backend/.env')      # Load backend/.env (overrides)
+
+# Environment-specific loading
+env = os.getenv('APP_ENVIRONMENT', 'production')
+if env == 'development':
+    load_dotenv('.env.development')
+elif env == 'production':
+    load_dotenv('.env.production')
 
 # Import our user management system
 sys.path.append('/app')
@@ -27,6 +35,18 @@ from models.user_management import (
     UserRole,
     JWTManager
 )
+
+# Import query routes
+from query_routes import router as query_router
+from saved_queries_routes import router as saved_queries_router
+from ai_routes import router as ai_router
+from framework_routes import router as framework_router
+from extended_framework_routes import router as extended_framework_router
+from analyst_features_routes import router as analyst_router
+from security_ops_routes import router as security_ops_router # New import
+
+# Import security middleware
+from security_middleware import setup_security_middleware
 
 # Initialize FastAPI
 app = FastAPI(
@@ -49,7 +69,7 @@ app.add_middleware(
 )
 
 # Configuration
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://admin:password@mongodb:27017/jupiter_siem?authSource=admin")
+DUCKDB_PATH = os.getenv("DUCKDB_PATH", "data/jupiter_siem.db")
 JWT_SECRET = os.getenv("JWT_SECRET_KEY", "jupiter_siem_production_secret_key")
 EMAIL_CONFIG = {
     'host': os.getenv("EMAIL_HOST", "smtp.outlook.com"),
@@ -59,16 +79,54 @@ EMAIL_CONFIG = {
     'use_tls': os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 }
 
-# Initialize systems
-user_manager = UserManagementSystem(MONGO_URL, EMAIL_CONFIG, JWT_SECRET)
+# Initialize database and systems
+from database import get_db_manager
+db_manager = get_db_manager()
+user_manager = UserManagementSystem(DUCKDB_PATH, EMAIL_CONFIG, JWT_SECRET)
 jwt_manager = JWTManager(JWT_SECRET)
 security = HTTPBearer()
 
+# Setup security middleware
+setup_security_middleware(app)
+
+# Include query routes
+app.include_router(query_router)
+app.include_router(saved_queries_router)
+app.include_router(ai_router)
+app.include_router(framework_router)
+app.include_router(extended_framework_router)
+app.include_router(analyst_router)
+app.include_router(security_ops_router) # New extended framework router
+
 # Request/Response Models
 class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-    tenant_id: Optional[str] = None
+    email: EmailStr = Field(..., description="User email address")
+    password: str = Field(..., min_length=1, max_length=128, description="User password")
+    tenant_id: Optional[str] = Field(None, max_length=100, description="Tenant ID")
+    
+    @validator('email')
+    def validate_email_security(cls, v):
+        """Enhanced email validation"""
+        from security_utils import SecurityValidator
+        is_valid, error = SecurityValidator.validate_email(v)
+        if not is_valid:
+            raise ValueError(error)
+        return v
+    
+    @validator('password')
+    def validate_password_input(cls, v):
+        """Basic password input validation"""
+        if not v or len(v.strip()) == 0:
+            raise ValueError("Password is required")
+        return v.strip()
+    
+    @validator('tenant_id')
+    def validate_tenant_id(cls, v):
+        """Validate and sanitize tenant ID"""
+        if v is not None:
+            from security_utils import sanitize_string
+            return sanitize_string(v, max_length=100)
+        return v
 
 class LoginResponse(BaseModel):
     access_token: str

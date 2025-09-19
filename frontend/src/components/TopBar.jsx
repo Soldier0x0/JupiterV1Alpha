@@ -3,6 +3,7 @@ import { Bell, Search, Command, User, LogOut } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import JupiterIcon from './JupiterIcon';
 import GlobalSearch from './GlobalSearch';
+import ConnectionStatus from './ConnectionStatus';
 
 const TopBar = () => {
   const { user, logout } = useAuth();
@@ -27,6 +28,27 @@ const TopBar = () => {
     try {
       // This will be connected to the actual API
       console.log('Creating test alert...');
+      
+      // Create a test alert in localStorage for demonstration
+      const testAlert = {
+        _id: Date.now().toString(),
+        severity: 'high',
+        source: 'Manual Test',
+        entity: 'Test Entity',
+        message: 'Manual test alert generated from UI',
+        timestamp: new Date().toISOString(),
+        status: 'open'
+      };
+      
+      // Store in localStorage to simulate API call
+      const existingAlerts = JSON.parse(localStorage.getItem('test_alerts') || '[]');
+      existingAlerts.unshift(testAlert);
+      localStorage.setItem('test_alerts', JSON.stringify(existingAlerts));
+      
+      // Show success message
+      alert('Test alert created successfully!');
+      
+      // In a real app, you would call the API here
       // await alertsAPI.createAlert({
       //   severity: 'high',
       //   source: 'Manual Test',
@@ -35,6 +57,7 @@ const TopBar = () => {
       // });
     } catch (error) {
       console.error('Failed to create test alert:', error);
+      alert('Failed to create test alert');
     }
   };
 
@@ -45,23 +68,21 @@ const TopBar = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setShowSearch(true)}
-            className="flex items-center space-x-3 bg-background-primary px-4 py-2.5 rounded-lg border border-neutral-700 max-w-md hover:border-neutral-600 transition-all duration-200 group"
+            className="flex items-center space-x-3 bg-background-primary px-4 py-2.5 rounded-lg border border-neutral-700 max-w-md hover:border-neutral-600 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+            aria-label="Open global search (Ctrl+K)"
           >
-            <Search className="w-4 h-4 text-neutral-500 group-hover:text-neutral-400" />
+            <Search className="w-4 h-4 text-neutral-500 group-hover:text-neutral-400" aria-hidden="true" />
             <span className="text-neutral-500 group-hover:text-neutral-400">Search everything...</span>
-            <div className="flex items-center space-x-1 text-xs text-neutral-500 bg-neutral-800 px-2 py-1 rounded">
+            <div className="flex items-center space-x-1 text-xs text-neutral-500 bg-neutral-800 px-2 py-1 rounded" aria-hidden="true">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
           </button>
         </div>
 
-        {/* Center - System Status */}
+        {/* Center - Connection Status */}
         <div className="hidden md:flex items-center space-x-6">
-          <div className="flex items-center space-x-2 text-sm px-3 py-1.5 rounded-lg bg-success-500/10 border border-success-500/20">
-            <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse-subtle"></div>
-            <span className="text-success-500 font-medium">System Operational</span>
-          </div>
+          <ConnectionStatus showDetails={false} />
         </div>
 
         {/* Right Side - Actions & Profile */}
@@ -104,7 +125,14 @@ const TopBar = () => {
             {showProfile && (
               <div className="absolute right-0 mt-2 w-48 bg-background-secondary border border-neutral-700 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                 <div className="p-2">
-                  <button className="flex items-center space-x-3 w-full p-3 hover:bg-neutral-800 rounded-lg transition-all duration-200 text-left">
+                  <button 
+                    onClick={() => {
+                      // Navigate to profile settings or open modal
+                      console.log('Profile settings clicked');
+                      alert('Profile settings functionality coming soon!');
+                    }}
+                    className="flex items-center space-x-3 w-full p-3 hover:bg-neutral-800 rounded-lg transition-all duration-200 text-left"
+                  >
                     <User className="w-4 h-4 text-neutral-400" />
                     <span className="text-neutral-300 text-sm">Profile Settings</span>
                   </button>

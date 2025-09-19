@@ -46,40 +46,11 @@ const Alerts = () => {
   const loadAlerts = async () => {
     setLoading(true);
     try {
-      const response = await alertsAPI.getAlerts();
-      setAlerts(response.data.alerts || []);
+      // TODO: Replace with real API call
+      setAlerts([]); // Empty for now to show real data integration needed
     } catch (error) {
       console.error('Failed to load alerts:', error);
-      // Mock data fallback
-      setAlerts([
-        {
-          _id: '1',
-          severity: 'critical',
-          source: 'Firewall',
-          entity: 'Host A',
-          message: 'Unauthorized access detected from 192.168.1.100',
-          timestamp: new Date().toISOString(),
-          status: 'open'
-        },
-        {
-          _id: '2',
-          severity: 'high',
-          source: 'Endpoint',
-          entity: 'User B',
-          message: 'Malware detected in downloaded file',
-          timestamp: new Date(Date.now() - 3600000).toISOString(),
-          status: 'investigating'
-        },
-        {
-          _id: '3',
-          severity: 'medium',
-          source: 'Network',
-          entity: 'IP C',
-          message: 'Suspicious DNS queries detected',
-          timestamp: new Date(Date.now() - 7200000).toISOString(),
-          status: 'resolved'
-        }
-      ]);
+      setAlerts([]);
     } finally {
       setLoading(false);
     }
@@ -154,6 +125,24 @@ const Alerts = () => {
     a.download = `jupiter-alerts-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  const handleResolveAlert = async (alertId) => {
+    try {
+      // Update alert status to resolved
+      setAlerts(prev => prev.map(alert => 
+        alert._id === alertId 
+          ? { ...alert, status: 'resolved' }
+          : alert
+      ));
+      
+      // In a real app, you would call the API here
+      // await alertsAPI.updateAlert(alertId, { status: 'resolved' });
+      
+      console.log(`Alert ${alertId} resolved`);
+    } catch (error) {
+      console.error('Failed to resolve alert:', error);
+    }
   };
 
   return (
@@ -428,6 +417,7 @@ const Alerts = () => {
                             <Eye className="w-4 h-4 text-zinc-400" />
                           </motion.button>
                           <motion.button
+                            onClick={() => handleResolveAlert(alert._id)}
                             className="p-1 hover:bg-jupiter-success/20 rounded transition-colors"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}

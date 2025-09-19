@@ -13,12 +13,16 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 from enum import Enum
-from pydantic import BaseModel, EmailStr, validator
-from pymongo import MongoClient
+from pydantic import BaseModel, EmailStr, validator, Field
+from database import get_db_manager
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from jinja2 import Template
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from security_utils import SecurityValidator, UserFriendlyValidator, sanitize_string
 
 class UserRole(Enum):
     """User roles with specific permissions"""
@@ -66,23 +70,81 @@ class PasswordValidator:
 
 class UserCreateRequest(BaseModel):
     """Request model for creating new users"""
-    email: EmailStr
-    role: UserRole
-    tenant_name: Optional[str] = None
-    permissions: Optional[List[str]] = []
-    send_email: bool = True
+    email: EmailStr = Field(..., description="User email address")
+    role: UserRole = Field(..., description="User role")
+    tenant_name: Optional[str] = Field(None, max_length=100, description="Tenant name")
+    permissions: Optional[List[str]] = Field(default=[], description="Custom permissions")
+    send_email: bool = Field(default=True, description="Send welcome email")
+    
+    @validator('email')
+    def validate_email_security(cls, v):
+        """Enhanced email validation"""
+        is_valid, error = SecurityValidator.validate_email(v)
+        if not is_valid:
+            raise ValueError(error)
+        return v
+    
+    @validator('tenant_name')
+    def validate_tenant_name(cls, v):
+        """Validate and sanitize tenant name"""
+        if v is not None:
+            sanitized = sanitize_string(v, max_length=100)
+            if not sanitized.strip():
+                raise ValueError("Tenant name cannot be empty")
+            return sanitized
+        return v
+    
+    @validator('permissions')
+    def validate_permissions(cls, v):
+        """Validate and sanitize permissions"""
+        if v is None:
+            return []
+        
+        sanitized_permissions = []
+        for permission in v:
+            sanitized = sanitize_string(permission, max_length=50)
+            if sanitized.strip():
+                sanitized_permissions.append(sanitized)
+        
+        return sanitized_permissions
+
+class User(BaseModel):
+    """User model for API responses"""
+    id: str = Field(..., description="Unique user ID")
+    email: EmailStr = Field(..., description="User email address")
+    tenant_id: str = Field(..., description="Tenant ID for multi-tenancy")
+    role: UserRole = Field(..., description="User role")
+    is_active: bool = Field(..., description="Whether user is active")
+    is_owner: bool = Field(..., description="Whether user is tenant owner")
+    created_at: datetime = Field(..., description="User creation timestamp")
+    updated_at: datetime = Field(..., description="User last update timestamp")
+    last_login: Optional[datetime] = Field(None, description="Last login timestamp")
+    two_fa_enabled: bool = Field(default=False, description="Whether 2FA is enabled")
+    metadata: Optional[Dict] = Field(default_factory=dict, description="Additional user metadata")
 
 class PasswordSetRequest(BaseModel):
     """Request model for setting user password"""
-    token: str
-    password: str
+    token: str = Field(..., description="Password reset token")
+    password: str = Field(..., min_length=10, max_length=128, description="New password")
     
     @validator('password')
     def validate_password_strength(cls, v):
-        is_valid, errors = PasswordValidator.validate_password(v)
-        if not is_valid:
-            raise ValueError('; '.join(errors))
+        """Enhanced password validation with user-friendly feedback"""
+        validation_result = UserFriendlyValidator.validate_password_with_help(v)
+        if not validation_result["valid"]:
+            # Return user-friendly error message
+            issues = validation_result["issues"]
+            suggestions = validation_result["suggestions"]
+            error_msg = f"Password issues: {', '.join(issues)}. Suggestions: {'; '.join(suggestions[:3])}"
+            raise ValueError(error_msg)
         return v
+    
+    @validator('token')
+    def validate_token(cls, v):
+        """Validate and sanitize token"""
+        if not v or len(v.strip()) < 10:
+            raise ValueError("Invalid token format")
+        return sanitize_string(v, max_length=500)
 
 class JWTManager:
     """JWT token management for secure authentication"""
@@ -246,20 +308,14 @@ class EmailService:
 class UserManagementSystem:
     """Complete user management system for Jupiter SIEM"""
     
-    def __init__(self, mongo_url: str, smtp_config: Dict, jwt_secret: str):
-        self.client = MongoClient(mongo_url)
-        self.db = self.client.jupiter_siem
-        self.users = self.db.users
-        self.tenants = self.db.tenants
-        self.tokens = self.db.tokens
-        
+    def __init__(self, db_path: str, smtp_config: Dict, jwt_secret: str):
+        self.db_manager = get_db_manager()
         self.jwt_manager = JWTManager(jwt_secret)
         self.email_service = EmailService(smtp_config)
         
         # Create indexes
-        self.users.create_index([("email", 1), ("tenant_id", 1)], unique=True)
-        self.tenants.create_index("name", unique=True)
-        self.tokens.create_index("expires_at", expireAfterSeconds=0)
+        self.db_manager.create_index("users", [("email", 1), ("tenant_id", 1)], unique=True)
+        self.db_manager.create_index("tenants", [("name", 1)], unique=True)
     
     def hash_password(self, password: str) -> str:
         """Hash password using bcrypt"""
@@ -278,39 +334,37 @@ class UserManagementSystem:
             raise ValueError(f"Password validation failed: {'; '.join(errors)}")
         
         # Check if super admin exists
-        existing = self.users.find_one({"email": email, "role": "super_admin"})
+        existing = self.db_manager.find_one("users", {"email": email, "role": "super_admin"})
         if existing:
             raise ValueError("Super admin already exists")
         
         # Create tenant
         tenant_id = f"jupiter-main-{secrets.token_hex(4)}"
         tenant_doc = {
-            "_id": tenant_id,
+            "id": tenant_id,
             "name": tenant_name,
-            "type": "main",
-            "created_at": datetime.utcnow(),
-            "enabled": True
+            "description": "Main tenant for Jupiter SIEM",
+            "is_active": True,
+            "created_at": datetime.utcnow()
         }
-        self.tenants.insert_one(tenant_doc)
+        self.db_manager.insert_one("tenants", tenant_doc)
         
         # Create super admin user
         user_id = str(uuid.uuid4())
         hashed_password = self.hash_password(password)
         
         user_doc = {
-            "_id": user_id,
+            "id": user_id,
             "email": email,
             "password_hash": hashed_password,
             "tenant_id": tenant_id,
             "role": "super_admin",
-            "permissions": ["*"],  # All permissions
+            "metadata": {"permissions": ["*"], "created_by": "system", "password_set": True},  # All permissions
             "created_at": datetime.utcnow(),
-            "created_by": "system",
             "is_active": True,
-            "password_set": True,
             "last_login": None
         }
-        self.users.insert_one(user_doc)
+        self.db_manager.insert_one("users", user_doc)
         
         return {
             "user_id": user_id,
@@ -323,66 +377,66 @@ class UserManagementSystem:
         """Create new user (admin only)"""
         
         # Check if user already exists
-        existing = self.users.find_one({"email": request.email})
+        existing = self.db_manager.find_one("users", {"email": request.email})
         if existing:
             raise ValueError(f"User with email {request.email} already exists")
         
         # Create or get tenant
         if request.tenant_name:
-            tenant = self.tenants.find_one({"name": request.tenant_name})
+            tenant = self.db_manager.find_one("tenants", {"name": request.tenant_name})
             if not tenant:
                 tenant_id = f"jupiter-{secrets.token_hex(6)}"
                 tenant_doc = {
-                    "_id": tenant_id,
+                    "id": tenant_id,
                     "name": request.tenant_name,
-                    "type": "custom",
+                    "description": f"Custom tenant: {request.tenant_name}",
                     "created_at": datetime.utcnow(),
-                    "created_by": created_by,
-                    "enabled": True
+                    "owner_id": created_by,
+                    "is_active": True
                 }
-                self.tenants.insert_one(tenant_doc)
+                self.db_manager.insert_one("tenants", tenant_doc)
             else:
-                tenant_id = tenant["_id"]
+                tenant_id = tenant["id"]
         else:
             # Use main tenant
-            main_tenant = self.tenants.find_one({"type": "main"})
-            tenant_id = main_tenant["_id"]
+            main_tenant = self.db_manager.find_one("tenants", {"name": "MainTenant"})
+            tenant_id = main_tenant["id"]
             request.tenant_name = main_tenant["name"]
         
         # Create user
         user_id = str(uuid.uuid4())
         user_doc = {
-            "_id": user_id,
+            "id": user_id,
             "email": request.email,
             "password_hash": None,  # Will be set when user creates password
             "tenant_id": tenant_id,
             "role": request.role.value,
-            "permissions": request.permissions,
+            "metadata": {"permissions": request.permissions, "created_by": created_by, "password_set": False},
             "created_at": datetime.utcnow(),
-            "created_by": created_by,
             "is_active": True,
-            "password_set": False,
             "last_login": None
         }
-        self.users.insert_one(user_doc)
+        self.db_manager.insert_one("users", user_doc)
         
         # Create password reset token
         password_token = self.jwt_manager.create_password_reset_token(user_id, request.email)
         
         # Store token in database
         token_doc = {
-            "token": password_token,
+            "id": str(uuid.uuid4()),
             "user_id": user_id,
-            "type": "password_reset", 
+            "tenant_id": tenant_id,
+            "token_type": "password_reset",
+            "token_value": password_token,
             "created_at": datetime.utcnow(),
             "expires_at": datetime.utcnow() + timedelta(hours=24),
-            "used": False
+            "is_used": False
         }
-        self.tokens.insert_one(token_doc)
+        self.db_manager.insert_one("tokens", token_doc)
         
         # Send welcome email
         if request.send_email:
-            admin = self.users.find_one({"_id": created_by})
+            admin = self.db_manager.find_one("users", {"id": created_by})
             admin_email = admin["email"] if admin else "admin@projectjupiter.in"
             
             email_sent = self.email_service.send_welcome_email(

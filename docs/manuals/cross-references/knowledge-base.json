@@ -1,0 +1,7443 @@
+{
+  "metadata": {
+    "generated_at": "2025-09-19T19:15:56.378986",
+    "total_documents": 11,
+    "total_cross_references": 70,
+    "total_keywords": 1234,
+    "version": "1.0"
+  },
+  "documents": {
+    "admin-guide\\installation-deployment.md": {
+      "title": "🚀 Installation & Deployment Guide",
+      "path": "admin-guide\\installation-deployment.md",
+      "volume": "admin-guide",
+      "section": "admin-guide",
+      "keywords": [
+        "access",
+        "accessibility",
+        "account",
+        "activate",
+        "add",
+        "address",
+        "admin",
+        "after",
+        "all",
+        "allow",
+        "alpine",
+        "already",
+        "always",
+        "ami",
+        "analysis",
+        "apache",
+        "api",
+        "app",
+        "application",
+        "apt",
+        "are",
+        "auth",
+        "authentication",
+        "authorization",
+        "authorized",
+        "automated",
+        "available",
+        "aws",
+        "azure",
+        "azureuser",
+        "backend",
+        "backup",
+        "bantime",
+        "bash",
+        "basic",
+        "bearer",
+        "bench",
+        "bin",
+        "boot",
+        "build",
+        "centos",
+        "cert",
+        "certbot",
+        "certificate",
+        "certificates",
+        "certonly",
+        "certs",
+        "change",
+        "check",
+        "checklist",
+        "checks",
+        "chmod",
+        "chown",
+        "clean",
+        "click",
+        "client",
+        "clone",
+        "cloud",
+        "cmd",
+        "code",
+        "com",
+        "commands",
+        "common",
+        "compose",
+        "compute",
+        "conf",
+        "configuration",
+        "configure",
+        "connect",
+        "connection",
+        "connectivity",
+        "container",
+        "containerized",
+        "content",
+        "contents",
+        "context",
+        "copy",
+        "cpu",
+        "create",
+        "curl",
+        "custom",
+        "data",
+        "database",
+        "debian",
+        "dedicated",
+        "default",
+        "denied",
+        "deny",
+        "dependencies",
+        "depends",
+        "deploy",
+        "deployment",
+        "description",
+        "dev",
+        "devel",
+        "disk",
+        "dns",
+        "docker",
+        "dockerfile",
+        "document",
+        "domain",
+        "down",
+        "download",
+        "eastus",
+        "edit",
+        "email",
+        "enable",
+        "enabled",
+        "encrypt",
+        "endpoint",
+        "endpoints",
+        "engine",
+        "env",
+        "environment",
+        "essential",
+        "etc",
+        "event",
+        "example",
+        "exec",
+        "execstart",
+        "failed",
+        "family",
+        "file",
+        "find",
+        "findtime",
+        "firewall",
+        "firewalld",
+        "fix",
+        "forwarded",
+        "fromport",
+        "frontend",
+        "fullchain",
+        "functional",
+        "gateway",
+        "gcc",
+        "gcloud",
+        "generate",
+        "git",
+        "github",
+        "githubusercontent",
+        "google",
+        "grep",
+        "group",
+        "groups",
+        "guide",
+        "header",
+        "health",
+        "higher",
+        "home",
+        "host",
+        "hostname",
+        "htop",
+        "http",
+        "https",
+        "image",
+        "images",
+        "incoming",
+        "information",
+        "ingestion",
+        "ini",
+        "init",
+        "initial",
+        "initialize",
+        "install",
+        "installation",
+        "instance",
+        "instances",
+        "interface",
+        "interpreter",
+        "iotop",
+        "ipprotocol",
+        "issue",
+        "issues",
+        "jail",
+        "journalctl",
+        "json",
+        "jupiter",
+        "key",
+        "keys",
+        "kill",
+        "launch",
+        "let",
+        "letsencrypt",
+        "lib",
+        "listen",
+        "listening",
+        "live",
+        "load",
+        "local",
+        "localhost",
+        "location",
+        "log",
+        "login",
+        "logpath",
+        "logs",
+        "lsof",
+        "lts",
+        "machine",
+        "main",
+        "maintenance",
+        "management",
+        "maxretry",
+        "medium",
+        "method",
+        "methods",
+        "migrate",
+        "migrations",
+        "minimum",
+        "mkdir",
+        "monitor",
+        "monitoring",
+        "multi",
+        "name",
+        "nano",
+        "native",
+        "nethogs",
+        "netstat",
+        "network",
+        "nginx",
+        "node",
+        "nodejs",
+        "noout",
+        "npm",
+        "one",
+        "openssl",
+        "operations",
+        "opt",
+        "optional",
+        "options",
+        "org",
+        "outgoing",
+        "package",
+        "packages",
+        "pair",
+        "pass",
+        "password",
+        "path",
+        "pem",
+        "performance",
+        "permanent",
+        "permission",
+        "permissions",
+        "pid",
+        "pip",
+        "policies",
+        "port",
+        "ports",
+        "post",
+        "postgres",
+        "postgresql",
+        "pre",
+        "preparation",
+        "privkey",
+        "problems",
+        "procedures",
+        "process",
+        "prod",
+        "production",
+        "project",
+        "proto",
+        "proxy",
+        "prune",
+        "public",
+        "pull",
+        "python",
+        "quick",
+        "ram",
+        "raw",
+        "react",
+        "real",
+        "recommended",
+        "records",
+        "recovery",
+        "recreate",
+        "redis",
+        "reload",
+        "remote",
+        "renew",
+        "repository",
+        "request",
+        "required",
+        "requirements",
+        "reread",
+        "resource",
+        "resources",
+        "restart",
+        "restartsec",
+        "restore",
+        "return",
+        "reverse",
+        "review",
+        "rhel",
+        "root",
+        "rules",
+        "run",
+        "save",
+        "scheme",
+        "script",
+        "scripts",
+        "secret",
+        "secure",
+        "security",
+        "securitygrouprules",
+        "server",
+        "servers",
+        "service",
+        "services",
+        "set",
+        "settings",
+        "setup",
+        "should",
+        "siem",
+        "simple",
+        "sites",
+        "size",
+        "software",
+        "source",
+        "specific",
+        "sql",
+        "sqlite",
+        "ssh",
+        "sshd",
+        "ssl",
+        "standalone",
+        "start",
+        "startup",
+        "stats",
+        "status",
+        "stop",
+        "storage",
+        "sudo",
+        "supervisor",
+        "supervisorctl",
+        "system",
+        "systemctl",
+        "systemd",
+        "table",
+        "tables",
+        "tail",
+        "target",
+        "tcp",
+        "template",
+        "test",
+        "testing",
+        "text",
+        "timestamp",
+        "tlnp",
+        "token",
+        "toport",
+        "troubleshooting",
+        "true",
+        "txt",
+        "type",
+        "ubuntu",
+        "ufw",
+        "unit",
+        "unused",
+        "update",
+        "url",
+        "usage",
+        "use",
+        "user",
+        "useradd",
+        "usermod",
+        "username",
+        "using",
+        "usr",
+        "utils",
+        "validity",
+        "var",
+        "variables",
+        "venv",
+        "verification",
+        "verify",
+        "version",
+        "view",
+        "virtual",
+        "volumes",
+        "wantedby",
+        "web",
+        "wget",
+        "workingdirectory",
+        "yaml",
+        "yml",
+        "your",
+        "yourdomain",
+        "yum",
+        "zone"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "system-administrators",
+        "it-managers",
+        "devops-engineers"
+      ],
+      "last_updated": "sudo apt install -y curl wget git build-essential python3-dev python3-pip nodejs npm"
+    },
+    "developer-guide\\api-documentation.md": {
+      "title": "🔌 API Documentation",
+      "path": "developer-guide\\api-documentation.md",
+      "volume": "developer-guide",
+      "section": "developer-guide",
+      "keywords": [
+        "access",
+        "acknowledged",
+        "activity",
+        "add",
+        "address",
+        "admin",
+        "after",
+        "alert",
+        "alerts",
+        "analysis",
+        "analyst",
+        "analytics",
+        "analyze",
+        "api",
+        "apikey",
+        "application",
+        "assert",
+        "async",
+        "attempt",
+        "attempts",
+        "auth",
+        "authentication",
+        "authorization",
+        "await",
+        "base",
+        "baseurl",
+        "bash",
+        "basic",
+        "bearer",
+        "below",
+        "botnet",
+        "breakdown",
+        "builder",
+        "cef",
+        "change",
+        "characters",
+        "check",
+        "client",
+        "code",
+        "codes",
+        "collection",
+        "com",
+        "completed",
+        "confidence",
+        "configuration",
+        "const",
+        "content",
+        "contents",
+        "cookie",
+        "core",
+        "count",
+        "create",
+        "created",
+        "credentials",
+        "critical",
+        "curl",
+        "current",
+        "dark",
+        "dashboard",
+        "data",
+        "def",
+        "denied",
+        "deprecation",
+        "desc",
+        "describe",
+        "description",
+        "details",
+        "detected",
+        "development",
+        "documentation",
+        "doe",
+        "doesn",
+        "domain",
+        "download",
+        "email",
+        "enabled",
+        "end",
+        "endpoint",
+        "endpoints",
+        "enterprise",
+        "error",
+        "event",
+        "events",
+        "example",
+        "examples",
+        "exceeded",
+        "execute",
+        "exist",
+        "expect",
+        "factor",
+        "failed",
+        "false",
+        "fetch",
+        "field",
+        "fields",
+        "filters",
+        "first",
+        "format",
+        "found",
+        "free",
+        "function",
+        "generate",
+        "get",
+        "getpostman",
+        "global",
+        "group",
+        "gte",
+        "handling",
+        "has",
+        "hash",
+        "have",
+        "header",
+        "headers",
+        "here",
+        "high",
+        "hooks",
+        "host",
+        "http",
+        "https",
+        "import",
+        "incident",
+        "incidents",
+        "include",
+        "increasing",
+        "indicator",
+        "indicators",
+        "info",
+        "ingest",
+        "input",
+        "install",
+        "installation",
+        "insufficient",
+        "integration",
+        "integrations",
+        "intelligence",
+        "internal",
+        "invalid",
+        "investigating",
+        "javascript",
+        "jest",
+        "john",
+        "json",
+        "jsondata",
+        "jupiter",
+        "jupiterapi",
+        "jwt",
+        "key",
+        "known",
+        "least",
+        "less",
+        "limit",
+        "limiting",
+        "list",
+        "localhost",
+        "lockout",
+        "log",
+        "login",
+        "logout",
+        "logs",
+        "low",
+        "lte",
+        "malicious",
+        "malware",
+        "management",
+        "manual",
+        "many",
+        "medium",
+        "message",
+        "method",
+        "methods",
+        "metric",
+        "metrics",
+        "minutes",
+        "mock",
+        "more",
+        "mozilla",
+        "multiple",
+        "must",
+        "name",
+        "network",
+        "new",
+        "node",
+        "notes",
+        "notifications",
+        "npm",
+        "offset",
+        "open",
+        "operation",
+        "order",
+        "overview",
+        "parameters",
+        "password",
+        "patch",
+        "path",
+        "pdf",
+        "permissions",
+        "pip",
+        "policy",
+        "port",
+        "post",
+        "postman",
+        "preferences",
+        "production",
+        "professional",
+        "profile",
+        "projectjupiter",
+        "promise",
+        "property",
+        "protocol",
+        "put",
+        "pytest",
+        "python",
+        "queries",
+        "query",
+        "range",
+        "rate",
+        "ratelimit",
+        "read",
+        "reason",
+        "recommended",
+        "refresh",
+        "remaining",
+        "remember",
+        "report",
+        "reporting",
+        "reports",
+        "req",
+        "request",
+        "requests",
+        "require",
+        "required",
+        "reset",
+        "resolve",
+        "resolved",
+        "resource",
+        "response",
+        "responsetime",
+        "result",
+        "retry",
+        "return",
+        "role",
+        "rule",
+        "save",
+        "schema",
+        "scripts",
+        "sdk",
+        "search",
+        "secret",
+        "secure",
+        "security",
+        "select",
+        "services",
+        "session",
+        "setup",
+        "severity",
+        "should",
+        "siem",
+        "slack",
+        "source",
+        "sources",
+        "start",
+        "status",
+        "string",
+        "structure",
+        "success",
+        "successfully",
+        "suspicious",
+        "syslog",
+        "table",
+        "tags",
+        "template",
+        "templates",
+        "test",
+        "testing",
+        "tests",
+        "than",
+        "theme",
+        "threat",
+        "threats",
+        "tiers",
+        "time",
+        "timerange",
+        "timestamp",
+        "timezone",
+        "title",
+        "tobe",
+        "token",
+        "too",
+        "total",
+        "trend",
+        "true",
+        "two",
+        "type",
+        "udp",
+        "unit",
+        "update",
+        "url",
+        "usage",
+        "use",
+        "user",
+        "users",
+        "utc",
+        "validation",
+        "value",
+        "variable",
+        "verify",
+        "version",
+        "versioning",
+        "wait",
+        "web",
+        "webhook",
+        "webhooks",
+        "where",
+        "window",
+        "windows"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "developers",
+        "integrators",
+        "contributors"
+      ],
+      "last_updated": "User Profile"
+    },
+    "reference-library\\api-reference.md": {
+      "title": "🔌 API Reference",
+      "path": "reference-library\\api-reference.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "api",
+        "reference"
+      ],
+      "content_type": "configuration",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "September 2025"
+    },
+    "reference-library\\command-reference.md": {
+      "title": "🧰 Command Reference",
+      "path": "reference-library\\command-reference.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "command",
+        "reference"
+      ],
+      "content_type": "api",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "September 2025"
+    },
+    "reference-library\\configuration-reference.md": {
+      "title": "⚙️ Configuration Reference",
+      "path": "reference-library\\configuration-reference.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "app",
+        "check",
+        "configuration",
+        "database",
+        "debug",
+        "duration",
+        "email",
+        "jwt",
+        "key",
+        "level",
+        "login",
+        "mail",
+        "metrics",
+        "microsoft",
+        "name",
+        "password",
+        "port",
+        "redis",
+        "reference",
+        "session",
+        "smtp",
+        "url"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "September 2025"
+    },
+    "reference-library\\error-codes.md": {
+      "title": "❌ Error Codes",
+      "path": "reference-library\\error-codes.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "authentication",
+        "codes",
+        "denied",
+        "entity",
+        "error",
+        "exceeded",
+        "failed",
+        "found",
+        "input",
+        "insufficient",
+        "internal",
+        "many",
+        "not",
+        "permissions",
+        "rate",
+        "requests",
+        "resource",
+        "too",
+        "validation"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "September 2025"
+    },
+    "reference-library\\faq.md": {
+      "title": "❓ FAQ",
+      "path": "reference-library\\faq.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "faq"
+      ],
+      "content_type": "configuration",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "September 2025"
+    },
+    "reference-library\\quick-reference.md": {
+      "title": "⚡ Quick Reference",
+      "path": "reference-library\\quick-reference.md",
+      "volume": "reference-library",
+      "section": "reference-library",
+      "keywords": [
+        "access",
+        "account",
+        "accounts",
+        "admin",
+        "administrator",
+        "alert",
+        "alertmanager",
+        "alerts",
+        "all",
+        "analyst",
+        "analytics",
+        "api",
+        "app",
+        "application",
+        "appropriate",
+        "are",
+        "asked",
+        "auth",
+        "authentication",
+        "authority",
+        "available",
+        "backend",
+        "backup",
+        "backups",
+        "base",
+        "bash",
+        "browser",
+        "business",
+        "cache",
+        "cannot",
+        "cert",
+        "certbot",
+        "certificate",
+        "channels",
+        "character",
+        "characters",
+        "check",
+        "chrome",
+        "clear",
+        "com",
+        "commands",
+        "common",
+        "community",
+        "complete",
+        "compose",
+        "config",
+        "configuration",
+        "connect",
+        "connection",
+        "contact",
+        "contacts",
+        "contents",
+        "core",
+        "cores",
+        "cpu",
+        "credentials",
+        "ctrl",
+        "data",
+        "database",
+        "default",
+        "delete",
+        "detailed",
+        "details",
+        "development",
+        "directory",
+        "docker",
+        "docs",
+        "document",
+        "documentation",
+        "down",
+        "duration",
+        "during",
+        "edge",
+        "email",
+        "emergency",
+        "enabled",
+        "encrypt",
+        "encryption",
+        "endpoints",
+        "env",
+        "environment",
+        "error",
+        "errors",
+        "etc",
+        "event",
+        "explorer",
+        "export",
+        "exports",
+        "false",
+        "faq",
+        "file",
+        "files",
+        "firefox",
+        "firewall",
+        "fixes",
+        "follow",
+        "forum",
+        "forums",
+        "free",
+        "frequently",
+        "friday",
+        "frontend",
+        "get",
+        "github",
+        "grafana",
+        "grep",
+        "guides",
+        "health",
+        "here",
+        "history",
+        "hour",
+        "hours",
+        "htop",
+        "http",
+        "https",
+        "incident",
+        "info",
+        "information",
+        "ingest",
+        "installation",
+        "interface",
+        "internet",
+        "issuer",
+        "issues",
+        "jail",
+        "journalctl",
+        "jupiter",
+        "jwt",
+        "key",
+        "least",
+        "length",
+        "let",
+        "letter",
+        "limited",
+        "line",
+        "listening",
+        "local",
+        "localhost",
+        "locations",
+        "log",
+        "logging",
+        "login",
+        "logout",
+        "logs",
+        "lowercase",
+        "lts",
+        "mail",
+        "main",
+        "management",
+        "member",
+        "metrics",
+        "migrate",
+        "migrations",
+        "minimum",
+        "monday",
+        "mongodb",
+        "monitoring",
+        "mysql",
+        "name",
+        "netstat",
+        "nginx",
+        "noout",
+        "number",
+        "openssl",
+        "opt",
+        "org",
+        "pass",
+        "password",
+        "pem",
+        "performance",
+        "permissions",
+        "phone",
+        "port",
+        "ports",
+        "post",
+        "postgresql",
+        "private",
+        "problem",
+        "procedures",
+        "prod",
+        "production",
+        "projectjupiter",
+        "prometheus",
+        "pull",
+        "put",
+        "python",
+        "queries",
+        "query",
+        "questions",
+        "quick",
+        "ram",
+        "recommended",
+        "redirects",
+        "redis",
+        "reference",
+        "references",
+        "refresh",
+        "related",
+        "renew",
+        "requirements",
+        "reset",
+        "resolution",
+        "resources",
+        "response",
+        "restart",
+        "restore",
+        "review",
+        "run",
+        "running",
+        "safari",
+        "scripts",
+        "search",
+        "secret",
+        "security",
+        "self",
+        "server",
+        "service",
+        "services",
+        "session",
+        "set",
+        "settings",
+        "shift",
+        "siem",
+        "sites",
+        "size",
+        "smtp",
+        "special",
+        "sql",
+        "sqlite",
+        "ssd",
+        "ssh",
+        "ssl",
+        "start",
+        "status",
+        "step",
+        "stop",
+        "storage",
+        "sudo",
+        "support",
+        "system",
+        "systemctl",
+        "systemd",
+        "table",
+        "tail",
+        "team",
+        "templates",
+        "test",
+        "testing",
+        "text",
+        "time",
+        "tlnp",
+        "troubleshooting",
+        "true",
+        "two",
+        "ubuntu",
+        "ufw",
+        "update",
+        "uploads",
+        "uppercase",
+        "url",
+        "urls",
+        "used",
+        "user",
+        "users",
+        "using",
+        "utc",
+        "validity",
+        "var",
+        "variables",
+        "verify",
+        "view",
+        "viewer",
+        "web",
+        "yml",
+        "your"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "all-users"
+      ],
+      "last_updated": "services"
+    },
+    "security-guide\\security-architecture.md": {
+      "title": "🏗️ Security Architecture",
+      "path": "security-guide\\security-architecture.md",
+      "volume": "security-guide",
+      "section": "security-guide",
+      "keywords": [
+        "abac",
+        "abuse",
+        "acceptance",
+        "access",
+        "accidental",
+        "account",
+        "accounts",
+        "acls",
+        "actions",
+        "activity",
+        "adjustments",
+        "administrative",
+        "administrator",
+        "advanced",
+        "aes",
+        "aggregation",
+        "alerting",
+        "alerts",
+        "always",
+        "analysis",
+        "analyst",
+        "analytics",
+        "annual",
+        "anomaly",
+        "anti",
+        "antivirus",
+        "api",
+        "appliances",
+        "application",
+        "approval",
+        "approvals",
+        "architecture",
+        "assessment",
+        "assessments",
+        "asset",
+        "assignment",
+        "assignments",
+        "attack",
+        "attacks",
+        "attribute",
+        "audit",
+        "audits",
+        "auth",
+        "authentication",
+        "authorization",
+        "authorized",
+        "automated",
+        "automation",
+        "availability",
+        "available",
+        "avoidance",
+        "aware",
+        "awareness",
+        "backup",
+        "backups",
+        "balancers",
+        "base",
+        "based",
+        "baselines",
+        "basic",
+        "basis",
+        "behavior",
+        "behavioral",
+        "benchmark",
+        "biometric",
+        "blocking",
+        "board",
+        "breach",
+        "briefing",
+        "business",
+        "calculation",
+        "campaigns",
+        "capabilities",
+        "capacity",
+        "center",
+        "certificate",
+        "certification",
+        "chain",
+        "changes",
+        "checks",
+        "cis",
+        "classification",
+        "cleanup",
+        "cloud",
+        "cluster",
+        "code",
+        "codes",
+        "coding",
+        "collection",
+        "column",
+        "common",
+        "communication",
+        "compliance",
+        "components",
+        "compromised",
+        "concurrent",
+        "confidential",
+        "confidentiality",
+        "configuration",
+        "connections",
+        "consent",
+        "container",
+        "containment",
+        "content",
+        "contents",
+        "context",
+        "continuity",
+        "continuous",
+        "control",
+        "controls",
+        "core",
+        "correlation",
+        "creation",
+        "cybersecurity",
+        "dashboards",
+        "data",
+        "database",
+        "ddos",
+        "deactivation",
+        "decisions",
+        "defense",
+        "deletion",
+        "deployment",
+        "deprovisioning",
+        "depth",
+        "design",
+        "detect",
+        "detection",
+        "developer",
+        "development",
+        "disk",
+        "disposal",
+        "dmz",
+        "documentation",
+        "dynamic",
+        "effectiveness",
+        "email",
+        "emergency",
+        "employee",
+        "encrypted",
+        "encryption",
+        "end",
+        "enforcement",
+        "engine",
+        "engineering",
+        "environmental",
+        "error",
+        "escalation",
+        "escrow",
+        "event",
+        "exception",
+        "exchange",
+        "executive",
+        "exfiltration",
+        "exposure",
+        "external",
+        "facing",
+        "factor",
+        "feeds",
+        "file",
+        "filtering",
+        "fine",
+        "fire",
+        "firewall",
+        "flow",
+        "forensic",
+        "framework",
+        "full",
+        "gap",
+        "gdpr",
+        "geo",
+        "governance",
+        "grained",
+        "groups",
+        "guidelines",
+        "handling",
+        "hardening",
+        "hardware",
+        "hierarchies",
+        "highly",
+        "historical",
+        "host",
+        "hsm",
+        "humidity",
+        "iam",
+        "identification",
+        "identify",
+        "identity",
+        "ids",
+        "image",
+        "impact",
+        "implementation",
+        "improvement",
+        "incident",
+        "indicators",
+        "information",
+        "infrastructure",
+        "inheritance",
+        "injection",
+        "input",
+        "insider",
+        "inspection",
+        "integration",
+        "integrity",
+        "intelligence",
+        "internal",
+        "internet",
+        "intrusion",
+        "inventory",
+        "investigation",
+        "ips",
+        "ipsec",
+        "iso",
+        "isolation",
+        "just",
+        "key",
+        "know",
+        "landscape",
+        "layer",
+        "learned",
+        "learning",
+        "least",
+        "legal",
+        "lessons",
+        "level",
+        "levels",
+        "lifecycle",
+        "likelihood",
+        "limitation",
+        "limits",
+        "live",
+        "load",
+        "lockout",
+        "log",
+        "logging",
+        "loss",
+        "machine",
+        "malware",
+        "management",
+        "manager",
+        "masking",
+        "maximum",
+        "measures",
+        "media",
+        "message",
+        "methods",
+        "mfa",
+        "micro",
+        "minimization",
+        "mitigation",
+        "model",
+        "modeling",
+        "modifications",
+        "modules",
+        "monitoring",
+        "multi",
+        "need",
+        "network",
+        "never",
+        "new",
+        "nist",
+        "normalization",
+        "notification",
+        "notifications",
+        "offsite",
+        "only",
+        "operating",
+        "optimization",
+        "orchestration",
+        "orientation",
+        "override",
+        "overview",
+        "owasp",
+        "packet",
+        "pam",
+        "parameter",
+        "party",
+        "password",
+        "patch",
+        "patterns",
+        "penetration",
+        "performance",
+        "perimeter",
+        "permission",
+        "permissions",
+        "persistent",
+        "personnel",
+        "phishing",
+        "physical",
+        "planning",
+        "points",
+        "policies",
+        "policy",
+        "power",
+        "practices",
+        "predefined",
+        "prevention",
+        "primary",
+        "principle",
+        "principles",
+        "prioritization",
+        "privacy",
+        "privilege",
+        "privileged",
+        "procedures",
+        "process",
+        "processes",
+        "processing",
+        "program",
+        "protect",
+        "protection",
+        "protocol",
+        "protocols",
+        "provisioning",
+        "proxy",
+        "public",
+        "publicly",
+        "purpose",
+        "quality",
+        "query",
+        "rbac",
+        "real",
+        "recording",
+        "recover",
+        "recovery",
+        "registry",
+        "regular",
+        "regulatory",
+        "related",
+        "remediation",
+        "remote",
+        "reporting",
+        "required",
+        "requirements",
+        "resource",
+        "respond",
+        "response",
+        "rest",
+        "restricted",
+        "restrictions",
+        "result",
+        "retention",
+        "review",
+        "reviews",
+        "revocation",
+        "rights",
+        "risk",
+        "risks",
+        "role",
+        "roles",
+        "rotation",
+        "rule",
+        "rules",
+        "runtime",
+        "sanitization",
+        "sans",
+        "scanning",
+        "scheme",
+        "secondary",
+        "secret",
+        "secure",
+        "security",
+        "segmentation",
+        "server",
+        "servers",
+        "service",
+        "services",
+        "session",
+        "siem",
+        "sign",
+        "signing",
+        "single",
+        "sms",
+        "soc",
+        "social",
+        "software",
+        "special",
+        "specific",
+        "sql",
+        "ssh",
+        "ssl",
+        "sso",
+        "stakeholder",
+        "standard",
+        "standards",
+        "stateful",
+        "static",
+        "status",
+        "storage",
+        "strategies",
+        "strategy",
+        "strict",
+        "strong",
+        "supply",
+        "suppression",
+        "surveillance",
+        "system",
+        "systems",
+        "table",
+        "tde",
+        "technical",
+        "temperature",
+        "termination",
+        "testing",
+        "third",
+        "threat",
+        "threats",
+        "time",
+        "timeout",
+        "tls",
+        "tokens",
+        "tools",
+        "top",
+        "tracking",
+        "traffic",
+        "trail",
+        "training",
+        "transfer",
+        "transit",
+        "transmission",
+        "transparency",
+        "transparent",
+        "treatment",
+        "trend",
+        "trust",
+        "type",
+        "unit",
+        "updates",
+        "use",
+        "user",
+        "username",
+        "validation",
+        "vectors",
+        "vendor",
+        "verification",
+        "verify",
+        "video",
+        "visitor",
+        "vlan",
+        "vpc",
+        "vpn",
+        "vulnerabilities",
+        "vulnerability",
+        "waf",
+        "web",
+        "welcome",
+        "workflow",
+        "workflows",
+        "xss",
+        "yaml",
+        "zero",
+        "zone",
+        "zones"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "security-architects",
+        "compliance-officers",
+        "auditors"
+      ],
+      "last_updated": "September 2025"
+    },
+    "user-guide\\quick-start.md": {
+      "title": "🚀 Quick Start Guide",
+      "path": "user-guide\\quick-start.md",
+      "volume": "user-guide",
+      "section": "user-guide",
+      "keywords": [
+        "access",
+        "accessing",
+        "acknowledge",
+        "acknowledging",
+        "activity",
+        "admin",
+        "administration",
+        "advanced",
+        "alert",
+        "alerts",
+        "all",
+        "analytics",
+        "anomalies",
+        "attempts",
+        "authentication",
+        "auto",
+        "basic",
+        "behavioral",
+        "breadcrumb",
+        "browser",
+        "builder",
+        "building",
+        "built",
+        "cards",
+        "case",
+        "change",
+        "channels",
+        "checklist",
+        "common",
+        "compliance",
+        "components",
+        "configuration",
+        "contents",
+        "critical",
+        "customization",
+        "daily",
+        "dark",
+        "dashboard",
+        "data",
+        "date",
+        "day",
+        "days",
+        "default",
+        "devices",
+        "digest",
+        "disabled",
+        "display",
+        "documentation",
+        "elements",
+        "email",
+        "enable",
+        "enabled",
+        "english",
+        "escalate",
+        "escalating",
+        "essential",
+        "event",
+        "events",
+        "example",
+        "examples",
+        "factor",
+        "failed",
+        "file",
+        "filter",
+        "filters",
+        "first",
+        "format",
+        "getting",
+        "global",
+        "guide",
+        "help",
+        "high",
+        "hints",
+        "home",
+        "hour",
+        "hours",
+        "hunting",
+        "icon",
+        "immediate",
+        "incident",
+        "incidents",
+        "info",
+        "initial",
+        "insights",
+        "integrations",
+        "intelligence",
+        "interface",
+        "jupiter",
+        "key",
+        "keyboard",
+        "language",
+        "last",
+        "learning",
+        "levels",
+        "light",
+        "login",
+        "logins",
+        "logs",
+        "low",
+        "machine",
+        "main",
+        "management",
+        "medium",
+        "menu",
+        "metrics",
+        "navigation",
+        "network",
+        "next",
+        "notification",
+        "notifications",
+        "open",
+        "operations",
+        "options",
+        "overview",
+        "panel",
+        "password",
+        "popup",
+        "preferences",
+        "priority",
+        "process",
+        "profile",
+        "projectjupiter",
+        "query",
+        "quick",
+        "range",
+        "recent",
+        "references",
+        "reports",
+        "resources",
+        "response",
+        "screen",
+        "search",
+        "sections",
+        "security",
+        "self",
+        "service",
+        "settings",
+        "setup",
+        "severity",
+        "shortcuts",
+        "show",
+        "siem",
+        "simple",
+        "sound",
+        "source",
+        "sources",
+        "start",
+        "step",
+        "steps",
+        "support",
+        "suspicious",
+        "system",
+        "systems",
+        "table",
+        "tasks",
+        "team",
+        "term",
+        "theme",
+        "threat",
+        "threats",
+        "time",
+        "timeline",
+        "tooltips",
+        "traffic",
+        "two",
+        "type",
+        "types",
+        "unauthorized",
+        "understanding",
+        "unusual",
+        "update",
+        "user",
+        "username",
+        "utc",
+        "viewing",
+        "views",
+        "web",
+        "week",
+        "widget",
+        "within",
+        "working",
+        "your",
+        "yyyy",
+        "zone"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "end-users",
+        "security-analysts",
+        "soc-operators"
+      ],
+      "last_updated": "Password\"**"
+    },
+    "user-guide\\troubleshooting.md": {
+      "title": "🔧 Troubleshooting Guide",
+      "path": "user-guide\\troubleshooting.md",
+      "volume": "user-guide",
+      "section": "user-guide",
+      "keywords": [
+        "acceleration",
+        "access",
+        "accessing",
+        "account",
+        "actions",
+        "active",
+        "add",
+        "adjust",
+        "admin",
+        "administrative",
+        "administrator",
+        "again",
+        "alert",
+        "alerts",
+        "all",
+        "allow",
+        "alternative",
+        "app",
+        "appearing",
+        "applicable",
+        "application",
+        "applications",
+        "approaches",
+        "are",
+        "assignment",
+        "assignments",
+        "authentication",
+        "authenticator",
+        "auto",
+        "availability",
+        "available",
+        "back",
+        "backend",
+        "backup",
+        "bandwidth",
+        "basic",
+        "best",
+        "blockers",
+        "blocking",
+        "break",
+        "broader",
+        "browser",
+        "browsers",
+        "builder",
+        "built",
+        "cache",
+        "cannot",
+        "case",
+        "certificate",
+        "certificates",
+        "channel",
+        "chat",
+        "check",
+        "chrome",
+        "clear",
+        "close",
+        "code",
+        "codes",
+        "com",
+        "common",
+        "compatibility",
+        "complex",
+        "complexity",
+        "conditions",
+        "configuration",
+        "configure",
+        "connection",
+        "connectivity",
+        "consider",
+        "console",
+        "contact",
+        "contacts",
+        "content",
+        "contents",
+        "context",
+        "cookies",
+        "corporate",
+        "correct",
+        "correlation",
+        "create",
+        "credential",
+        "credentials",
+        "critical",
+        "cross",
+        "currently",
+        "custom",
+        "customization",
+        "dashboard",
+        "dashboards",
+        "data",
+        "database",
+        "datasets",
+        "date",
+        "default",
+        "denied",
+        "detailed",
+        "detected",
+        "device",
+        "diagnostics",
+        "different",
+        "dig",
+        "digest",
+        "disable",
+        "displaying",
+        "dns",
+        "document",
+        "documentation",
+        "domain",
+        "don",
+        "down",
+        "drivers",
+        "duration",
+        "during",
+        "edge",
+        "edit",
+        "email",
+        "emergency",
+        "enable",
+        "enabled",
+        "environment",
+        "error",
+        "errors",
+        "escalation",
+        "event",
+        "examples",
+        "exception",
+        "execution",
+        "exists",
+        "exit",
+        "expiration",
+        "expired",
+        "explanations",
+        "explorer",
+        "export",
+        "extensions",
+        "extra",
+        "factor",
+        "faq",
+        "field",
+        "fields",
+        "filter",
+        "filtering",
+        "filters",
+        "firefox",
+        "firewall",
+        "first",
+        "fixes",
+        "forgot",
+        "format",
+        "functionality",
+        "general",
+        "generating",
+        "getting",
+        "group",
+        "guide",
+        "handling",
+        "hardware",
+        "has",
+        "have",
+        "heavy",
+        "help",
+        "hints",
+        "home",
+        "hours",
+        "https",
+        "identify",
+        "incognito",
+        "increase",
+        "indexed",
+        "information",
+        "ingestion",
+        "initial",
+        "insecure",
+        "instead",
+        "instructions",
+        "interface",
+        "internal",
+        "internet",
+        "intervals",
+        "into",
+        "invalid",
+        "issue",
+        "issues",
+        "javascript",
+        "jupiter",
+        "keep",
+        "large",
+        "level",
+        "library",
+        "lighter",
+        "limit",
+        "limitations",
+        "link",
+        "linux",
+        "load",
+        "loading",
+        "locked",
+        "log",
+        "logging",
+        "logical",
+        "login",
+        "logs",
+        "longer",
+        "mac",
+        "management",
+        "manager",
+        "manual",
+        "many",
+        "matching",
+        "memory",
+        "menu",
+        "message",
+        "messages",
+        "met",
+        "missing",
+        "mode",
+        "modem",
+        "more",
+        "names",
+        "needed",
+        "network",
+        "new",
+        "not",
+        "notepad",
+        "notification",
+        "notifications",
+        "nslookup",
+        "number",
+        "occurred",
+        "off",
+        "ones",
+        "operating",
+        "operators",
+        "optimization",
+        "out",
+        "page",
+        "parentheses",
+        "password",
+        "peak",
+        "performance",
+        "permission",
+        "permissions",
+        "phone",
+        "please",
+        "policies",
+        "popup",
+        "practices",
+        "prevention",
+        "priorities",
+        "privacy",
+        "private",
+        "problem",
+        "problems",
+        "process",
+        "processing",
+        "projectjupiter",
+        "proper",
+        "protection",
+        "provide",
+        "proxy",
+        "queries",
+        "query",
+        "quotes",
+        "range",
+        "ranges",
+        "real",
+        "reduce",
+        "reference",
+        "refinement",
+        "refresh",
+        "regenerate",
+        "regularly",
+        "reinstall",
+        "related",
+        "remember",
+        "remove",
+        "reports",
+        "reproduce",
+        "request",
+        "required",
+        "reset",
+        "resolution",
+        "resource",
+        "resources",
+        "restart",
+        "restrictions",
+        "restrictive",
+        "results",
+        "review",
+        "role",
+        "router",
+        "routing",
+        "rules",
+        "running",
+        "safari",
+        "saved",
+        "saving",
+        "scan",
+        "schedule",
+        "screenshots",
+        "search",
+        "searches",
+        "section",
+        "security",
+        "selected",
+        "self",
+        "sending",
+        "sensitive",
+        "service",
+        "services",
+        "session",
+        "set",
+        "settings",
+        "setup",
+        "siem",
+        "signal",
+        "similar",
+        "simpler",
+        "simplify",
+        "site",
+        "slow",
+        "smaller",
+        "solution",
+        "solutions",
+        "source",
+        "sources",
+        "space",
+        "spaces",
+        "specific",
+        "speed",
+        "ssl",
+        "status",
+        "steps",
+        "storage",
+        "strength",
+        "strict",
+        "suggestions",
+        "support",
+        "supported",
+        "suppression",
+        "symptoms",
+        "sync",
+        "synchronization",
+        "syntax",
+        "system",
+        "table",
+        "tabs",
+        "task",
+        "team",
+        "templates",
+        "temporarily",
+        "terms",
+        "test",
+        "testing",
+        "thresholds",
+        "time",
+        "timed",
+        "timeout",
+        "tips",
+        "tls",
+        "too",
+        "tooltips",
+        "tracking",
+        "troubleshooting",
+        "try",
+        "tuning",
+        "two",
+        "typing",
+        "typos",
+        "unavailable",
+        "unnecessary",
+        "unused",
+        "update",
+        "updated",
+        "updates",
+        "url",
+        "usage",
+        "use",
+        "user",
+        "username",
+        "using",
+        "validity",
+        "values",
+        "verification",
+        "verify",
+        "version",
+        "views",
+        "visual",
+        "visualizations",
+        "vpn",
+        "websocket",
+        "when",
+        "whitelist",
+        "widget",
+        "widgets",
+        "wifi",
+        "wildcard",
+        "windows",
+        "wired",
+        "workflow",
+        "workflows",
+        "working",
+        "wrong",
+        "you",
+        "your"
+      ],
+      "content_type": "troubleshooting",
+      "target_audience": [
+        "end-users",
+        "security-analysts",
+        "soc-operators"
+      ],
+      "last_updated": "✅ Clear cache regularly"
+    }
+  },
+  "cross_references": [
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "developer-guide\\api-documentation.md",
+      "source_section": "admin-guide",
+      "target_section": "developer-guide",
+      "reference_type": "related-content",
+      "context": "Related to: template, resource, auth",
+      "confidence": 0.38710963455149505
+    },
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "admin-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: name, redis, configuration",
+      "confidence": 0.3720603015075377
+    },
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "admin-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: resource, denied, authentication",
+      "confidence": 0.36497512437810953
+    },
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "admin-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: pass, backup, sudo",
+      "confidence": 0.4759533073929962
+    },
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "user-guide\\quick-start.md",
+      "source_section": "admin-guide",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: your, access, interface",
+      "confidence": 0.3834108527131783
+    },
+    {
+      "source_doc": "admin-guide\\installation-deployment.md",
+      "target_doc": "user-guide\\troubleshooting.md",
+      "source_section": "admin-guide",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: backup, certificate, resource",
+      "confidence": 0.40239067055393585
+    },
+    {
+      "source_doc": "developer-guide\\api-documentation.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "developer-guide",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: template, resource, auth",
+      "confidence": 0.38710963455149505
+    },
+    {
+      "source_doc": "developer-guide\\api-documentation.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "developer-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: jwt, name, configuration",
+      "confidence": 0.3747692307692308
+    },
+    {
+      "source_doc": "developer-guide\\api-documentation.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "developer-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: insufficient, error, resource",
+      "confidence": 0.3814511041009464
+    },
+    {
+      "source_doc": "developer-guide\\api-documentation.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "developer-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, error, queries",
+      "confidence": 0.4291848906560637
+    },
+    {
+      "source_doc": "developer-guide\\api-documentation.md",
+      "target_doc": "security-guide\\security-architecture.md",
+      "source_section": "developer-guide",
+      "target_section": "security-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, error, incident",
+      "confidence": 0.3471615720524017
+    },
+    {
+      "source_doc": "reference-library\\api-reference.md",
+      "target_doc": "reference-library\\command-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.5333333333333334
+    },
+    {
+      "source_doc": "reference-library\\api-reference.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4173913043478261
+    },
+    {
+      "source_doc": "reference-library\\api-reference.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\api-reference.md",
+      "target_doc": "reference-library\\faq.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Similar configuration content",
+      "confidence": 0.6000000000000001
+    },
+    {
+      "source_doc": "reference-library\\api-reference.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference, api",
+      "confidence": 0.40290909090909094
+    },
+    {
+      "source_doc": "reference-library\\command-reference.md",
+      "target_doc": "reference-library\\api-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.5333333333333334
+    },
+    {
+      "source_doc": "reference-library\\command-reference.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4173913043478261
+    },
+    {
+      "source_doc": "reference-library\\command-reference.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\command-reference.md",
+      "target_doc": "reference-library\\faq.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\command-reference.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4014492753623189
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "reference-library",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: name, redis, configuration",
+      "confidence": 0.3720603015075377
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "developer-guide\\api-documentation.md",
+      "source_section": "reference-library",
+      "target_section": "developer-guide",
+      "reference_type": "related-content",
+      "context": "Related to: jwt, name, configuration",
+      "confidence": 0.3747692307692308
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "reference-library\\api-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4173913043478261
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "reference-library\\command-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4173913043478261
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Similar troubleshooting content",
+      "confidence": 0.6000000000000001
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "reference-library\\faq.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference, app, port",
+      "confidence": 0.6273381294964029
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "security-guide\\security-architecture.md",
+      "source_section": "reference-library",
+      "target_section": "security-guide",
+      "reference_type": "related-content",
+      "context": "Related to: session, configuration, key",
+      "confidence": 0.36598290598290606
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "user-guide\\quick-start.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: configuration, key, email",
+      "confidence": 0.37200000000000005
+    },
+    {
+      "source_doc": "reference-library\\configuration-reference.md",
+      "target_doc": "user-guide\\troubleshooting.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: session, reference, configuration",
+      "confidence": 0.37156626506024104
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "reference-library",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: resource, denied, authentication",
+      "confidence": 0.36497512437810953
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "developer-guide\\api-documentation.md",
+      "source_section": "reference-library",
+      "target_section": "developer-guide",
+      "reference_type": "related-content",
+      "context": "Related to: insufficient, error, resource",
+      "confidence": 0.3814511041009464
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "reference-library\\api-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "reference-library\\command-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Similar troubleshooting content",
+      "confidence": 0.6000000000000001
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "reference-library\\faq.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: error, authentication, permissions",
+      "confidence": 0.6041237113402063
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "security-guide\\security-architecture.md",
+      "source_section": "reference-library",
+      "target_section": "security-guide",
+      "reference_type": "related-content",
+      "context": "Related to: error, resource, internal",
+      "confidence": 0.366896551724138
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "user-guide\\quick-start.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: failed, authentication",
+      "confidence": 0.3639800995024876
+    },
+    {
+      "source_doc": "reference-library\\error-codes.md",
+      "target_doc": "user-guide\\troubleshooting.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: error, resource, internal",
+      "confidence": 0.3696618357487923
+    },
+    {
+      "source_doc": "reference-library\\faq.md",
+      "target_doc": "reference-library\\api-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Similar configuration content",
+      "confidence": 0.6000000000000001
+    },
+    {
+      "source_doc": "reference-library\\faq.md",
+      "target_doc": "reference-library\\command-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\faq.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\faq.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related documentation",
+      "confidence": 0.4
+    },
+    {
+      "source_doc": "reference-library\\faq.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: faq",
+      "confidence": 0.4014545454545455
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "reference-library",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: pass, backup, sudo",
+      "confidence": 0.4759533073929962
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "developer-guide\\api-documentation.md",
+      "source_section": "reference-library",
+      "target_section": "developer-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, error, queries",
+      "confidence": 0.4291848906560637
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "reference-library\\api-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference, api",
+      "confidence": 0.40290909090909094
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "reference-library\\command-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference",
+      "confidence": 0.4014492753623189
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: reference, app, port",
+      "confidence": 0.6273381294964029
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: error, authentication, permissions",
+      "confidence": 0.6041237113402063
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "reference-library\\faq.md",
+      "source_section": "reference-library",
+      "target_section": "reference-library",
+      "reference_type": "internal",
+      "context": "Related to: faq",
+      "confidence": 0.4014545454545455
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "security-guide\\security-architecture.md",
+      "source_section": "reference-library",
+      "target_section": "security-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, backup, error",
+      "confidence": 0.40255319148936175
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "user-guide\\quick-start.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, your, access",
+      "confidence": 0.4167164179104478
+    },
+    {
+      "source_doc": "reference-library\\quick-reference.md",
+      "target_doc": "user-guide\\troubleshooting.md",
+      "source_section": "reference-library",
+      "target_section": "user-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, backup, error",
+      "confidence": 0.43971781305114643
+    },
+    {
+      "source_doc": "security-guide\\security-architecture.md",
+      "target_doc": "developer-guide\\api-documentation.md",
+      "source_section": "security-guide",
+      "target_section": "developer-guide",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, error, incident",
+      "confidence": 0.3471615720524017
+    },
+    {
+      "source_doc": "security-guide\\security-architecture.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "security-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: session, configuration, key",
+      "confidence": 0.36598290598290606
+    },
+    {
+      "source_doc": "security-guide\\security-architecture.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "security-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: error, resource, internal",
+      "confidence": 0.366896551724138
+    },
+    {
+      "source_doc": "security-guide\\security-architecture.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "security-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, backup, error",
+      "confidence": 0.40255319148936175
+    },
+    {
+      "source_doc": "user-guide\\quick-start.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "user-guide",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: your, access, interface",
+      "confidence": 0.3834108527131783
+    },
+    {
+      "source_doc": "user-guide\\quick-start.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: configuration, key, email",
+      "confidence": 0.37200000000000005
+    },
+    {
+      "source_doc": "user-guide\\quick-start.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: failed, authentication",
+      "confidence": 0.3639800995024876
+    },
+    {
+      "source_doc": "user-guide\\quick-start.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, your, access",
+      "confidence": 0.4167164179104478
+    },
+    {
+      "source_doc": "user-guide\\quick-start.md",
+      "target_doc": "user-guide\\troubleshooting.md",
+      "source_section": "user-guide",
+      "target_section": "user-guide",
+      "reference_type": "internal",
+      "context": "Related to: documentation, case, logs",
+      "confidence": 0.6646942800788955
+    },
+    {
+      "source_doc": "user-guide\\troubleshooting.md",
+      "target_doc": "admin-guide\\installation-deployment.md",
+      "source_section": "user-guide",
+      "target_section": "admin-guide",
+      "reference_type": "related-content",
+      "context": "Related to: backup, certificate, resource",
+      "confidence": 0.40239067055393585
+    },
+    {
+      "source_doc": "user-guide\\troubleshooting.md",
+      "target_doc": "reference-library\\configuration-reference.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: session, reference, configuration",
+      "confidence": 0.37156626506024104
+    },
+    {
+      "source_doc": "user-guide\\troubleshooting.md",
+      "target_doc": "reference-library\\error-codes.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: error, resource, internal",
+      "confidence": 0.3696618357487923
+    },
+    {
+      "source_doc": "user-guide\\troubleshooting.md",
+      "target_doc": "reference-library\\quick-reference.md",
+      "source_section": "user-guide",
+      "target_section": "reference-library",
+      "reference_type": "related-content",
+      "context": "Related to: documentation, backup, error",
+      "confidence": 0.43971781305114643
+    },
+    {
+      "source_doc": "user-guide\\troubleshooting.md",
+      "target_doc": "user-guide\\quick-start.md",
+      "source_section": "user-guide",
+      "target_section": "user-guide",
+      "reference_type": "internal",
+      "context": "Related to: documentation, case, logs",
+      "confidence": 0.6646942800788955
+    }
+  ],
+  "keyword_index": {
+    "access": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "accessibility": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "account": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "activate": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "add": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "address": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "admin": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "after": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "all": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "allow": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "alpine": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "already": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "always": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "ami": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "analysis": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "apache": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "api": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\api-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "app": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "application": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "apt": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "are": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "auth": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "authentication": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "authorization": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "authorized": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "automated": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "available": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "aws": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "azure": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "azureuser": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "backend": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "backup": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "bantime": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "bash": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "basic": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "bearer": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "bench": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "bin": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "boot": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "build": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "centos": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "cert": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "certbot": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "certificate": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "certificates": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "certonly": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "certs": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "change": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "check": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "checklist": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md"
+    ],
+    "checks": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "chmod": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "chown": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "clean": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "click": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "client": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "clone": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "cloud": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "cmd": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "code": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "com": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "commands": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "common": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "compose": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "compute": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "conf": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "configuration": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "configure": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "connect": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "connection": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "connectivity": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "container": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "containerized": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "content": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "contents": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "context": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "copy": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "cpu": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "create": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "curl": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "custom": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "data": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "database": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "debian": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "dedicated": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "default": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "denied": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "deny": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "dependencies": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "depends": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "deploy": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "deployment": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "description": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "dev": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "devel": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "disk": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "dns": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "docker": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "dockerfile": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "document": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "domain": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "down": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "download": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "eastus": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "edit": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "email": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "enable": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "enabled": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "encrypt": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "endpoint": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "endpoints": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "engine": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "env": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "environment": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "essential": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md"
+    ],
+    "etc": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "event": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "example": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "exec": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "execstart": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "failed": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "user-guide\\quick-start.md"
+    ],
+    "family": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "file": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "find": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "findtime": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "firewall": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "firewalld": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "fix": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "forwarded": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "fromport": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "frontend": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "fullchain": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "functional": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "gateway": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "gcc": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "gcloud": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "generate": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "git": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "github": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "githubusercontent": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "google": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "grep": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "group": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "groups": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "guide": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "header": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "health": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "higher": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "home": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "host": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "hostname": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "htop": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "http": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "https": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "image": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "images": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "incoming": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "information": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "ingestion": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "ini": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "init": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "initial": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "initialize": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "install": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "installation": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "instance": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "instances": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "interface": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "interpreter": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "iotop": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "ipprotocol": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "issue": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "issues": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "jail": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "journalctl": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "json": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "jupiter": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "key": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "keys": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "kill": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "launch": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "let": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "letsencrypt": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "lib": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "listen": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "listening": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "live": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "load": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "local": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "localhost": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "location": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "log": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "login": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "logpath": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "logs": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "lsof": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "lts": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "machine": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "main": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "maintenance": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "management": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "maxretry": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "medium": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "method": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "methods": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "migrate": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "migrations": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "minimum": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "mkdir": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "monitor": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "monitoring": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "multi": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "name": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "nano": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "native": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "nethogs": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "netstat": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "network": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "nginx": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "node": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "nodejs": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "noout": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "npm": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "one": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "openssl": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "operations": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md"
+    ],
+    "opt": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "optional": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "options": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md"
+    ],
+    "org": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "outgoing": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "package": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "packages": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "pair": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "pass": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "password": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "path": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "pem": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "performance": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "permanent": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "permission": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "permissions": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "pid": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "pip": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "policies": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "port": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "ports": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "post": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "postgres": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "postgresql": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "pre": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "preparation": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "privkey": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "problems": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "procedures": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "process": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "prod": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "production": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "project": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "proto": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "proxy": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "prune": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "public": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "pull": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "python": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "quick": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "ram": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "raw": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "react": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "real": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "recommended": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "records": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "recovery": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "recreate": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "redis": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "reload": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "remote": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "renew": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "repository": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "request": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "required": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "requirements": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "reread": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "resource": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "resources": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "restart": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "restartsec": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "restore": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "return": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "reverse": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "review": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "rhel": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "root": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "rules": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "run": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "save": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "scheme": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "script": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "scripts": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "secret": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "secure": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "security": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "securitygrouprules": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "server": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "servers": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "service": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "services": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "set": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "settings": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "setup": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "should": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "siem": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "simple": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\quick-start.md"
+    ],
+    "sites": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "size": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "software": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "source": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "specific": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "sql": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "sqlite": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "ssh": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "sshd": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "ssl": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "standalone": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "start": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "startup": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "stats": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "status": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "stop": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "storage": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "sudo": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "supervisor": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "supervisorctl": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "system": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "systemctl": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "systemd": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "table": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "tables": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "tail": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "target": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "tcp": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "template": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "test": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "testing": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "text": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "timestamp": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "tlnp": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "token": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md"
+    ],
+    "toport": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "troubleshooting": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "true": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "txt": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "type": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "ubuntu": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "ufw": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "unit": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "unused": [
+      "admin-guide\\installation-deployment.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "update": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "url": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "usage": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "use": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "user": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "useradd": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "usermod": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "username": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "using": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "usr": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "utils": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "validity": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "var": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "variables": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "venv": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "verification": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "verify": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "version": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "view": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "virtual": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "volumes": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "wantedby": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "web": [
+      "admin-guide\\installation-deployment.md",
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "wget": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "workingdirectory": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "yaml": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "yml": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "your": [
+      "admin-guide\\installation-deployment.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "yourdomain": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "yum": [
+      "admin-guide\\installation-deployment.md"
+    ],
+    "zone": [
+      "admin-guide\\installation-deployment.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "acknowledged": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "activity": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "alert": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "alerts": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "analyst": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "analytics": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "analyze": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "apikey": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "assert": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "async": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "attempt": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "attempts": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "await": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "base": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "baseurl": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "below": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "botnet": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "breakdown": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "builder": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "cef": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "characters": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "codes": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "collection": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "completed": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "confidence": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "const": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "cookie": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "core": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "count": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "created": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "credentials": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "critical": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "current": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "dark": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "dashboard": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "def": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "deprecation": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "desc": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "describe": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "details": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "detected": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "development": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "documentation": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "doe": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "doesn": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "end": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "enterprise": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "error": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "events": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "examples": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "exceeded": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md"
+    ],
+    "execute": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "exist": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "expect": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "factor": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "false": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "fetch": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "field": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "fields": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "filters": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "first": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "format": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "found": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md"
+    ],
+    "free": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "function": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "get": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "getpostman": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "global": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "gte": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "handling": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "has": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "hash": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "have": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "headers": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "here": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "high": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "hooks": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "import": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "incident": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "incidents": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "include": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "increasing": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "indicator": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "indicators": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "info": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "ingest": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "input": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "insufficient": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md"
+    ],
+    "integration": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "integrations": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "intelligence": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "internal": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "invalid": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "investigating": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "javascript": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "jest": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "john": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "jsondata": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "jupiterapi": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "jwt": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "known": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "least": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "less": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "limit": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "limiting": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "list": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "lockout": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "logout": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "low": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "lte": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "malicious": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "malware": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "manual": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "many": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "message": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "metric": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "metrics": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "minutes": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "mock": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "more": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "mozilla": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "multiple": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "must": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "new": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "notes": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "notifications": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "offset": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "open": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "operation": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "order": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "overview": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "parameters": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "patch": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "pdf": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "policy": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "postman": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "preferences": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "professional": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "profile": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "projectjupiter": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "promise": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "property": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "protocol": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "put": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "pytest": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "queries": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "query": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "range": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "rate": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md"
+    ],
+    "ratelimit": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "read": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "reason": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "refresh": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "remaining": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "remember": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "report": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "reporting": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "reports": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "req": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "requests": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md"
+    ],
+    "require": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "reset": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "resolve": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "resolved": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "response": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "responsetime": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "result": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "retry": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "role": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "rule": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "schema": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "sdk": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "search": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "select": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "session": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "severity": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "slack": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "sources": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "string": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "structure": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "success": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "successfully": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "suspicious": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "syslog": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "tags": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "templates": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "tests": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "than": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "theme": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\quick-start.md"
+    ],
+    "threat": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "threats": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "tiers": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "time": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "timerange": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "timezone": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "title": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "tobe": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "too": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "total": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "trend": [
+      "developer-guide\\api-documentation.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "two": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "udp": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "users": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "utc": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "validation": [
+      "developer-guide\\api-documentation.md",
+      "reference-library\\error-codes.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "value": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "variable": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "versioning": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "wait": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "webhook": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "webhooks": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "where": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "window": [
+      "developer-guide\\api-documentation.md"
+    ],
+    "windows": [
+      "developer-guide\\api-documentation.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "reference": [
+      "reference-library\\api-reference.md",
+      "reference-library\\command-reference.md",
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "command": [
+      "reference-library\\command-reference.md"
+    ],
+    "debug": [
+      "reference-library\\configuration-reference.md"
+    ],
+    "duration": [
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "level": [
+      "reference-library\\configuration-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "mail": [
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "microsoft": [
+      "reference-library\\configuration-reference.md"
+    ],
+    "smtp": [
+      "reference-library\\configuration-reference.md",
+      "reference-library\\quick-reference.md"
+    ],
+    "entity": [
+      "reference-library\\error-codes.md"
+    ],
+    "not": [
+      "reference-library\\error-codes.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "faq": [
+      "reference-library\\faq.md",
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "accounts": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "administrator": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "alertmanager": [
+      "reference-library\\quick-reference.md"
+    ],
+    "appropriate": [
+      "reference-library\\quick-reference.md"
+    ],
+    "asked": [
+      "reference-library\\quick-reference.md"
+    ],
+    "authority": [
+      "reference-library\\quick-reference.md"
+    ],
+    "backups": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "browser": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "business": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "cache": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "cannot": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "channels": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "character": [
+      "reference-library\\quick-reference.md"
+    ],
+    "chrome": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "clear": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "community": [
+      "reference-library\\quick-reference.md"
+    ],
+    "complete": [
+      "reference-library\\quick-reference.md"
+    ],
+    "config": [
+      "reference-library\\quick-reference.md"
+    ],
+    "contact": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "contacts": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "cores": [
+      "reference-library\\quick-reference.md"
+    ],
+    "ctrl": [
+      "reference-library\\quick-reference.md"
+    ],
+    "delete": [
+      "reference-library\\quick-reference.md"
+    ],
+    "detailed": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "directory": [
+      "reference-library\\quick-reference.md"
+    ],
+    "docs": [
+      "reference-library\\quick-reference.md"
+    ],
+    "during": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "edge": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "emergency": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "encryption": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "errors": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "explorer": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "export": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "exports": [
+      "reference-library\\quick-reference.md"
+    ],
+    "files": [
+      "reference-library\\quick-reference.md"
+    ],
+    "firefox": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "fixes": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "follow": [
+      "reference-library\\quick-reference.md"
+    ],
+    "forum": [
+      "reference-library\\quick-reference.md"
+    ],
+    "forums": [
+      "reference-library\\quick-reference.md"
+    ],
+    "frequently": [
+      "reference-library\\quick-reference.md"
+    ],
+    "friday": [
+      "reference-library\\quick-reference.md"
+    ],
+    "grafana": [
+      "reference-library\\quick-reference.md"
+    ],
+    "guides": [
+      "reference-library\\quick-reference.md"
+    ],
+    "history": [
+      "reference-library\\quick-reference.md"
+    ],
+    "hour": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "hours": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "internet": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "issuer": [
+      "reference-library\\quick-reference.md"
+    ],
+    "length": [
+      "reference-library\\quick-reference.md"
+    ],
+    "letter": [
+      "reference-library\\quick-reference.md"
+    ],
+    "limited": [
+      "reference-library\\quick-reference.md"
+    ],
+    "line": [
+      "reference-library\\quick-reference.md"
+    ],
+    "locations": [
+      "reference-library\\quick-reference.md"
+    ],
+    "logging": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "lowercase": [
+      "reference-library\\quick-reference.md"
+    ],
+    "member": [
+      "reference-library\\quick-reference.md"
+    ],
+    "monday": [
+      "reference-library\\quick-reference.md"
+    ],
+    "mongodb": [
+      "reference-library\\quick-reference.md"
+    ],
+    "mysql": [
+      "reference-library\\quick-reference.md"
+    ],
+    "number": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "phone": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "private": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "problem": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "prometheus": [
+      "reference-library\\quick-reference.md"
+    ],
+    "questions": [
+      "reference-library\\quick-reference.md"
+    ],
+    "redirects": [
+      "reference-library\\quick-reference.md"
+    ],
+    "references": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "related": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "resolution": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "running": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "safari": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "self": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "shift": [
+      "reference-library\\quick-reference.md"
+    ],
+    "special": [
+      "reference-library\\quick-reference.md",
+      "security-guide\\security-architecture.md"
+    ],
+    "ssd": [
+      "reference-library\\quick-reference.md"
+    ],
+    "step": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md"
+    ],
+    "support": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "team": [
+      "reference-library\\quick-reference.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "uploads": [
+      "reference-library\\quick-reference.md"
+    ],
+    "uppercase": [
+      "reference-library\\quick-reference.md"
+    ],
+    "urls": [
+      "reference-library\\quick-reference.md"
+    ],
+    "used": [
+      "reference-library\\quick-reference.md"
+    ],
+    "viewer": [
+      "reference-library\\quick-reference.md"
+    ],
+    "abac": [
+      "security-guide\\security-architecture.md"
+    ],
+    "abuse": [
+      "security-guide\\security-architecture.md"
+    ],
+    "acceptance": [
+      "security-guide\\security-architecture.md"
+    ],
+    "accidental": [
+      "security-guide\\security-architecture.md"
+    ],
+    "acls": [
+      "security-guide\\security-architecture.md"
+    ],
+    "actions": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "adjustments": [
+      "security-guide\\security-architecture.md"
+    ],
+    "administrative": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "advanced": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "aes": [
+      "security-guide\\security-architecture.md"
+    ],
+    "aggregation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "alerting": [
+      "security-guide\\security-architecture.md"
+    ],
+    "annual": [
+      "security-guide\\security-architecture.md"
+    ],
+    "anomaly": [
+      "security-guide\\security-architecture.md"
+    ],
+    "anti": [
+      "security-guide\\security-architecture.md"
+    ],
+    "antivirus": [
+      "security-guide\\security-architecture.md"
+    ],
+    "appliances": [
+      "security-guide\\security-architecture.md"
+    ],
+    "approval": [
+      "security-guide\\security-architecture.md"
+    ],
+    "approvals": [
+      "security-guide\\security-architecture.md"
+    ],
+    "architecture": [
+      "security-guide\\security-architecture.md"
+    ],
+    "assessment": [
+      "security-guide\\security-architecture.md"
+    ],
+    "assessments": [
+      "security-guide\\security-architecture.md"
+    ],
+    "asset": [
+      "security-guide\\security-architecture.md"
+    ],
+    "assignment": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "assignments": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "attack": [
+      "security-guide\\security-architecture.md"
+    ],
+    "attacks": [
+      "security-guide\\security-architecture.md"
+    ],
+    "attribute": [
+      "security-guide\\security-architecture.md"
+    ],
+    "audit": [
+      "security-guide\\security-architecture.md"
+    ],
+    "audits": [
+      "security-guide\\security-architecture.md"
+    ],
+    "automation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "availability": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "avoidance": [
+      "security-guide\\security-architecture.md"
+    ],
+    "aware": [
+      "security-guide\\security-architecture.md"
+    ],
+    "awareness": [
+      "security-guide\\security-architecture.md"
+    ],
+    "balancers": [
+      "security-guide\\security-architecture.md"
+    ],
+    "based": [
+      "security-guide\\security-architecture.md"
+    ],
+    "baselines": [
+      "security-guide\\security-architecture.md"
+    ],
+    "basis": [
+      "security-guide\\security-architecture.md"
+    ],
+    "behavior": [
+      "security-guide\\security-architecture.md"
+    ],
+    "behavioral": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "benchmark": [
+      "security-guide\\security-architecture.md"
+    ],
+    "biometric": [
+      "security-guide\\security-architecture.md"
+    ],
+    "blocking": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "board": [
+      "security-guide\\security-architecture.md"
+    ],
+    "breach": [
+      "security-guide\\security-architecture.md"
+    ],
+    "briefing": [
+      "security-guide\\security-architecture.md"
+    ],
+    "calculation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "campaigns": [
+      "security-guide\\security-architecture.md"
+    ],
+    "capabilities": [
+      "security-guide\\security-architecture.md"
+    ],
+    "capacity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "center": [
+      "security-guide\\security-architecture.md"
+    ],
+    "certification": [
+      "security-guide\\security-architecture.md"
+    ],
+    "chain": [
+      "security-guide\\security-architecture.md"
+    ],
+    "changes": [
+      "security-guide\\security-architecture.md"
+    ],
+    "cis": [
+      "security-guide\\security-architecture.md"
+    ],
+    "classification": [
+      "security-guide\\security-architecture.md"
+    ],
+    "cleanup": [
+      "security-guide\\security-architecture.md"
+    ],
+    "cluster": [
+      "security-guide\\security-architecture.md"
+    ],
+    "coding": [
+      "security-guide\\security-architecture.md"
+    ],
+    "column": [
+      "security-guide\\security-architecture.md"
+    ],
+    "communication": [
+      "security-guide\\security-architecture.md"
+    ],
+    "compliance": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "components": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "compromised": [
+      "security-guide\\security-architecture.md"
+    ],
+    "concurrent": [
+      "security-guide\\security-architecture.md"
+    ],
+    "confidential": [
+      "security-guide\\security-architecture.md"
+    ],
+    "confidentiality": [
+      "security-guide\\security-architecture.md"
+    ],
+    "connections": [
+      "security-guide\\security-architecture.md"
+    ],
+    "consent": [
+      "security-guide\\security-architecture.md"
+    ],
+    "containment": [
+      "security-guide\\security-architecture.md"
+    ],
+    "continuity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "continuous": [
+      "security-guide\\security-architecture.md"
+    ],
+    "control": [
+      "security-guide\\security-architecture.md"
+    ],
+    "controls": [
+      "security-guide\\security-architecture.md"
+    ],
+    "correlation": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "creation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "cybersecurity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "dashboards": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "ddos": [
+      "security-guide\\security-architecture.md"
+    ],
+    "deactivation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "decisions": [
+      "security-guide\\security-architecture.md"
+    ],
+    "defense": [
+      "security-guide\\security-architecture.md"
+    ],
+    "deletion": [
+      "security-guide\\security-architecture.md"
+    ],
+    "deprovisioning": [
+      "security-guide\\security-architecture.md"
+    ],
+    "depth": [
+      "security-guide\\security-architecture.md"
+    ],
+    "design": [
+      "security-guide\\security-architecture.md"
+    ],
+    "detect": [
+      "security-guide\\security-architecture.md"
+    ],
+    "detection": [
+      "security-guide\\security-architecture.md"
+    ],
+    "developer": [
+      "security-guide\\security-architecture.md"
+    ],
+    "disposal": [
+      "security-guide\\security-architecture.md"
+    ],
+    "dmz": [
+      "security-guide\\security-architecture.md"
+    ],
+    "dynamic": [
+      "security-guide\\security-architecture.md"
+    ],
+    "effectiveness": [
+      "security-guide\\security-architecture.md"
+    ],
+    "employee": [
+      "security-guide\\security-architecture.md"
+    ],
+    "encrypted": [
+      "security-guide\\security-architecture.md"
+    ],
+    "enforcement": [
+      "security-guide\\security-architecture.md"
+    ],
+    "engineering": [
+      "security-guide\\security-architecture.md"
+    ],
+    "environmental": [
+      "security-guide\\security-architecture.md"
+    ],
+    "escalation": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "escrow": [
+      "security-guide\\security-architecture.md"
+    ],
+    "exception": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "exchange": [
+      "security-guide\\security-architecture.md"
+    ],
+    "executive": [
+      "security-guide\\security-architecture.md"
+    ],
+    "exfiltration": [
+      "security-guide\\security-architecture.md"
+    ],
+    "exposure": [
+      "security-guide\\security-architecture.md"
+    ],
+    "external": [
+      "security-guide\\security-architecture.md"
+    ],
+    "facing": [
+      "security-guide\\security-architecture.md"
+    ],
+    "feeds": [
+      "security-guide\\security-architecture.md"
+    ],
+    "filtering": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "fine": [
+      "security-guide\\security-architecture.md"
+    ],
+    "fire": [
+      "security-guide\\security-architecture.md"
+    ],
+    "flow": [
+      "security-guide\\security-architecture.md"
+    ],
+    "forensic": [
+      "security-guide\\security-architecture.md"
+    ],
+    "framework": [
+      "security-guide\\security-architecture.md"
+    ],
+    "full": [
+      "security-guide\\security-architecture.md"
+    ],
+    "gap": [
+      "security-guide\\security-architecture.md"
+    ],
+    "gdpr": [
+      "security-guide\\security-architecture.md"
+    ],
+    "geo": [
+      "security-guide\\security-architecture.md"
+    ],
+    "governance": [
+      "security-guide\\security-architecture.md"
+    ],
+    "grained": [
+      "security-guide\\security-architecture.md"
+    ],
+    "guidelines": [
+      "security-guide\\security-architecture.md"
+    ],
+    "hardening": [
+      "security-guide\\security-architecture.md"
+    ],
+    "hardware": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "hierarchies": [
+      "security-guide\\security-architecture.md"
+    ],
+    "highly": [
+      "security-guide\\security-architecture.md"
+    ],
+    "historical": [
+      "security-guide\\security-architecture.md"
+    ],
+    "hsm": [
+      "security-guide\\security-architecture.md"
+    ],
+    "humidity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "iam": [
+      "security-guide\\security-architecture.md"
+    ],
+    "identification": [
+      "security-guide\\security-architecture.md"
+    ],
+    "identify": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "identity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "ids": [
+      "security-guide\\security-architecture.md"
+    ],
+    "impact": [
+      "security-guide\\security-architecture.md"
+    ],
+    "implementation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "improvement": [
+      "security-guide\\security-architecture.md"
+    ],
+    "infrastructure": [
+      "security-guide\\security-architecture.md"
+    ],
+    "inheritance": [
+      "security-guide\\security-architecture.md"
+    ],
+    "injection": [
+      "security-guide\\security-architecture.md"
+    ],
+    "insider": [
+      "security-guide\\security-architecture.md"
+    ],
+    "inspection": [
+      "security-guide\\security-architecture.md"
+    ],
+    "integrity": [
+      "security-guide\\security-architecture.md"
+    ],
+    "intrusion": [
+      "security-guide\\security-architecture.md"
+    ],
+    "inventory": [
+      "security-guide\\security-architecture.md"
+    ],
+    "investigation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "ips": [
+      "security-guide\\security-architecture.md"
+    ],
+    "ipsec": [
+      "security-guide\\security-architecture.md"
+    ],
+    "iso": [
+      "security-guide\\security-architecture.md"
+    ],
+    "isolation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "just": [
+      "security-guide\\security-architecture.md"
+    ],
+    "know": [
+      "security-guide\\security-architecture.md"
+    ],
+    "landscape": [
+      "security-guide\\security-architecture.md"
+    ],
+    "layer": [
+      "security-guide\\security-architecture.md"
+    ],
+    "learned": [
+      "security-guide\\security-architecture.md"
+    ],
+    "learning": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "legal": [
+      "security-guide\\security-architecture.md"
+    ],
+    "lessons": [
+      "security-guide\\security-architecture.md"
+    ],
+    "levels": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "lifecycle": [
+      "security-guide\\security-architecture.md"
+    ],
+    "likelihood": [
+      "security-guide\\security-architecture.md"
+    ],
+    "limitation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "limits": [
+      "security-guide\\security-architecture.md"
+    ],
+    "loss": [
+      "security-guide\\security-architecture.md"
+    ],
+    "manager": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "masking": [
+      "security-guide\\security-architecture.md"
+    ],
+    "maximum": [
+      "security-guide\\security-architecture.md"
+    ],
+    "measures": [
+      "security-guide\\security-architecture.md"
+    ],
+    "media": [
+      "security-guide\\security-architecture.md"
+    ],
+    "mfa": [
+      "security-guide\\security-architecture.md"
+    ],
+    "micro": [
+      "security-guide\\security-architecture.md"
+    ],
+    "minimization": [
+      "security-guide\\security-architecture.md"
+    ],
+    "mitigation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "model": [
+      "security-guide\\security-architecture.md"
+    ],
+    "modeling": [
+      "security-guide\\security-architecture.md"
+    ],
+    "modifications": [
+      "security-guide\\security-architecture.md"
+    ],
+    "modules": [
+      "security-guide\\security-architecture.md"
+    ],
+    "need": [
+      "security-guide\\security-architecture.md"
+    ],
+    "never": [
+      "security-guide\\security-architecture.md"
+    ],
+    "nist": [
+      "security-guide\\security-architecture.md"
+    ],
+    "normalization": [
+      "security-guide\\security-architecture.md"
+    ],
+    "notification": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "offsite": [
+      "security-guide\\security-architecture.md"
+    ],
+    "only": [
+      "security-guide\\security-architecture.md"
+    ],
+    "operating": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "optimization": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "orchestration": [
+      "security-guide\\security-architecture.md"
+    ],
+    "orientation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "override": [
+      "security-guide\\security-architecture.md"
+    ],
+    "owasp": [
+      "security-guide\\security-architecture.md"
+    ],
+    "packet": [
+      "security-guide\\security-architecture.md"
+    ],
+    "pam": [
+      "security-guide\\security-architecture.md"
+    ],
+    "parameter": [
+      "security-guide\\security-architecture.md"
+    ],
+    "party": [
+      "security-guide\\security-architecture.md"
+    ],
+    "patterns": [
+      "security-guide\\security-architecture.md"
+    ],
+    "penetration": [
+      "security-guide\\security-architecture.md"
+    ],
+    "perimeter": [
+      "security-guide\\security-architecture.md"
+    ],
+    "persistent": [
+      "security-guide\\security-architecture.md"
+    ],
+    "personnel": [
+      "security-guide\\security-architecture.md"
+    ],
+    "phishing": [
+      "security-guide\\security-architecture.md"
+    ],
+    "physical": [
+      "security-guide\\security-architecture.md"
+    ],
+    "planning": [
+      "security-guide\\security-architecture.md"
+    ],
+    "points": [
+      "security-guide\\security-architecture.md"
+    ],
+    "power": [
+      "security-guide\\security-architecture.md"
+    ],
+    "practices": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "predefined": [
+      "security-guide\\security-architecture.md"
+    ],
+    "prevention": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "primary": [
+      "security-guide\\security-architecture.md"
+    ],
+    "principle": [
+      "security-guide\\security-architecture.md"
+    ],
+    "principles": [
+      "security-guide\\security-architecture.md"
+    ],
+    "prioritization": [
+      "security-guide\\security-architecture.md"
+    ],
+    "privacy": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "privilege": [
+      "security-guide\\security-architecture.md"
+    ],
+    "privileged": [
+      "security-guide\\security-architecture.md"
+    ],
+    "processes": [
+      "security-guide\\security-architecture.md"
+    ],
+    "processing": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "program": [
+      "security-guide\\security-architecture.md"
+    ],
+    "protect": [
+      "security-guide\\security-architecture.md"
+    ],
+    "protection": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "protocols": [
+      "security-guide\\security-architecture.md"
+    ],
+    "provisioning": [
+      "security-guide\\security-architecture.md"
+    ],
+    "publicly": [
+      "security-guide\\security-architecture.md"
+    ],
+    "purpose": [
+      "security-guide\\security-architecture.md"
+    ],
+    "quality": [
+      "security-guide\\security-architecture.md"
+    ],
+    "rbac": [
+      "security-guide\\security-architecture.md"
+    ],
+    "recording": [
+      "security-guide\\security-architecture.md"
+    ],
+    "recover": [
+      "security-guide\\security-architecture.md"
+    ],
+    "registry": [
+      "security-guide\\security-architecture.md"
+    ],
+    "regular": [
+      "security-guide\\security-architecture.md"
+    ],
+    "regulatory": [
+      "security-guide\\security-architecture.md"
+    ],
+    "remediation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "respond": [
+      "security-guide\\security-architecture.md"
+    ],
+    "rest": [
+      "security-guide\\security-architecture.md"
+    ],
+    "restricted": [
+      "security-guide\\security-architecture.md"
+    ],
+    "restrictions": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "retention": [
+      "security-guide\\security-architecture.md"
+    ],
+    "reviews": [
+      "security-guide\\security-architecture.md"
+    ],
+    "revocation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "rights": [
+      "security-guide\\security-architecture.md"
+    ],
+    "risk": [
+      "security-guide\\security-architecture.md"
+    ],
+    "risks": [
+      "security-guide\\security-architecture.md"
+    ],
+    "roles": [
+      "security-guide\\security-architecture.md"
+    ],
+    "rotation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "runtime": [
+      "security-guide\\security-architecture.md"
+    ],
+    "sanitization": [
+      "security-guide\\security-architecture.md"
+    ],
+    "sans": [
+      "security-guide\\security-architecture.md"
+    ],
+    "scanning": [
+      "security-guide\\security-architecture.md"
+    ],
+    "secondary": [
+      "security-guide\\security-architecture.md"
+    ],
+    "segmentation": [
+      "security-guide\\security-architecture.md"
+    ],
+    "sign": [
+      "security-guide\\security-architecture.md"
+    ],
+    "signing": [
+      "security-guide\\security-architecture.md"
+    ],
+    "single": [
+      "security-guide\\security-architecture.md"
+    ],
+    "sms": [
+      "security-guide\\security-architecture.md"
+    ],
+    "soc": [
+      "security-guide\\security-architecture.md"
+    ],
+    "social": [
+      "security-guide\\security-architecture.md"
+    ],
+    "sso": [
+      "security-guide\\security-architecture.md"
+    ],
+    "stakeholder": [
+      "security-guide\\security-architecture.md"
+    ],
+    "standard": [
+      "security-guide\\security-architecture.md"
+    ],
+    "standards": [
+      "security-guide\\security-architecture.md"
+    ],
+    "stateful": [
+      "security-guide\\security-architecture.md"
+    ],
+    "static": [
+      "security-guide\\security-architecture.md"
+    ],
+    "strategies": [
+      "security-guide\\security-architecture.md"
+    ],
+    "strategy": [
+      "security-guide\\security-architecture.md"
+    ],
+    "strict": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "strong": [
+      "security-guide\\security-architecture.md"
+    ],
+    "supply": [
+      "security-guide\\security-architecture.md"
+    ],
+    "suppression": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "surveillance": [
+      "security-guide\\security-architecture.md"
+    ],
+    "systems": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "tde": [
+      "security-guide\\security-architecture.md"
+    ],
+    "technical": [
+      "security-guide\\security-architecture.md"
+    ],
+    "temperature": [
+      "security-guide\\security-architecture.md"
+    ],
+    "termination": [
+      "security-guide\\security-architecture.md"
+    ],
+    "third": [
+      "security-guide\\security-architecture.md"
+    ],
+    "timeout": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "tls": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "tokens": [
+      "security-guide\\security-architecture.md"
+    ],
+    "tools": [
+      "security-guide\\security-architecture.md"
+    ],
+    "top": [
+      "security-guide\\security-architecture.md"
+    ],
+    "tracking": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "traffic": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\quick-start.md"
+    ],
+    "trail": [
+      "security-guide\\security-architecture.md"
+    ],
+    "training": [
+      "security-guide\\security-architecture.md"
+    ],
+    "transfer": [
+      "security-guide\\security-architecture.md"
+    ],
+    "transit": [
+      "security-guide\\security-architecture.md"
+    ],
+    "transmission": [
+      "security-guide\\security-architecture.md"
+    ],
+    "transparency": [
+      "security-guide\\security-architecture.md"
+    ],
+    "transparent": [
+      "security-guide\\security-architecture.md"
+    ],
+    "treatment": [
+      "security-guide\\security-architecture.md"
+    ],
+    "trust": [
+      "security-guide\\security-architecture.md"
+    ],
+    "updates": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "vectors": [
+      "security-guide\\security-architecture.md"
+    ],
+    "vendor": [
+      "security-guide\\security-architecture.md"
+    ],
+    "video": [
+      "security-guide\\security-architecture.md"
+    ],
+    "visitor": [
+      "security-guide\\security-architecture.md"
+    ],
+    "vlan": [
+      "security-guide\\security-architecture.md"
+    ],
+    "vpc": [
+      "security-guide\\security-architecture.md"
+    ],
+    "vpn": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "vulnerabilities": [
+      "security-guide\\security-architecture.md"
+    ],
+    "vulnerability": [
+      "security-guide\\security-architecture.md"
+    ],
+    "waf": [
+      "security-guide\\security-architecture.md"
+    ],
+    "welcome": [
+      "security-guide\\security-architecture.md"
+    ],
+    "workflow": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "workflows": [
+      "security-guide\\security-architecture.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "xss": [
+      "security-guide\\security-architecture.md"
+    ],
+    "zero": [
+      "security-guide\\security-architecture.md"
+    ],
+    "zones": [
+      "security-guide\\security-architecture.md"
+    ],
+    "accessing": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "acknowledge": [
+      "user-guide\\quick-start.md"
+    ],
+    "acknowledging": [
+      "user-guide\\quick-start.md"
+    ],
+    "administration": [
+      "user-guide\\quick-start.md"
+    ],
+    "anomalies": [
+      "user-guide\\quick-start.md"
+    ],
+    "auto": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "breadcrumb": [
+      "user-guide\\quick-start.md"
+    ],
+    "building": [
+      "user-guide\\quick-start.md"
+    ],
+    "built": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "cards": [
+      "user-guide\\quick-start.md"
+    ],
+    "case": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "customization": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "daily": [
+      "user-guide\\quick-start.md"
+    ],
+    "date": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "day": [
+      "user-guide\\quick-start.md"
+    ],
+    "days": [
+      "user-guide\\quick-start.md"
+    ],
+    "devices": [
+      "user-guide\\quick-start.md"
+    ],
+    "digest": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "disabled": [
+      "user-guide\\quick-start.md"
+    ],
+    "display": [
+      "user-guide\\quick-start.md"
+    ],
+    "elements": [
+      "user-guide\\quick-start.md"
+    ],
+    "english": [
+      "user-guide\\quick-start.md"
+    ],
+    "escalate": [
+      "user-guide\\quick-start.md"
+    ],
+    "escalating": [
+      "user-guide\\quick-start.md"
+    ],
+    "filter": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "getting": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "help": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "hints": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "hunting": [
+      "user-guide\\quick-start.md"
+    ],
+    "icon": [
+      "user-guide\\quick-start.md"
+    ],
+    "immediate": [
+      "user-guide\\quick-start.md"
+    ],
+    "insights": [
+      "user-guide\\quick-start.md"
+    ],
+    "keyboard": [
+      "user-guide\\quick-start.md"
+    ],
+    "language": [
+      "user-guide\\quick-start.md"
+    ],
+    "last": [
+      "user-guide\\quick-start.md"
+    ],
+    "light": [
+      "user-guide\\quick-start.md"
+    ],
+    "logins": [
+      "user-guide\\quick-start.md"
+    ],
+    "menu": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "navigation": [
+      "user-guide\\quick-start.md"
+    ],
+    "next": [
+      "user-guide\\quick-start.md"
+    ],
+    "panel": [
+      "user-guide\\quick-start.md"
+    ],
+    "popup": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "priority": [
+      "user-guide\\quick-start.md"
+    ],
+    "recent": [
+      "user-guide\\quick-start.md"
+    ],
+    "screen": [
+      "user-guide\\quick-start.md"
+    ],
+    "sections": [
+      "user-guide\\quick-start.md"
+    ],
+    "shortcuts": [
+      "user-guide\\quick-start.md"
+    ],
+    "show": [
+      "user-guide\\quick-start.md"
+    ],
+    "sound": [
+      "user-guide\\quick-start.md"
+    ],
+    "steps": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "tasks": [
+      "user-guide\\quick-start.md"
+    ],
+    "term": [
+      "user-guide\\quick-start.md"
+    ],
+    "timeline": [
+      "user-guide\\quick-start.md"
+    ],
+    "tooltips": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "types": [
+      "user-guide\\quick-start.md"
+    ],
+    "unauthorized": [
+      "user-guide\\quick-start.md"
+    ],
+    "understanding": [
+      "user-guide\\quick-start.md"
+    ],
+    "unusual": [
+      "user-guide\\quick-start.md"
+    ],
+    "viewing": [
+      "user-guide\\quick-start.md"
+    ],
+    "views": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "week": [
+      "user-guide\\quick-start.md"
+    ],
+    "widget": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "within": [
+      "user-guide\\quick-start.md"
+    ],
+    "working": [
+      "user-guide\\quick-start.md",
+      "user-guide\\troubleshooting.md"
+    ],
+    "yyyy": [
+      "user-guide\\quick-start.md"
+    ],
+    "acceleration": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "active": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "adjust": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "again": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "alternative": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "appearing": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "applicable": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "applications": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "approaches": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "authenticator": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "back": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "bandwidth": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "best": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "blockers": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "break": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "broader": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "browsers": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "channel": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "chat": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "close": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "compatibility": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "complex": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "complexity": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "conditions": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "consider": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "console": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "cookies": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "corporate": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "correct": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "credential": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "cross": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "currently": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "datasets": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "device": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "diagnostics": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "different": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "dig": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "disable": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "displaying": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "don": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "drivers": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "execution": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "exists": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "exit": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "expiration": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "expired": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "explanations": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "extensions": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "extra": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "forgot": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "functionality": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "general": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "generating": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "heavy": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "incognito": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "increase": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "indexed": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "insecure": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "instead": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "instructions": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "intervals": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "into": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "keep": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "large": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "library": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "lighter": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "limitations": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "link": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "linux": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "loading": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "locked": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "logical": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "longer": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "mac": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "matching": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "memory": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "messages": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "met": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "missing": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "mode": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "modem": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "names": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "needed": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "notepad": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "nslookup": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "occurred": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "off": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "ones": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "operators": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "out": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "page": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "parentheses": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "peak": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "please": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "priorities": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "proper": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "provide": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "quotes": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "ranges": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "reduce": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "refinement": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "regenerate": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "regularly": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "reinstall": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "remove": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "reproduce": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "restrictive": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "results": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "router": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "routing": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "saved": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "saving": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "scan": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "schedule": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "screenshots": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "searches": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "section": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "selected": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "sending": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "sensitive": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "signal": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "similar": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "simpler": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "simplify": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "site": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "slow": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "smaller": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "solution": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "solutions": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "space": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "spaces": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "speed": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "strength": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "suggestions": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "supported": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "symptoms": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "sync": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "synchronization": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "syntax": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "tabs": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "task": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "temporarily": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "terms": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "thresholds": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "timed": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "tips": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "try": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "tuning": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "typing": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "typos": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "unavailable": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "unnecessary": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "updated": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "values": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "visual": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "visualizations": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "websocket": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "when": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "whitelist": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "widgets": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "wifi": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "wildcard": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "wired": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "wrong": [
+      "user-guide\\troubleshooting.md"
+    ],
+    "you": [
+      "user-guide\\troubleshooting.md"
+    ]
+  },
+  "volume_structure": {
+    "user-guide": {
+      "name": "User Guide",
+      "audience": [
+        "end-users",
+        "security-analysts",
+        "soc-operators"
+      ],
+      "level": "beginner"
+    },
+    "admin-guide": {
+      "name": "Admin Guide",
+      "audience": [
+        "system-administrators",
+        "it-managers",
+        "devops-engineers"
+      ],
+      "level": "intermediate"
+    },
+    "developer-guide": {
+      "name": "Developer Guide",
+      "audience": [
+        "developers",
+        "integrators",
+        "contributors"
+      ],
+      "level": "advanced"
+    },
+    "security-guide": {
+      "name": "Security Guide",
+      "audience": [
+        "security-architects",
+        "compliance-officers",
+        "auditors"
+      ],
+      "level": "expert"
+    },
+    "reference-library": {
+      "name": "Reference Library",
+      "audience": [
+        "all-users"
+      ],
+      "level": "all"
+    }
+  }
+}

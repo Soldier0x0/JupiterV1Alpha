@@ -27,6 +27,29 @@ const Settings = () => {
   const [aiMessage, setAiMessage] = useState('');
   const [showKeys, setShowKeys] = useState({});
   const [showAIKeys, setShowAIKeys] = useState({});
+  const [fontSettings, setFontSettings] = useState({
+    uiFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    baseSize: 'Medium',
+    codeSize: 'Medium',
+    headingScale: 'Normal'
+  });
+  const [colorTheme, setColorTheme] = useState('Jupiter Dark');
+  const [displayOptions, setDisplayOptions] = useState({
+    reduceMotion: false,
+    highContrast: false,
+    compactMode: false,
+    showGridLines: false
+  });
+  const [systemConfig, setSystemConfig] = useState({
+    logRetention: 90,
+    alertThreshold: 'medium',
+    realtimeMonitoring: true
+  });
+  const [backupConfig, setBackupConfig] = useState({
+    location: '',
+    frequency: 'daily'
+  });
 
   const threatIntelServices = [
     {
@@ -113,7 +136,7 @@ const Settings = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/ai/config`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('JWT')}`
         }
       });
       
@@ -162,7 +185,7 @@ const Settings = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('JWT')}`
         },
         body: JSON.stringify(newAIConfig)
       });
@@ -209,6 +232,57 @@ const Settings = () => {
       ...prev,
       [keyId]: !prev[keyId]
     }));
+  };
+
+  // Font and display settings handlers
+  const handleFontSettingChange = (setting, value) => {
+    setFontSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  const handleDisplayOptionChange = (option, value) => {
+    setDisplayOptions(prev => ({
+      ...prev,
+      [option]: value
+    }));
+  };
+
+  const handleSystemConfigChange = (setting, value) => {
+    setSystemConfig(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  const handleBackupConfigChange = (setting, value) => {
+    setBackupConfig(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  const handleColorThemeChange = (theme) => {
+    setColorTheme(theme);
+  };
+
+  const saveSettings = async () => {
+    try {
+      const settingsData = {
+        fontSettings,
+        colorTheme,
+        displayOptions,
+        systemConfig,
+        backupConfig
+      };
+      
+      // Save to localStorage for now (in real app, save to backend)
+      localStorage.setItem('jupiter_settings', JSON.stringify(settingsData));
+      setMessage('Settings saved successfully');
+    } catch (error) {
+      setMessage('Failed to save settings');
+    }
   };
 
   return (
@@ -483,22 +557,30 @@ const Settings = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-2">UI Font Family</label>
-                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                  <option>Inter (Default)</option>
-                  <option>System Font</option>
-                  <option>Arial</option>
-                  <option>Helvetica</option>
-                  <option>Roboto</option>
+                <select 
+                  value={fontSettings.uiFont}
+                  onChange={(e) => handleFontSettingChange('uiFont', e.target.value)}
+                  className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Inter">Inter (Default)</option>
+                  <option value="System Font">System Font</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Roboto">Roboto</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-2">Monospace Font</label>
-                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                  <option>JetBrains Mono (Default)</option>
-                  <option>Monaco</option>
-                  <option>Consolas</option>
-                  <option>Source Code Pro</option>
-                  <option>Courier New</option>
+                <select 
+                  value={fontSettings.monoFont}
+                  onChange={(e) => handleFontSettingChange('monoFont', e.target.value)}
+                  className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="JetBrains Mono">JetBrains Mono (Default)</option>
+                  <option value="Monaco">Monaco</option>
+                  <option value="Consolas">Consolas</option>
+                  <option value="Source Code Pro">Source Code Pro</option>
+                  <option value="Courier New">Courier New</option>
                 </select>
               </div>
             </div>
@@ -510,29 +592,41 @@ const Settings = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-2">Base Font Size</label>
-                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                  <option>Small</option>
-                  <option>Medium (Default)</option>
-                  <option>Large</option>
-                  <option>Extra Large</option>
+                <select 
+                  value={fontSettings.baseSize}
+                  onChange={(e) => handleFontSettingChange('baseSize', e.target.value)}
+                  className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium (Default)</option>
+                  <option value="Large">Large</option>
+                  <option value="Extra Large">Extra Large</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-2">Code Font Size</label>
-                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                  <option>Small</option>
-                  <option>Medium (Default)</option>
-                  <option>Large</option>
-                  <option>Extra Large</option>
+                <select 
+                  value={fontSettings.codeSize}
+                  onChange={(e) => handleFontSettingChange('codeSize', e.target.value)}
+                  className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium (Default)</option>
+                  <option value="Large">Large</option>
+                  <option value="Extra Large">Extra Large</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-2">Heading Scale</label>
-                <select className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                  <option>Compact</option>
-                  <option>Normal (Default)</option>
-                  <option>Comfortable</option>
-                  <option>Spacious</option>
+                <select 
+                  value={fontSettings.headingScale}
+                  onChange={(e) => handleFontSettingChange('headingScale', e.target.value)}
+                  className="w-full bg-[#0b0c10] border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Compact">Compact</option>
+                  <option value="Normal">Normal (Default)</option>
+                  <option value="Comfortable">Comfortable</option>
+                  <option value="Spacious">Spacious</option>
                 </select>
               </div>
             </div>
@@ -543,15 +637,16 @@ const Settings = () => {
             <label className="block text-sm font-medium text-zinc-300 mb-3">Color Theme</label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { name: 'Jupiter Dark', colors: ['bg-red-500', 'bg-zinc-800'], active: true },
+                { name: 'Jupiter Dark', colors: ['bg-red-500', 'bg-zinc-800'] },
                 { name: 'Ocean Blue', colors: ['bg-blue-500', 'bg-blue-900'] },
                 { name: 'Forest Green', colors: ['bg-green-500', 'bg-green-900'] },
                 { name: 'Purple Night', colors: ['bg-purple-500', 'bg-purple-900'] },
               ].map((theme) => (
                 <div
                   key={theme.name}
+                  onClick={() => handleColorThemeChange(theme.name)}
                   className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                    theme.active 
+                    colorTheme === theme.name
                       ? 'border-red-500/50 bg-red-500/10' 
                       : 'border-zinc-700 hover:border-zinc-600'
                   }`}
@@ -562,7 +657,7 @@ const Settings = () => {
                     ))}
                   </div>
                   <p className="text-xs text-zinc-300">{theme.name}</p>
-                  {theme.active && <CheckCircle className="w-3 h-3 text-red-400 mt-1" />}
+                  {colorTheme === theme.name && <CheckCircle className="w-3 h-3 text-red-400 mt-1" />}
                 </div>
               ))}
             </div>
@@ -574,19 +669,39 @@ const Settings = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm text-zinc-300">Reduce Motion</label>
-                <input type="checkbox" className="w-4 h-4 text-red-500" />
+                <input 
+                  type="checkbox" 
+                  checked={displayOptions.reduceMotion}
+                  onChange={(e) => handleDisplayOptionChange('reduceMotion', e.target.checked)}
+                  className="w-4 h-4 text-red-500" 
+                />
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-sm text-zinc-300">High Contrast</label>
-                <input type="checkbox" className="w-4 h-4 text-red-500" />
+                <input 
+                  type="checkbox" 
+                  checked={displayOptions.highContrast}
+                  onChange={(e) => handleDisplayOptionChange('highContrast', e.target.checked)}
+                  className="w-4 h-4 text-red-500" 
+                />
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-sm text-zinc-300">Compact Mode</label>
-                <input type="checkbox" className="w-4 h-4 text-red-500" />
+                <input 
+                  type="checkbox" 
+                  checked={displayOptions.compactMode}
+                  onChange={(e) => handleDisplayOptionChange('compactMode', e.target.checked)}
+                  className="w-4 h-4 text-red-500" 
+                />
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-sm text-zinc-300">Show Grid Lines</label>
-                <input type="checkbox" className="w-4 h-4 text-red-500" />
+                <input 
+                  type="checkbox" 
+                  checked={displayOptions.showGridLines}
+                  onChange={(e) => handleDisplayOptionChange('showGridLines', e.target.checked)}
+                  className="w-4 h-4 text-red-500" 
+                />
               </div>
             </div>
           </div>
@@ -825,18 +940,33 @@ const Settings = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Log Retention (days)</label>
-              <input type="number" className="input-field" defaultValue="90" />
+              <input 
+                type="number" 
+                value={systemConfig.logRetention}
+                onChange={(e) => handleSystemConfigChange('logRetention', parseInt(e.target.value))}
+                className="input-field" 
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Alert Threshold</label>
-              <select className="input-field">
+              <select 
+                value={systemConfig.alertThreshold}
+                onChange={(e) => handleSystemConfigChange('alertThreshold', e.target.value)}
+                className="input-field"
+              >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
             </div>
             <div className="flex items-center space-x-3">
-              <input type="checkbox" id="realtime" className="w-4 h-4" defaultChecked />
+              <input 
+                type="checkbox" 
+                id="realtime" 
+                checked={systemConfig.realtimeMonitoring}
+                onChange={(e) => handleSystemConfigChange('realtimeMonitoring', e.target.checked)}
+                className="w-4 h-4" 
+              />
               <label htmlFor="realtime" className="text-sm text-zinc-300">Enable real-time monitoring</label>
             </div>
           </div>
@@ -847,7 +977,11 @@ const Settings = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Backup Location</label>
-              <select className="input-field">
+              <select 
+                value={backupConfig.location}
+                onChange={(e) => handleBackupConfigChange('location', e.target.value)}
+                className="input-field"
+              >
                 <option value="">Select backup destination</option>
                 <option value="onedrive">OneDrive</option>
                 <option value="sharepoint">SharePoint</option>
@@ -856,7 +990,11 @@ const Settings = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-300">Backup Frequency</label>
-              <select className="input-field">
+              <select 
+                value={backupConfig.frequency}
+                onChange={(e) => handleBackupConfigChange('frequency', e.target.value)}
+                className="input-field"
+              >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
@@ -864,6 +1002,19 @@ const Settings = () => {
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Save Settings Button */}
+      <div className="flex justify-end">
+        <motion.button
+          onClick={saveSettings}
+          className="btn-primary flex items-center space-x-2"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Save className="w-4 h-4" />
+          <span>Save All Settings</span>
+        </motion.button>
       </div>
     </motion.div>
   );

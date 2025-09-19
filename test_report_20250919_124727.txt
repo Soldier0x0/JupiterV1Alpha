@@ -1,0 +1,164 @@
+JUPITER SIEM - CRITICAL TESTS REPORT
+==================================================
+Generated: 2025-09-19 12:47:27
+Duration: 5.67 seconds
+Total Tests: 4
+Passed: 1
+Failed: 3
+Success Rate: 25.0%
+
+DETAILED RESULTS:
+------------------------------
+
+tests/unit/test_auth.py:
+  Status: FAILED
+  Return Code: 2
+  Output:
+============================= test session starts =============================
+collecting ... collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting tests/unit/test_auth.py ___________________
+ImportError while importing test module 'F:\Soldier0x00\siem\JupiterEmerge\tests\unit\test_auth.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\harsha\AppData\Roaming\Python\Python313\site-packages\_pytest\python.py:498: in importtestmodule
+    mod = import_path(
+C:\Users\harsha\AppData\Roaming\Python\Python313\site-packages\_pytest\pathlib.py:587: in import_path
+    importlib.import_module(module_name)
+C:\Program Files\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+C:\Users\harsha\AppData\Roaming\Python\Python313\site-packages\_pytest\assertion\rewrite.py:186: in exec_module
+    exec(co, module.__dict__)
+tests\unit\test_auth.py:5: in <module>
+    import jwt
+E   ModuleNotFoundError: No module named 'jwt'
+=========================== short test summary info ===========================
+ERROR tests/unit/test_auth.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.31s ===============================
+
+
+tests/unit/test_api_endpoints.py:
+  Status: PASSED
+  Return Code: 0
+  Output:
+============================= test session starts =============================
+collecting ... collected 18 items
+
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_health_check_endpoint SKIPPED [  5%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_healthz_endpoint SKIPPED [ 11%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_readyz_endpoint SKIPPED [ 16%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_login_endpoint_structure SKIPPED [ 22%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_dashboard_endpoint_protection SKIPPED [ 27%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_api_response_format SKIPPED [ 33%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_cors_headers SKIPPED [ 38%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIEndpoints::test_rate_limiting_headers SKIPPED [ 44%]
+tests/unit/test_api_endpoints.py::TestAPIValidation::test_invalid_json_handling SKIPPED [ 50%]
+tests/unit/test_api_endpoints.py::TestAPIValidation::test_missing_required_fields SKIPPED [ 55%]
+tests/unit/test_api_endpoints.py::TestAPIValidation::test_oversized_payload SKIPPED [ 61%]
+tests/unit/test_api_endpoints.py::TestSecurityHeaders::test_security_headers SKIPPED [ 66%]
+tests/unit/test_api_endpoints.py::TestSecurityHeaders::test_content_type_validation SKIPPED [ 72%]
+tests/unit/test_api_endpoints.py::TestErrorHandling::test_404_handling SKIPPED [ 77%]
+tests/unit/test_api_endpoints.py::TestErrorHandling::test_method_not_allowed SKIPPED [ 83%]
+tests/unit/test_api_endpoints.py::TestErrorHandling::test_server_error_handling SKIPPED [ 88%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIFlow::test_authentication_flow SKIPPED [ 94%]
+tests/unit/test_api_endpoints.py::TestCriticalAPIFlow::test_data_validation_flow SKIPPED [100%]
+
+============================= 18 skipped in 0.14s =============================
+
+
+tests/unit/test_security.py:
+  Status: FAILED
+  Return Code: 1
+  Output:
+============================= test session starts =============================
+collecting ... collected 13 items
+
+tests/unit/test_security.py::TestInputValidation::test_sql_injection_prevention FAILED [  7%]
+tests/unit/test_security.py::TestInputValidation::test_xss_prevention PASSED [ 15%]
+tests/unit/test_security.py::TestInputValidation::test_path_traversal_prevention FAILED [ 23%]
+tests/unit/test_security.py::TestInputValidation::test_command_injection_prevention PASSED [ 30%]
+tests/unit/test_security.py::TestAuthenticationSecurity::test_password_strength_validation PASSED [ 38%]
+tests/unit/test_security.py::TestAuthenticationSecurity::test_session_security PASSED [ 46%]
+tests/unit/test_security.py::TestAuthenticationSecurity::test_brute_force_protection PASSED [ 53%]
+tests/unit/test_security.py::TestDataEncryption::test_data_encryption PASSED [ 61%]
+tests/unit/test_security.py::TestDataEncryption::test_password_hashing FAILED [ 69%]
+tests/unit/test_security.py::TestDataEncryption::test_hmac_verification PASSED [ 76%]
+tests/unit/test_security.py::TestSecurityHeaders::test_security_headers_validation PASSED [ 84%]
+tests/unit/test_security.py::TestCriticalSecurityFlow::test_complete_security_validation PASSED [ 92%]
+tests/unit/test_security.py::TestCriticalSecurityFlow::test_security_incident_detection PASSED [100%]
+
+================================== FAILURES ===================================
+______________ TestInputValidation.test_sql_injection_prevention ______________
+tests\unit\test_security.py:37: in test_sql_injection_prevention
+    assert "DROP TABLE" not in sanitized
+E   AssertionError: assert 'DROP TABLE' not in ' DROP TABLE users '
+E     
+E     'DROP TABLE' is contained here:
+E        DROP TABLE users
+_____________ TestInputValidation.test_path_traversal_prevention ______________
+tests\unit\test_security.py:116: in test_path_traversal_prevention
+    assert "etc/passwd" not in sanitized
+E   AssertionError: assert 'etc/passwd' not in 'etc/passwd'
+E     
+E     'etc/passwd' is contained here:
+E       etc/passwd
+__________________ TestDataEncryption.test_password_hashing ___________________
+tests\unit\test_security.py:335: in test_password_hashing
+    import bcrypt
+E   ModuleNotFoundError: No module named 'bcrypt'
+=========================== short test summary info ===========================
+FAILED tests/unit/test_security.py::TestInputValidation::test_sql_injection_prevention - AssertionError: assert 'DROP TABLE' not in ' DROP TABLE users '
+  
+  'DROP TABLE' is contained here:
+     DROP TABLE users
+FAILED tests/unit/test_security.py::TestInputValidation::test_path_traversal_prevention - AssertionError: assert 'etc/passwd' not in 'etc/passwd'
+  
+  'etc/passwd' is contained here:
+    etc/passwd
+FAILED tests/unit/test_security.py::TestDataEncryption::test_password_hashing - ModuleNotFoundError: No module named 'bcrypt'
+======================== 3 failed, 10 passed in 0.20s =========================
+
+
+tests/integration/test_database.py:
+  Status: FAILED
+  Return Code: 1
+  Output:
+============================= test session starts =============================
+collecting ... collected 15 items
+
+tests/integration/test_database.py::TestDatabaseConnection::test_database_connectivity PASSED [  6%]
+tests/integration/test_database.py::TestDatabaseConnection::test_database_operations PASSED [ 13%]
+tests/integration/test_database.py::TestDatabaseConnection::test_database_error_handling PASSED [ 20%]
+tests/integration/test_database.py::TestDataModels::test_user_model_validation PASSED [ 26%]
+tests/integration/test_database.py::TestDataModels::test_alert_model_validation PASSED [ 33%]
+tests/integration/test_database.py::TestDataModels::test_log_model_validation FAILED [ 40%]
+tests/integration/test_database.py::TestTenantIsolation::test_tenant_data_segregation PASSED [ 46%]
+tests/integration/test_database.py::TestTenantIsolation::test_tenant_query_isolation PASSED [ 53%]
+tests/integration/test_database.py::TestDataIntegrity::test_data_consistency PASSED [ 60%]
+tests/integration/test_database.py::TestDataIntegrity::test_data_validation PASSED [ 66%]
+tests/integration/test_database.py::TestDatabasePerformance::test_query_performance PASSED [ 73%]
+tests/integration/test_database.py::TestDatabasePerformance::test_bulk_operations PASSED [ 80%]
+tests/integration/test_database.py::TestDatabasePerformance::test_connection_pooling PASSED [ 86%]
+tests/integration/test_database.py::TestCriticalDatabaseFlow::test_complete_data_flow PASSED [ 93%]
+tests/integration/test_database.py::TestCriticalDatabaseFlow::test_error_recovery PASSED [100%]
+
+================================== FAILURES ===================================
+__________________ TestDataModels.test_log_model_validation ___________________
+tests\integration\test_database.py:119: in test_log_model_validation
+    assert "Z" in timestamp or "+" in timestamp
+E   AssertionError: assert ('Z' in '2025-09-19T07:17:27.466510' or '+' in '2025-09-19T07:17:27.466510')
+=========================== short test summary info ===========================
+FAILED tests/integration/test_database.py::TestDataModels::test_log_model_validation - AssertionError: assert ('Z' in '2025-09-19T07:17:27.466510' or '+' in '2025-09-19T07:17:27.466510')
+======================== 1 failed, 14 passed in 0.35s =========================
+

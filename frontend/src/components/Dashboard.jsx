@@ -3,24 +3,18 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 import TopBar from './TopBar';
 import SideNav from './SideNav';
+import Breadcrumbs from './Breadcrumbs';
 import Home from '../pages/Home';
 import Alerts from '../pages/Alerts';
-import Explore from '../pages/Explore';
-import Intel from '../pages/Intel';
+import Logs from '../pages/Logs';
 import Entities from '../pages/Entities';
+import Intelligence from '../pages/Intelligence';
 import Cases from '../pages/Cases';
-import Models from '../pages/Models';
 import Settings from '../pages/Settings';
-import Automations from '../pages/Automations';
-import TenantManagement from '../pages/TenantManagement';
-import Training from '../pages/Training';
-import AIConsole from '../pages/AIConsole';
-import DeceptionCenter from '../pages/DeceptionCenter';
-import KnowledgeBase from '../pages/KnowledgeBase';
-import LocalModels from '../pages/LocalModels';
-import MCP from '../pages/MCP';
-import RoleManagement from '../pages/RoleManagement';
-import APIRateLimitsSimple from '../pages/APIRateLimitsSimple';
+import FrameworkDashboard from '../pages/FrameworkDashboard';
+import ExtendedFrameworks from '../pages/ExtendedFrameworks';
+import AnalystFeatures from '../pages/AnalystFeatures';
+import SecurityOps from '../pages/SecurityOps'; // New import
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -46,30 +40,20 @@ const Dashboard = () => {
         <div className="flex-1">
           <TopBar />
           <main className="p-6">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/alerts" element={<Alerts />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/intel" element={<Intel />} />
-              <Route path="/entities" element={<Entities />} />
-              <Route path="/cases" element={<Cases />} />
-              <Route path="/models" element={<Models />} />
-              <Route path="/automations" element={<Automations />} />
-              <Route path="/ai-console" element={<AIConsole />} />
-              <Route path="/deception" element={<DeceptionCenter />} />
-              <Route path="/knowledge" element={<KnowledgeBase />} />
-              <Route path="/local-models" element={<LocalModels />} />
-              <Route path="/mcp" element={<MCP />} />
-              <Route path="/training" element={<Training />} />
-              <Route path="/api-rate-limits" element={<APIRateLimitsSimple />} />
-              <Route path="/settings" element={<Settings />} />
-              {user?.is_owner && (
-                <Route path="/admin/tenants" element={<TenantManagement />} />
-              )}
-              {(user?.permissions?.includes('roles:manage') || user?.permissions?.includes('system:manage') || user?.is_owner) && (
-                <Route path="/admin/roles" element={<RoleManagement />} />
-              )}
-            </Routes>
+            <Breadcrumbs />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/logs" element={<Logs />} />
+                  <Route path="/frameworks" element={<FrameworkDashboard />} />
+                  <Route path="/extended-frameworks" element={<ExtendedFrameworks />} />
+                  <Route path="/analyst-features" element={<AnalystFeatures />} />
+                  <Route path="/security-ops" element={<SecurityOps />} />
+                  <Route path="/entities" element={<Entities />} />
+          <Route path="/intelligence" element={<Intelligence />} />
+          <Route path="/cases" element={<Cases />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
           </main>
         </div>
       </div>

@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # MongoDB for development
+  mongodb:
+    image: mongo:7.0
+    container_name: jupiter-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: jupiter_dev_2024
+      MONGO_INITDB_DATABASE: jupiter_siem_dev
+    volumes:
+      - mongodb_dev_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - jupiter-dev-network
+
+  # Redis for development
+  redis:
+    image: redis:7.2-alpine
+    container_name: jupiter-redis-dev
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass jupiter_dev_2024
+    volumes:
+      - redis_dev_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - jupiter-dev-network
+
+  # Backend API (Development)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jupiter-backend-dev
+    restart: unless-stopped
+    environment:
+      - PYTHON_ENV=development
+      - MONGODB_URI=mongodb://admin:jupiter_dev_2024@mongodb:27017/jupiter_siem_dev?authSource=admin
+      - REDIS_URL=redis://:jupiter_dev_2024@redis:6379
+      - JWT_SECRET_KEY=jupiter_dev_secret_key
+    volumes:
+      - ./backend:/app
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+    networks:
+      - jupiter-dev-network
+    depends_on:
+      - mongodb
+      - redis
+    command: ["python", "main.py"]
+
+  # Frontend (Development)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jupiter-frontend-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - jupiter-dev-network
+    depends_on:
+      - backend
+    command: ["npm", "run", "dev"]
+
+volumes:
+  mongodb_dev_data:
+  redis_dev_data:
+
+networks:
+  jupiter-dev-network:
+    driver: bridge

@@ -145,15 +145,22 @@ const GlobalSearch = ({ isOpen, onClose }) => {
   }, [query]);
 
   const handleResultClick = (result) => {
-    // Save to recent searches
-    const newRecent = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
-    setRecentSearches(newRecent);
-    localStorage.setItem('jupiter_recent_searches', JSON.stringify(newRecent));
+    try {
+      // Save to recent searches
+      const newRecent = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
+      setRecentSearches(newRecent);
+      localStorage.setItem('jupiter_recent_searches', JSON.stringify(newRecent));
 
-    // Navigate
-    navigate(result.path || `/dashboard/${result.type}s/${result.id}`);
-    onClose();
-    setQuery('');
+      // Navigate
+      const targetPath = result.path || `/dashboard/${result.type}s/${result.id}`;
+      console.log('Navigating to:', targetPath);
+      navigate(targetPath);
+      onClose();
+      setQuery('');
+    } catch (error) {
+      console.error('Navigation error:', error);
+      alert('Navigation failed. Please try again.');
+    }
   };
 
   const handleRecentSearchClick = (searchTerm) => {
@@ -279,7 +286,11 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                 <h3 className="text-sm font-medium text-zinc-400 mb-3">Quick Actions</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => navigate('/dashboard/alerts')}
+                    onClick={() => {
+                      console.log('Navigating to alerts');
+                      navigate('/dashboard/alerts');
+                      onClose();
+                    }}
                     className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-left"
                   >
                     <AlertTriangle className="w-4 h-4 text-red-400 mb-1" />
@@ -287,7 +298,11 @@ const GlobalSearch = ({ isOpen, onClose }) => {
                     <div className="text-xs text-zinc-400">Latest security alerts</div>
                   </button>
                   <button
-                    onClick={() => navigate('/dashboard/training')}
+                    onClick={() => {
+                      console.log('Navigating to training');
+                      navigate('/dashboard/training');
+                      onClose();
+                    }}
                     className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-left"
                   >
                     <Users className="w-4 h-4 text-blue-400 mb-1" />

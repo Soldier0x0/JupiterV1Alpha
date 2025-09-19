@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Test MongoDB
+  mongodb-test:
+    image: mongo:7.0
+    container_name: jupiter-mongodb-test
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: jupiter_test_2024
+      MONGO_INITDB_DATABASE: jupiter_siem_test
+    ports:
+      - "27018:27017"
+    networks:
+      - jupiter-test-network
+
+  # Test Redis
+  redis-test:
+    image: redis:7.2-alpine
+    container_name: jupiter-redis-test
+    command: redis-server --requirepass jupiter_test_2024
+    ports:
+      - "6380:6379"
+    networks:
+      - jupiter-test-network
+
+  # Backend Tests
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jupiter-backend-test
+    environment:
+      - PYTHON_ENV=testing
+      - MONGODB_URI=mongodb://admin:jupiter_test_2024@mongodb-test:27017/jupiter_siem_test?authSource=admin
+      - REDIS_URL=redis://:jupiter_test_2024@redis-test:6379
+      - JWT_SECRET_KEY=jupiter_test_secret_key
+    volumes:
+      - ./backend:/app
+    networks:
+      - jupiter-test-network
+    depends_on:
+      - mongodb-test
+      - redis-test
+    command: ["python", "-m", "pytest", "tests/", "-v", "--tb=short"]
+
+  # Frontend Tests
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jupiter-frontend-test
+    environment:
+      - NODE_ENV=test
+      - CI=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - jupiter-test-network
+    command: ["npm", "test", "--", "--coverage", "--watchAll=false"]
+
+networks:
+  jupiter-test-network:
+    driver: bridge

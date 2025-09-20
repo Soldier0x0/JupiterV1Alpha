@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 import logging
 from datetime import datetime
+import os
 
 from auth_middleware import get_current_user
 from models.user_management import User
@@ -77,6 +78,11 @@ class TrainingResponse(BaseModel):
 async def startup_event():
     """Initialize AI system on startup"""
     try:
+        # Allow disabling heavy AI initialization on low-RAM machines
+        if os.getenv("AI_DISABLE", "0") == "1":
+            logger.warning("AI initialization disabled via AI_DISABLE=1. Running in fallback mode.")
+            return
+
         ai_system = initialize_ai_system()
         if ai_system:
             logger.info("AI system initialized successfully")

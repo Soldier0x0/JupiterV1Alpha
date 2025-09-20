@@ -1,0 +1,5 @@
+# Ignore local venv and runtime files for native setup
+.venv/
+node_modules/
+*.log
+.env

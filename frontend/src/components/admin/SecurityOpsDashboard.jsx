@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, 
-  AlertTriangle, 
   Settings, 
   Key, 
   Eye, 
@@ -11,7 +10,7 @@ import {
   Download,
   Upload,
   RotateCcw,
-  Panic,
+  AlertTriangle as Panic,
   CheckCircle,
   XCircle,
   Clock,

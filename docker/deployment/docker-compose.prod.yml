@@ -1,0 +1,168 @@
+version: '3.8'
+
+services:
+  # Backend API (FastAPI + DuckDB)
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: jupiter-docker-backend
+    restart: unless-stopped
+    environment:
+      - APP_ENVIRONMENT=production
+      - DUCKDB_PATH=/app/data/jupiter_siem.db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.outlook.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-true}
+      - SUPER_ADMIN_EMAIL=${SUPER_ADMIN_EMAIL:-admin@projectjupiter.in}
+      - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD}
+      - SUPER_ADMIN_TENANT_NAME=${SUPER_ADMIN_TENANT_NAME:-MainTenant}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+    volumes:
+      - ../../data:/app/data
+      - ../../logs/backend:/app/logs
+      - ../../exports:/app/exports
+    ports:
+      - "127.0.0.1:8002:8001"
+    networks:
+      - jupiter-docker-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Application (React + Vite)
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    container_name: jupiter-docker-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VITE_BACKEND_URL=/api
+    volumes:
+      - ../../logs/frontend:/app/logs
+    ports:
+      - "127.0.0.1:3001:3000"
+    networks:
+      - jupiter-docker-net
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache & Session Store
+  redis:
+    image: redis:7.2-alpine
+    container_name: jupiter-docker-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-jupiter_redis_2024}
+    volumes:
+      - redis_data:/data
+      - ../configuration/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "127.0.0.1:6380:6379"
+    networks:
+      - jupiter-docker-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-jupiter_redis_2024}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy & Load Balancer
+  nginx:
+    build:
+      context: ../containers/nginx
+      dockerfile: Dockerfile
+    container_name: jupiter-docker-nginx
+    restart: unless-stopped
+    volumes:
+      - ../configuration/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../configuration/ssl:/etc/nginx/ssl:ro
+      - ../../logs/nginx:/var/log/nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    networks:
+      - jupiter-docker-net
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: jupiter-docker-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ../configuration/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9091:9090"
+    networks:
+      - jupiter-docker-net
+    profiles:
+      - monitoring
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: jupiter-docker-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-jupiter_grafana_2024}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ../configuration/grafana:/etc/grafana/provisioning:ro
+    ports:
+      - "127.0.0.1:3002:3000"
+    networks:
+      - jupiter-docker-net
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+networks:
+  jupiter-docker-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

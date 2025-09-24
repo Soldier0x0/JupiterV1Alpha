@@ -1,0 +1,14 @@
+[Unit]
+Description=Jupiter SIEM Frontend (Vite Preview)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/JupiterV1Alpha/frontend
+ExecStart=/usr/bin/npm run preview -- --host --port 3000
+Restart=always
+RestartSec=3
+User=%i
+
+[Install]
+WantedBy=multi-user.target

@@ -1,15 +1,39 @@
 [Unit]
-Description=Jupiter SIEM Backend (Uvicorn)
-After=network.target
+Description=Jupiter SIEM Backend (FastAPI + DuckDB)
+Documentation=https://github.com/projectjupiter/jupiter-siem
+After=network.target redis.service
+Wants=redis.service
+RequiresMountsFor=/var/lib/jupiter-siem
 
 [Service]
-Type=simple
-WorkingDirectory=%h/JupiterV1Alpha/backend
-EnvironmentFile=%h/JupiterV1Alpha/native/.env
-ExecStart=%h/JupiterV1Alpha/native/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 8001 --log-level info
+Type=exec
+User=jupiter-siem
+Group=jupiter-siem
+WorkingDirectory=/opt/jupiter-siem/backend
+EnvironmentFile=/opt/jupiter-siem/native/configuration/.env.native
+Environment=PATH=/opt/jupiter-siem/native/.venv/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/jupiter-siem/native/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 8001 --workers 4 --log-level info
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
-RestartSec=3
-User=%i
+RestartSec=5
+StartLimitInterval=0
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/jupiter-siem /var/log/jupiter-siem /tmp
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+# Process limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Health check
+TimeoutStartSec=60
+TimeoutStopSec=30
 
 [Install]
 WantedBy=multi-user.target

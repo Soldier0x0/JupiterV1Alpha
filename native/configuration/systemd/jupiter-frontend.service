@@ -1,14 +1,38 @@
 [Unit]
-Description=Jupiter SIEM Frontend (Vite Preview)
+Description=Jupiter SIEM Frontend (React + Vite)
+Documentation=https://github.com/projectjupiter/jupiter-siem
 After=network.target
+RequiresMountsFor=/var/lib/jupiter-siem
 
 [Service]
-Type=simple
-WorkingDirectory=%h/JupiterV1Alpha/frontend
-ExecStart=/usr/bin/npm run preview -- --host --port 3000
+Type=exec
+User=jupiter-siem
+Group=jupiter-siem
+WorkingDirectory=/opt/jupiter-siem/frontend
+EnvironmentFile=/opt/jupiter-siem/native/configuration/.env.native
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/npm run preview -- --host 0.0.0.0 --port 3000
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
-RestartSec=3
-User=%i
+RestartSec=5
+StartLimitInterval=0
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/jupiter-siem /var/log/jupiter-siem /tmp
+
+# Process limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Health check
+TimeoutStartSec=60
+TimeoutStopSec=30
 
 [Install]
 WantedBy=multi-user.target

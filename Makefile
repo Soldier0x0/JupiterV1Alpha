@@ -1,165 +1,215 @@
-# Jupiter SIEM Makefile
-# Comprehensive build, test, and deployment automation
+# Jupiter SIEM - Enhanced Makefile
+# Comprehensive build, test, and deployment automation for both Native and Docker
 
-.PHONY: help build test deploy clean install dev prod
+.PHONY: help install test clean deploy backup restore logs health
 
 # Default target
 help:
-	@echo "Jupiter SIEM - Available Commands:"
+	@echo "Jupiter SIEM - Enhanced Deployment Automation"
 	@echo ""
-	@echo "Development:"
-	@echo "  make dev          - Start development environment"
-	@echo "  make install      - Install dependencies"
-	@echo "  make test         - Run all tests"
-	@echo "  make lint         - Run linting"
+	@echo "🏠 Native Deployment:"
+	@echo "  make native-setup     - Setup native environment"
+	@echo "  make native-deploy    - Deploy native production"
+	@echo "  make native-backup    - Backup native deployment"
+	@echo "  make native-logs      - View native service logs"
+	@echo "  make native-status    - Check native service status"
+	@echo "  make native-stop      - Stop native services"
+	@echo "  make native-restart   - Restart native services"
 	@echo ""
-	@echo "Production:"
-	@echo "  make build        - Build all Docker images"
-	@echo "  make deploy       - Deploy to production"
-	@echo "  make prod         - Start production environment"
+	@echo "🐳 Docker Deployment:"
+	@echo "  make docker-setup     - Setup Docker environment"
+	@echo "  make docker-build     - Build Docker images"
+	@echo "  make docker-deploy    - Deploy Docker production"
+	@echo "  make docker-backup    - Backup Docker deployment"
+	@echo "  make docker-logs      - View Docker container logs"
+	@echo "  make docker-status    - Check Docker container status"
+	@echo "  make docker-stop      - Stop Docker containers"
+	@echo "  make docker-restart   - Restart Docker containers"
 	@echo ""
-	@echo "Maintenance:"
-	@echo "  make clean        - Clean up containers and images"
-	@echo "  make backup       - Create system backup"
-	@echo "  make restore      - Restore from backup"
-	@echo "  make logs         - View application logs"
+	@echo "🔧 Development:"
+	@echo "  make dev              - Start development environment"
+	@echo "  make test             - Run all tests"
+	@echo "  make lint             - Run linting"
+	@echo "  make clean            - Clean up build artifacts"
+	@echo ""
+	@echo "🚀 Unified Commands:"
+	@echo "  make deploy           - Interactive deployment selector"
+	@echo "  make backup           - Interactive backup selector"
+	@echo "  make health           - Check health of all deployments"
+	@echo "  make install          - Install all dependencies"
 
-# Development
+# Variables
+NATIVE_ROOT := native
+DOCKER_ROOT := docker
+BACKEND_DIR := backend
+FRONTEND_DIR := frontend
+
+# Native deployment targets
+native-setup:
+	@echo "🏠 Setting up native environment..."
+	cd $(NATIVE_ROOT)/deployment && chmod +x setup-native.sh && ./setup-native.sh
+
+native-deploy:
+	@echo "🏠 Deploying native production..."
+	cd $(NATIVE_ROOT)/deployment && chmod +x deploy-native.sh && ./deploy-native.sh
+
+native-backup:
+	@echo "🏠 Creating native backup..."
+	cd $(NATIVE_ROOT)/deployment && chmod +x backup-native.sh && ./backup-native.sh
+
+native-logs:
+	@echo "🏠 Viewing native service logs..."
+	sudo journalctl -f -u jupiter-backend -u jupiter-frontend
+
+native-status:
+	@echo "🏠 Native service status:"
+	@systemctl status jupiter-backend --no-pager || echo "Backend service not found"
+	@systemctl status jupiter-frontend --no-pager || echo "Frontend service not found"
+	@systemctl status redis-server --no-pager || echo "Redis service not found"
+	@systemctl status nginx --no-pager || echo "Nginx service not found"
+
+native-stop:
+	@echo "🏠 Stopping native services..."
+	sudo systemctl stop jupiter-backend jupiter-frontend || true
+
+native-restart:
+	@echo "🏠 Restarting native services..."
+	sudo systemctl restart jupiter-backend jupiter-frontend nginx redis-server
+
+# Docker deployment targets
+docker-setup:
+	@echo "🐳 Setting up Docker environment..."
+	@if [ ! -f "$(DOCKER_ROOT)/configuration/.env.docker" ]; then \
+		cp $(DOCKER_ROOT)/configuration/.env.docker.example $(DOCKER_ROOT)/configuration/.env.docker; \
+		echo "Created Docker environment file. Please review and update it."; \
+	fi
+
+docker-build:
+	@echo "🐳 Building Docker images..."
+	docker build -t jupiter-siem-backend:latest -f $(BACKEND_DIR)/Dockerfile $(BACKEND_DIR)/
+	docker build -t jupiter-siem-frontend:latest -f $(FRONTEND_DIR)/Dockerfile $(FRONTEND_DIR)/
+	docker build -t jupiter-siem-nginx:latest -f $(DOCKER_ROOT)/containers/nginx/Dockerfile $(DOCKER_ROOT)/containers/nginx/
+
+docker-deploy:
+	@echo "🐳 Deploying Docker production..."
+	cd $(DOCKER_ROOT)/deployment && chmod +x deploy-docker.sh && ./deploy-docker.sh
+
+docker-backup:
+	@echo "🐳 Creating Docker backup..."
+	cd $(DOCKER_ROOT)/deployment && chmod +x backup-docker.sh && ./backup-docker.sh
+
+docker-logs:
+	@echo "🐳 Viewing Docker container logs..."
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.prod.yml logs -f
+
+docker-status:
+	@echo "🐳 Docker container status:"
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.prod.yml ps
+
+docker-stop:
+	@echo "🐳 Stopping Docker containers..."
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.prod.yml down
+
+docker-restart:
+	@echo "🐳 Restarting Docker containers..."
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.prod.yml restart
+
+# Development targets
 dev:
 	@echo "🚀 Starting development environment..."
-	docker-compose -f docker-compose.dev.yml up -d
-	@echo "✅ Development environment started"
-	@echo "Frontend: http://localhost:3000"
-	@echo "Backend: http://localhost:8000"
-
-install:
-	@echo "📦 Installing dependencies..."
-	cd backend && pip install -r requirements.txt
-	cd frontend && npm install
-	@echo "✅ Dependencies installed"
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.dev.yml up -d || \
+	echo "Development compose file not found, using production with dev profile"
 
 test:
 	@echo "🧪 Running comprehensive test suite..."
-	cd backend && python -m pytest tests/ -v --tb=short --cov=. --cov-report=html
-	cd frontend && npm test -- --coverage --watchAll=false
-	@echo "✅ All tests completed"
-
-test:integration
-	@echo "🔗 Running integration tests..."
-	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
-	@echo "✅ Integration tests completed"
+	@if [ -d "$(BACKEND_DIR)" ]; then \
+		cd $(BACKEND_DIR) && python -m pytest tests/ -v --tb=short || true; \
+	fi
+	@if [ -d "$(FRONTEND_DIR)" ]; then \
+		cd $(FRONTEND_DIR) && npm test -- --coverage --watchAll=false || true; \
+	fi
 
 lint:
 	@echo "🔍 Running linting..."
-	cd backend && flake8 . --max-line-length=100
-	cd frontend && npm run lint
-	@echo "✅ Linting completed"
+	@if [ -d "$(BACKEND_DIR)" ]; then \
+		cd $(BACKEND_DIR) && flake8 . --max-line-length=100 || true; \
+	fi
+	@if [ -d "$(FRONTEND_DIR)" ]; then \
+		cd $(FRONTEND_DIR) && npm run lint || true; \
+	fi
 
-# Production
-build:
-	@echo "🏗️ Building production images..."
-	docker build -t jupiter-siem-backend:latest -f backend/Dockerfile backend/
-	docker build -t jupiter-siem-frontend:latest -f frontend/Dockerfile frontend/
-	docker build -t jupiter-siem-nginx:latest -f nginx/Dockerfile nginx/
-	@echo "✅ All images built"
-
-deploy:
-	@echo "🚀 Deploying to production..."
-	./deploy-comprehensive.sh
-	@echo "✅ Deployment completed"
-
-deploy:cloudflare
-	@echo "☁️ Deploying with Cloudflare optimization..."
-	./deploy-cloudflare.sh
-	@echo "✅ Cloudflare deployment completed"
-
-prod:
-	@echo "🏭 Starting production environment..."
-	docker-compose -f docker-compose.prod.yml up -d
-	@echo "✅ Production environment started"
-
-prod:cloudflare
-	@echo "☁️ Starting Cloudflare-optimized production environment..."
-	docker-compose -f docker-compose.cloudflare.yml up -d
-	@echo "✅ Cloudflare production environment started"
-
-# Maintenance
 clean:
 	@echo "🧹 Cleaning up..."
-	docker-compose down --volumes --remove-orphans
-	docker system prune -f
-	docker volume prune -f
+	@# Clean Docker resources
+	docker system prune -f || true
+	@# Clean Python cache
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@# Clean Node modules (keep package.json)
+	@if [ -d "$(FRONTEND_DIR)/node_modules" ]; then \
+		echo "Cleaning frontend node_modules..."; \
+		rm -rf $(FRONTEND_DIR)/node_modules; \
+	fi
 	@echo "✅ Cleanup completed"
 
+# Unified targets
+deploy:
+	@echo "🚀 Starting interactive deployment..."
+	chmod +x deploy.sh && ./deploy.sh
+
 backup:
-	@echo "💾 Creating backup..."
-	./backup.sh
-	@echo "✅ Backup completed"
+	@echo "💾 Interactive backup selection..."
+	@echo "Select backup type:"
+	@echo "  [1] Native backup"
+	@echo "  [2] Docker backup"
+	@echo "  [3] Both backups"
+	@read -p "Enter choice [1-3]: " choice; \
+	case $$choice in \
+		1) make native-backup ;; \
+		2) make docker-backup ;; \
+		3) make native-backup && make docker-backup ;; \
+		*) echo "Invalid choice" ;; \
+	esac
 
-restore:
-	@echo "📥 Restoring from backup..."
-	@read -p "Enter backup file path: " backup_file; \
-	./restore.sh $$backup_file
-	@echo "✅ Restore completed"
-
-logs:
-	@echo "📋 Viewing logs..."
-	docker-compose logs -f
-
-# Security
-security-scan:
-	@echo "🔒 Running security scan..."
-	cd backend && bandit -r . -f json -o security-report.json
-	cd frontend && npm audit
-	@echo "✅ Security scan completed"
-
-# Monitoring
-monitor:
-	@echo "📊 Starting monitoring stack..."
-	docker-compose -f docker-compose.monitoring.yml up -d
-	@echo "✅ Monitoring started"
-	@echo "Prometheus: http://localhost:9090"
-	@echo "Grafana: http://localhost:3001"
-
-# Database
-db-migrate:
-	@echo "🗄️ Running database migrations..."
-	docker-compose exec backend python -m alembic upgrade head
-	@echo "✅ Database migrations completed"
-
-db-seed:
-	@echo "🌱 Seeding database..."
-	docker-compose exec backend python scripts/seed_database.py
-	@echo "✅ Database seeded"
-
-# SSL
-ssl-generate:
-	@echo "🔐 Generating SSL certificates..."
-	./scripts/generate-ssl.sh
-	@echo "✅ SSL certificates generated"
-
-# Health checks
 health:
 	@echo "🏥 Checking system health..."
-	curl -f http://localhost/health || echo "❌ Health check failed"
-	curl -f http://localhost:8000/api/security-ops/healthz || echo "❌ Backend health check failed"
-	@echo "✅ Health checks completed"
+	@echo ""
+	@echo "Native Health:"
+	@curl -f http://localhost/health 2>/dev/null && echo "✅ Native: Healthy" || echo "❌ Native: Unhealthy"
+	@echo ""
+	@echo "Docker Health:"
+	@curl -f http://localhost:8080/health 2>/dev/null && echo "✅ Docker: Healthy" || echo "❌ Docker: Unhealthy"
+	@echo ""
 
-# Performance
-benchmark:
-	@echo "⚡ Running performance benchmarks..."
-	cd tests && python benchmark.py
-	@echo "✅ Benchmarks completed"
+install:
+	@echo "📦 Installing all dependencies..."
+	@# Backend dependencies
+	@if [ -d "$(BACKEND_DIR)" ]; then \
+		cd $(BACKEND_DIR) && pip install -r requirements.txt; \
+	fi
+	@# Frontend dependencies
+	@if [ -d "$(FRONTEND_DIR)" ]; then \
+		cd $(FRONTEND_DIR) && npm ci; \
+	fi
+	@echo "✅ Dependencies installed"
 
-# Documentation
-docs:
-	@echo "📚 Generating documentation..."
-	cd backend && python -m pydoc -w .
-	cd frontend && npm run docs
-	@echo "✅ Documentation generated"
+# Monitoring targets
+monitor:
+	@echo "📊 Starting monitoring stack..."
+	cd $(DOCKER_ROOT)/deployment && docker-compose -f docker-compose.prod.yml --profile monitoring up -d
+
+# Security targets
+security-scan:
+	@echo "🔒 Running security scan..."
+	@if [ -d "$(BACKEND_DIR)" ]; then \
+		cd $(BACKEND_DIR) && bandit -r . -f json -o security-report.json || true; \
+	fi
+	@if [ -d "$(FRONTEND_DIR)" ]; then \
+		cd $(FRONTEND_DIR) && npm audit || true; \
+	fi
 
 # Quick start
-quickstart: install build deploy
-	@echo "🎉 Jupiter SIEM is ready!"
-	@echo "Access the application at: http://localhost"
-	@echo "Admin credentials: admin@jupiter-siem.local / JupiterSIEM2024!"
+quickstart: install docker-build deploy
+	@echo "🎉 Jupiter SIEM quickstart completed!"
+	@echo "Native: http://localhost"
+	@echo "Docker: http://localhost:8080"

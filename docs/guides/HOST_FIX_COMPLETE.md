@@ -28,7 +28,7 @@ The following hosts are now allowed to access the Jupiter SIEM platform:
 ```
 
 ## 🎯 **ACCESS CONFIRMED**
-- **Preview URL:** `https://secureinsight-1.preview.emergentagent.com`
+- **Preview URL:** `https://deployment-check-3.preview.emergentagent.com`
 - **Local URL:** `http://localhost:3000`
 - **Admin Login:** Works on both URLs ✅
 

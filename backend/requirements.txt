@@ -1,0 +1,114 @@
+# Jupiter SIEM Backend Dependencies
+
+# FastAPI Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database Drivers
+asynch==0.2.3                    # ClickHouse async driver
+pymongo==4.6.0                   # MongoDB driver
+motor==3.3.2                     # Async MongoDB driver
+redis==5.0.1                     # Redis driver
+aioredis==2.0.1                  # Async Redis driver
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+cryptography>=41.0.0
+
+# Data Processing & Validation
+pydantic==2.5.2
+pydantic-settings==2.1.0
+pandas==2.1.4
+numpy==1.25.2
+
+# HTTP Client
+httpx==0.25.2
+aiohttp==3.9.1
+requests==2.31.0
+
+# JSON & Data Serialization
+orjson==3.9.10
+python-json-logger==2.0.7
+
+# Date & Time
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Environment & Configuration
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Logging & Monitoring
+structlog==23.2.0
+prometheus-client==0.19.0
+
+# AI & ML Libraries (Optional)
+openai==1.6.1
+anthropic==0.8.1
+google-generativeai==0.3.2
+chromadb==0.4.18
+sentence-transformers==2.2.2
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.25.2
+
+# Development Tools
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+pre-commit==3.6.0
+
+# Jupyter (Optional for analysis)
+jupyter==1.0.0
+ipykernel==6.27.1
+
+# File Processing
+aiofiles==23.2.1
+watchfiles==0.21.0
+
+# Networking & Parsing
+python-whois==0.8.0
+dnspython==2.4.2
+
+# OCSF Schema Support
+jsonschema==4.20.0
+
+# Background Tasks
+celery==5.3.4
+redis==5.0.1
+
+# Web Sockets
+websockets==12.0
+
+# Email Support
+aiosmtplib==3.0.1
+email-validator==2.1.0
+
+# File Upload & Storage
+boto3==1.34.2                    # AWS S3 support
+azure-storage-blob==12.19.0      # Azure Blob support
+
+# Geolocation
+geoip2==4.7.0
+maxminddb==2.2.0
+
+# Regular Expressions
+regex==2023.10.3
+
+# Cache
+cachetools==5.3.2
+
+# Type Hints
+typing-extensions==4.8.0
+
+# Process Management
+psutil==5.9.6
+
+# Configuration Management
+dynaconf==3.2.4

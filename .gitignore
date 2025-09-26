@@ -11,3 +11,7 @@
 *.env
 *.env.*
 node_modules
+-e 
+# Environment files
+*.env
+*.env.*

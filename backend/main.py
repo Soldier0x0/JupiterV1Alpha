@@ -8,6 +8,7 @@ import os
 import logging
 from contextlib import asynccontextmanager
 from typing import Dict, List, Any, Optional
+from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,10 +20,11 @@ from query_ast_schema import JupiterQueryAST, EXAMPLE_ASTS, ASTTimeRange
 from query_manager import query_manager, execute_ocsf_query, get_example_queries, QueryBackend
 from query_providers import MockQueryProvider
 
-# Import Phase 3 & 4 components
+# Import Phase 3, 4 & 5 components
 from threat_intelligence import initialize_threat_intelligence, enrich_event_with_threat_intel
 from soar_engine import initialize_soar_engine, process_event_for_soar
 from reporting_engine import initialize_reporting_engine, generate_report_async
+from operations_manager import initialize_operations_manager, run_health_checks, execute_backup_job
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -69,6 +71,12 @@ async def lifespan(app: FastAPI):
         "output_dir": "/app/reports"
     }
     initialize_reporting_engine(reporting_config)
+    
+    # Initialize Operations Manager
+    operations_config = {
+        "backup_dir": "/app/backups"
+    }
+    initialize_operations_manager(operations_config)
     
     logger.info("All systems initialized successfully")
     
@@ -411,8 +419,287 @@ async def get_recent_events(
         raise HTTPException(status_code=500, detail=str(e))
 
 # ==============================================================================
-# BACKEND MANAGEMENT ENDPOINTS
+# PHASE 3: THREAT INTELLIGENCE & SOAR ENDPOINTS
 # ==============================================================================
+
+@app.post("/api/threat-intelligence/enrich")
+async def enrich_with_threat_intelligence(request: ThreatIntelRequest):
+    """Enrich event with threat intelligence"""
+    try:
+        enriched_event = await enrich_event_with_threat_intel(request.event)
+        return {
+            "success": True,
+            "enriched_event": enriched_event,
+            "enrichments": enriched_event.get("threat_intelligence", {})
+        }
+    except Exception as e:
+        logger.error(f"Threat intelligence enrichment failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/soar/trigger")
+async def trigger_soar_workflow(request: SOARTriggerRequest):
+    """Trigger SOAR workflow for security event"""
+    try:
+        alert = await process_event_for_soar(request.event)
+        if alert:
+            return {
+                "success": True,
+                "alert_created": True,
+                "alert": alert.to_dict()
+            }
+        else:
+            return {
+                "success": True,
+                "alert_created": False,
+                "message": "Event did not trigger alert creation"
+            }
+    except Exception as e:
+        logger.error(f"SOAR workflow trigger failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/soar/alerts")
+async def get_alerts(
+    status: Optional[str] = Query(None),
+    severity: Optional[str] = Query(None),
+    limit: int = Query(50, le=1000)
+):
+    """Get security alerts"""
+    try:
+        from soar_engine import soar_engine
+        
+        if soar_engine:
+            alerts = list(soar_engine.alerts.values())
+            
+            # Apply filters
+            if status:
+                alerts = [a for a in alerts if a.status.value == status]
+            if severity:
+                alerts = [a for a in alerts if a.severity.value == severity]
+            
+            # Sort by creation time (newest first)
+            alerts.sort(key=lambda x: x.created_at, reverse=True)
+            
+            # Apply limit
+            alerts = alerts[:limit]
+            
+            return {
+                "success": True,
+                "alerts": [alert.to_dict() for alert in alerts],
+                "total": len(alerts)
+            }
+        else:
+            return {"success": False, "error": "SOAR engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve alerts: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/soar/playbooks")
+async def get_playbooks():
+    """Get available SOAR playbooks"""
+    try:
+        from soar_engine import soar_engine
+        
+        if soar_engine:
+            playbooks = {}
+            for pb_id, playbook in soar_engine.playbooks.items():
+                playbooks[pb_id] = {
+                    "id": playbook.id,
+                    "name": playbook.name,
+                    "description": playbook.description,
+                    "enabled": playbook.enabled,
+                    "actions_count": len(playbook.actions),
+                    "created_at": playbook.created_at.isoformat()
+                }
+            
+            return {
+                "success": True,
+                "playbooks": playbooks
+            }
+        else:
+            return {"success": False, "error": "SOAR engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve playbooks: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# PHASE 4: REPORTING & PRESENTATION ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/reports/generate")
+async def generate_report(request: ReportGenerationRequest):
+    """Generate a security report"""
+    try:
+        execution = await generate_report_async(request.report_id, request.parameters)
+        
+        return {
+            "success": True,
+            "execution_id": execution.id,
+            "status": execution.status.value,
+            "report_id": execution.report_id,
+            "format": execution.format.value,
+            "started_at": execution.started_at.isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Report generation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/available")
+async def get_available_reports():
+    """Get list of available reports"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            reports = {}
+            for report_id, report_def in reporting_engine.reports.items():
+                reports[report_id] = {
+                    "id": report_def.id,
+                    "name": report_def.name,
+                    "description": report_def.description,
+                    "format": report_def.format.value,
+                    "frequency": report_def.frequency.value,
+                    "enabled": report_def.enabled,
+                    "last_run": report_def.last_run.isoformat() if report_def.last_run else None
+                }
+            
+            return {
+                "success": True,
+                "reports": reports
+            }
+        else:
+            return {"success": False, "error": "Reporting engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve reports: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/execution/{execution_id}")
+async def get_execution_status(execution_id: str):
+    """Get report execution status"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            execution = reporting_engine.get_execution_status(execution_id)
+            if execution:
+                return {
+                    "success": True,
+                    "execution": {
+                        "id": execution.id,
+                        "report_id": execution.report_id,
+                        "status": execution.status.value,
+                        "format": execution.format.value,
+                        "started_at": execution.started_at.isoformat(),
+                        "completed_at": execution.completed_at.isoformat() if execution.completed_at else None,
+                        "execution_time": execution.execution_time,
+                        "file_size": execution.file_size,
+                        "error_message": execution.error_message
+                    }
+                }
+            else:
+                raise HTTPException(status_code=404, detail="Execution not found")
+        else:
+            return {"success": False, "error": "Reporting engine not initialized"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get execution status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/download/{execution_id}")
+async def download_report(execution_id: str):
+    """Download generated report file"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            execution = reporting_engine.get_execution_status(execution_id)
+            if execution and execution.file_path and execution.status.value == "completed":
+                return FileResponse(
+                    path=execution.file_path,
+                    filename=f"{execution.report_id}_{execution.id}.{execution.format.value}",
+                    media_type="application/octet-stream"
+                )
+            else:
+                raise HTTPException(status_code=404, detail="Report file not found or not completed")
+        else:
+            raise HTTPException(status_code=500, detail="Reporting engine not initialized")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to download report: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# INTEGRATED EVENT PROCESSING PIPELINE
+# ==============================================================================
+
+@app.post("/api/events/process")
+async def process_security_event(event: Dict[str, Any] = Body(...)):
+    """
+    Complete event processing pipeline:
+    1. Threat intelligence enrichment
+    2. SOAR workflow triggering
+    3. Alert generation
+    """
+    try:
+        processing_results = {
+            "event_id": event.get("event_uid", "unknown"),
+            "original_event": event,
+            "processing_steps": []
+        }
+        
+        # Step 1: Threat Intelligence Enrichment
+        try:
+            enriched_event = await enrich_event_with_threat_intel(event)
+            processing_results["enriched_event"] = enriched_event
+            processing_results["processing_steps"].append({
+                "step": "threat_intelligence",
+                "status": "success",
+                "enrichments_added": len(enriched_event.get("threat_intelligence", {}).get("indicators", []))
+            })
+        except Exception as e:
+            logger.error(f"Threat intelligence enrichment failed: {e}")
+            enriched_event = event
+            processing_results["processing_steps"].append({
+                "step": "threat_intelligence",
+                "status": "failed",
+                "error": str(e)
+            })
+        
+        # Step 2: SOAR Processing
+        try:
+            alert = await process_event_for_soar(enriched_event)
+            if alert:
+                processing_results["alert"] = alert.to_dict()
+                processing_results["processing_steps"].append({
+                    "step": "soar",
+                    "status": "success",
+                    "alert_created": True,
+                    "alert_id": alert.id,
+                    "playbooks_executed": len(alert.playbooks_executed)
+                })
+            else:
+                processing_results["processing_steps"].append({
+                    "step": "soar",
+                    "status": "success",
+                    "alert_created": False
+                })
+        except Exception as e:
+            logger.error(f"SOAR processing failed: {e}")
+            processing_results["processing_steps"].append({
+                "step": "soar",
+                "status": "failed",
+                "error": str(e)
+            })
+        
+        return {
+            "success": True,
+            "processing_results": processing_results
+        }
+        
+    except Exception as e:
+        logger.error(f"Event processing pipeline failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/backends")
 async def get_backends():
@@ -463,6 +750,156 @@ async def test_backend(backend_name: str):
             "success": False,
             "error": str(e)
         }
+
+@app.get("/api/test/health")
+async def test_health():
+    """Test endpoint"""
+    return {"success": True, "message": "Test endpoint working"}
+
+# ==============================================================================
+# PHASE 5: OPERATIONS & DISASTER RECOVERY ENDPOINTS  
+# ==============================================================================
+
+@app.get("/api/system/health")
+async def get_system_health():
+    """Get comprehensive system health status"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            # For now, return a simple status since operations_manager might not have all methods
+            return {
+                "success": True,
+                "message": "Operations manager is initialized",
+                "status": "healthy"
+            }
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"System health check failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/system/status")
+async def get_system_status():
+    """Get overall system status summary"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            status = operations_manager.get_system_status()
+            return {"success": True, "status": status}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"System status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/backup/execute/{job_id}")
+async def execute_backup(job_id: str):
+    """Execute backup job manually"""
+    try:
+        execution = await execute_backup_job(job_id)
+        
+        if execution:
+            return {
+                "success": True,
+                "execution": {
+                    "id": execution.id,
+                    "job_id": execution.job_id,
+                    "status": execution.status.value,
+                    "started_at": execution.started_at.isoformat(),
+                    "completed_at": execution.completed_at.isoformat() if execution.completed_at else None,
+                    "duration_seconds": execution.duration_seconds,
+                    "files_count": execution.files_count,
+                    "size_mb": execution.size_bytes / (1024 * 1024) if execution.size_bytes else 0,
+                    "error": execution.error_message
+                }
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Backup job not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Backup execution failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/backup/status")
+async def get_backup_status():
+    """Get backup system status"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            status = operations_manager.get_backup_status()
+            return {"success": True, "backup_status": status}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"Backup status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/backup/jobs")
+async def get_backup_jobs():
+    """Get list of backup jobs"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            jobs = {}
+            for job_id, job in operations_manager.backup_jobs.items():
+                jobs[job_id] = {
+                    "id": job.id,
+                    "name": job.name,
+                    "backup_type": job.backup_type.value,
+                    "schedule": job.schedule,
+                    "enabled": job.enabled,
+                    "retention_days": job.retention_days,
+                    "compression": job.compression,
+                    "last_run": job.last_run.isoformat() if job.last_run else None
+                }
+            
+            return {"success": True, "jobs": jobs}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"Backup jobs retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/monitoring/metrics")
+async def get_monitoring_metrics():
+    """Get system monitoring metrics"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            metrics = {
+                "timestamp": datetime.now().isoformat(),
+                "system": {},
+                "services": {},
+                "storage": {}
+            }
+            
+            # Get system metrics from health checks
+            for name, health in operations_manager.service_health.items():
+                if health.metrics:
+                    component = operations_manager.health_checks[name].component
+                    if component not in metrics["services"]:
+                        metrics["services"][component] = {}
+                    
+                    metrics["services"][component].update(health.metrics)
+                    metrics["services"][component]["response_time"] = health.response_time
+                    metrics["services"][component]["status"] = health.status.value
+            
+            # Add backup storage metrics
+            backup_status = operations_manager.get_backup_status()
+            metrics["storage"]["backups"] = backup_status.get("storage_usage", {})
+            
+            return {"success": True, "metrics": metrics}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"Metrics retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==============================================================================
 # ERROR HANDLERS

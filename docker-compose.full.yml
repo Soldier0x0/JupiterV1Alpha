@@ -1,0 +1,376 @@
+version: '3.8'
+
+# Jupiter SIEM - Full Production Stack
+# ClickHouse + Vector + NiFi + MongoDB + Redis + n8n
+
+services:
+  # ClickHouse - Primary log storage
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.1
+    container_name: jupiter-clickhouse
+    restart: always
+    environment:
+      CLICKHOUSE_DB: jupiter_siem
+      CLICKHOUSE_USER: jupiter_user
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-jupiter_secure_2024}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./config/clickhouse:/etc/clickhouse-server/conf.d
+      - ./scripts/clickhouse_init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "127.0.0.1:8123:8123"  # HTTP interface
+      - "127.0.0.1:9000:9000"  # Native interface
+    networks:
+      - jupiter-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  # Vector - Log collection and routing
+  vector:
+    image: timberio/vector:0.34.1-alpine
+    container_name: jupiter-vector
+    restart: always
+    volumes:
+      - ./config/vector/vector.toml:/etc/vector/vector.toml:ro
+      - ./logs:/logs
+      - /var/log:/var/log:ro
+      - vector_data:/vector-data-dir
+    ports:
+      - "127.0.0.1:8686:8686"  # Vector API
+      - "514:514/udp"          # Syslog UDP
+      - "514:514/tcp"          # Syslog TCP
+      - "12345:12345/tcp"      # Custom log input
+    networks:
+      - jupiter-net
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    environment:
+      VECTOR_LOG: info
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USER: jupiter_user
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-jupiter_secure_2024}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8686/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Apache NiFi - Advanced log processing
+  nifi:
+    image: apache/nifi:1.23.2
+    container_name: jupiter-nifi
+    restart: always
+    ports:
+      - "127.0.0.1:8443:8443"  # NiFi web interface (HTTPS)
+    environment:
+      SINGLE_USER_CREDENTIALS_USERNAME: admin
+      SINGLE_USER_CREDENTIALS_PASSWORD: ${NIFI_PASSWORD:-jupiter_nifi_2024}
+      NIFI_WEB_HTTPS_PORT: 8443
+      NIFI_WEB_HTTPS_HOST: 0.0.0.0
+    volumes:
+      - nifi_database_repository:/opt/nifi/nifi-current/database_repository
+      - nifi_flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - nifi_content_repository:/opt/nifi/nifi-current/content_repository
+      - nifi_provenance_repository:/opt/nifi/nifi-current/provenance_repository
+      - nifi_state:/opt/nifi/nifi-current/state
+      - nifi_logs:/opt/nifi/nifi-current/logs
+      - nifi_conf:/opt/nifi/nifi-current/conf
+      - ./config/nifi:/opt/nifi/nifi-current/conf/templates
+    networks:
+      - jupiter-net
+    depends_on:
+      - vector
+      - clickhouse
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:8443/nifi/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # MongoDB - User management and metadata
+  mongodb:
+    image: mongo:7.0
+    container_name: jupiter-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jupiter_admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-jupiter_mongo_2024}
+      MONGO_INITDB_DATABASE: jupiter_siem
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/mongo_init.js:/docker-entrypoint-initdb.d/init.js
+    ports:
+      - "127.0.0.1:27017:27017"
+    networks:
+      - jupiter-net
+    command: --auth
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Redis - Caching and session storage
+  redis:
+    image: redis:7.2-alpine
+    container_name: jupiter-redis
+    restart: always
+    command: >
+      redis-server 
+      --requirepass ${REDIS_PASSWORD:-jupiter_redis_2024}
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - jupiter-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # n8n - SOAR workflows
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: jupiter-n8n
+    restart: always
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: true
+      N8N_BASIC_AUTH_USER: ${N8N_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-jupiter_n8n_2024}
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5678
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-jupiter_n8n_db_2024}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - jupiter-net
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+
+  # PostgreSQL - n8n database
+  postgres:
+    image: postgres:15-alpine
+    container_name: jupiter-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: ${N8N_DB_PASSWORD:-jupiter_n8n_db_2024}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - jupiter-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U n8n"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # FastAPI Backend
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jupiter-backend
+    restart: always
+    environment:
+      - APP_ENVIRONMENT=${APP_ENVIRONMENT:-production}
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - CLICKHOUSE_DB=jupiter_siem
+      - CLICKHOUSE_USER=jupiter_user
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-jupiter_secure_2024}
+      - MONGO_URL=mongodb://jupiter_admin:${MONGO_PASSWORD:-jupiter_mongo_2024}@mongodb:27017/jupiter_siem?authSource=admin
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-jupiter_redis_2024}@redis:6379
+      - JUPITER_QUERY_BACKEND=clickhouse
+      - JWT_SECRET_KEY=${JWT_SECRET:-jupiter_jwt_secret_2024}
+    volumes:
+      - ./backend/logs:/app/logs
+      - ./backups:/app/backups
+      - ./data:/app/data
+    ports:
+      - "127.0.0.1:8001:8001"
+    networks:
+      - jupiter-net
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: jupiter-frontend
+    restart: always
+    environment:
+      - REACT_APP_API_URL=http://localhost:8001
+      - REACT_APP_ENVIRONMENT=${APP_ENVIRONMENT:-production}
+    ports:
+      - "127.0.0.1:3000:80"
+    networks:
+      - jupiter-net
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: jupiter-nginx
+    restart: always
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - jupiter-net
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus - Metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: jupiter-prometheus
+    restart: always
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - jupiter-net
+    depends_on:
+      - clickhouse
+      - backend
+
+  # Grafana - Monitoring dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: jupiter-grafana
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-jupiter_grafana_2024}
+      GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "127.0.0.1:3001:3000"
+    networks:
+      - jupiter-net
+    depends_on:
+      - prometheus
+      - clickhouse
+
+  # Backup Service
+  backup:
+    image: alpine:latest
+    container_name: jupiter-backup
+    restart: "no"
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup.sh:/backup.sh
+      - clickhouse_data:/data/clickhouse:ro
+      - mongodb_data:/data/mongodb:ro
+    command: /bin/sh -c "chmod +x /backup.sh && crond -f"
+    networks:
+      - jupiter-net
+    depends_on:
+      - clickhouse
+      - mongodb
+
+volumes:
+  clickhouse_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  vector_data:
+    driver: local
+  nifi_database_repository:
+    driver: local
+  nifi_flowfile_repository:
+    driver: local
+  nifi_content_repository:
+    driver: local
+  nifi_provenance_repository:
+    driver: local
+  nifi_state:
+    driver: local
+  nifi_logs:
+    driver: local
+  nifi_conf:
+    driver: local
+  n8n_data:
+    driver: local
+  postgres_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  jupiter-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

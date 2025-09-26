@@ -1,0 +1,463 @@
+# Jupiter SIEM Vector Configuration
+# Collects logs from multiple sources and routes to ClickHouse
+
+[api]
+enabled = true
+address = "0.0.0.0:8686"
+playground = true
+
+[log]
+level = "info"
+
+# Data directory
+data_dir = "/vector-data-dir"
+
+# ==============================================================================
+# SOURCES - Log collection inputs
+# ==============================================================================
+
+# Syslog UDP input
+[sources.syslog_udp]
+type = "syslog"
+mode = "udp"
+address = "0.0.0.0:514"
+max_length = 102400
+
+# Syslog TCP input  
+[sources.syslog_tcp]
+type = "syslog"
+mode = "tcp"
+address = "0.0.0.0:514"
+max_length = 102400
+
+# File-based log input
+[sources.file_logs]
+type = "file"
+include = ["/logs/*.log", "/var/log/auth.log", "/var/log/syslog"]
+ignore_older_secs = 600
+
+# Windows Event Log input (for future Windows agent)
+[sources.windows_events]
+type = "demo_logs"
+format = "json"
+count = 100
+interval = 30.0
+
+# Custom JSON log input
+[sources.json_tcp]
+type = "socket"
+address = "0.0.0.0:12345"
+mode = "tcp"
+
+# Docker container logs
+[sources.docker_logs]
+type = "docker_logs"
+
+# ==============================================================================
+# TRANSFORMS - Log processing and OCSF normalization
+# ==============================================================================
+
+# Parse and enrich syslog messages
+[transforms.parse_syslog]
+type = "remap"
+inputs = ["syslog_udp", "syslog_tcp"]
+source = '''
+# Parse syslog fields
+.timestamp = parse_timestamp!(.timestamp, "%Y-%m-%dT%H:%M:%S%.fZ")
+.facility = to_string(.facility) ?? "unknown"
+.severity_name = to_string(.severity) ?? "info"
+
+# Map to OCSF severity
+.ocsf_severity = if .severity_name == "emerg" || .severity_name == "alert" || .severity_name == "crit" {
+    "Critical"
+} else if .severity_name == "err" {
+    "High"  
+} else if .severity_name == "warning" {
+    "Medium"
+} else {
+    "Low"
+}
+
+# Extract basic OCSF fields
+.tenant_id = get_env_var!("TENANT_ID") ?? "default_tenant"
+.class_uid = 1000  # Generic system activity
+.category_uid = 1
+.class_name = "System Activity"
+.category_name = "System Activity"
+.activity_name = "syslog_message"
+.event_uid = encode_base64(sha1(string!(.message) + string!(.timestamp)))
+
+# Try to extract user information
+if match(.message, r"user=([^\s]+)") {
+    .actor_user_name = capture_groups(.message, r"user=([^\s]+)")[0]
+} else if match(.message, r"for ([^\s]+) from") {
+    .actor_user_name = capture_groups(.message, r"for ([^\s]+) from")[0]
+}
+
+# Try to extract IP addresses
+if match(.message, r"from ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})") {
+    .src_endpoint_ip = capture_groups(.message, r"from ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})")[0]
+}
+
+# Set device information
+.device_name = .hostname ?? "unknown"
+.device_type = "Server"
+
+# Set message content
+.ocsf_message = .message
+.raw_data = encode_json(.)
+
+# Clean up temporary fields
+del(.facility)
+del(.message)
+'''
+
+# Parse JSON logs and convert to OCSF
+[transforms.parse_json_logs]
+type = "remap"
+inputs = ["json_tcp", "file_logs"]
+source = '''
+# Try to parse as JSON, fallback to text
+if is_string(.) {
+    . = parse_json(.) ?? {"message": string!(.), "timestamp": now()}
+}
+
+# Ensure required timestamp
+if !exists(.time) && !exists(.timestamp) {
+    .time = now()
+} else if exists(.timestamp) {
+    .time = .timestamp
+}
+
+# Convert timestamp to proper format
+.time = parse_timestamp!(string!(.time), ["%Y-%m-%dT%H:%M:%S%.fZ", "%Y-%m-%d %H:%M:%S", "%s"])
+
+# Set tenant ID
+.tenant_id = .tenant_id ?? get_env_var("TENANT_ID") ?? "default_tenant"
+
+# OCSF class mapping based on content
+if match(string!(.message ?? ""), r"(?i)(failed|invalid|unauthorized|denied).*login") {
+    .class_uid = 1001
+    .category_uid = 1  
+    .class_name = "Authentication"
+    .category_name = "Identity & Access Management"
+    .activity_name = "failed_login"
+    .ocsf_severity = "Medium"
+} else if match(string!(.message ?? ""), r"(?i)(process|exec|command)") {
+    .class_uid = 1002
+    .category_uid = 1
+    .class_name = "Process Activity"  
+    .category_name = "System Activity"
+    .activity_name = "process_started"
+    .ocsf_severity = "Low"
+} else if match(string!(.message ?? ""), r"(?i)(file|created|deleted|modified)") {
+    .class_uid = 1003
+    .category_uid = 2
+    .class_name = "File System Activity"
+    .category_name = "System Activity"  
+    .activity_name = "file_created"
+    .ocsf_severity = "Low"
+} else if match(string!(.message ?? ""), r"(?i)(network|connection|tcp|udp)") {
+    .class_uid = 1004
+    .category_uid = 3
+    .class_name = "Network Activity"
+    .category_name = "Network Activity"
+    .activity_name = "network_connection"
+    .ocsf_severity = "Low"
+} else {
+    .class_uid = 1000
+    .category_uid = 1
+    .class_name = "System Activity"
+    .category_name = "System Activity"
+    .activity_name = "generic_event"
+    .ocsf_severity = .severity ?? "Low"
+}
+
+# Generate event UID
+.event_uid = encode_base64(sha1(string!(.message ?? .raw_data ?? "") + string!(.time)))
+
+# Extract and normalize fields
+.actor_user_name = .user ?? .username ?? .actor_user_name ?? ""
+.device_name = .hostname ?? .host ?? .device_name ?? "unknown"
+.device_type = .device_type ?? "Unknown"
+.ocsf_message = .message ?? .raw_data ?? ""
+
+# Extract IP addresses if present
+if exists(.src_ip) {
+    .src_endpoint_ip = .src_ip
+}
+if exists(.dst_ip) {
+    .dst_endpoint_ip = .dst_ip  
+}
+
+# Extract process information
+if exists(.process) {
+    .process_name = .process.name ?? .process_name ?? ""
+    .process_pid = .process.pid ?? .process_pid
+    .process_cmd_line = .process.command ?? .process_cmd_line ?? ""
+}
+
+# Extract file information  
+if exists(.file) {
+    .file_name = .file.name ?? .file_name ?? ""
+    .file_path = .file.path ?? .file_path ?? ""
+    .file_size = .file.size ?? .file_size
+    .file_hash_sha256 = .file.hash.sha256 ?? .file_hash_sha256 ?? ""
+}
+
+# Set metadata
+.metadata_version = "1.6.0"
+.raw_data = encode_json(.)
+
+# Severity mapping
+.severity = if .ocsf_severity == "Critical" {
+    "Critical"
+} else if .ocsf_severity == "High" {
+    "High"  
+} else if .ocsf_severity == "Medium" {
+    "Medium"
+} else {
+    "Low"
+}
+
+# Clean up original fields to keep only OCSF structure
+del(.message)
+del(.timestamp)
+del(.host)  
+del(.hostname)
+del(.user)
+del(.username)
+del(.src_ip)
+del(.dst_ip)
+del(.process)
+del(.file)
+'''
+
+# Windows Event Log transformation
+[transforms.parse_windows_events]
+type = "remap"
+inputs = ["windows_events"]
+source = '''
+# Parse Windows Event Log to OCSF format
+.tenant_id = get_env_var("TENANT_ID") ?? "default_tenant"
+.time = now()
+.event_uid = uuid_v4()
+
+# Map Windows event ID to OCSF class
+.windows_event_id = .event_id ?? 0
+
+if .windows_event_id == 4624 {
+    # Successful logon
+    .class_uid = 1001
+    .activity_name = "successful_login"
+    .severity = "Low"
+} else if .windows_event_id == 4625 {
+    # Failed logon
+    .class_uid = 1001 
+    .activity_name = "failed_login"
+    .severity = "Medium"
+} else if .windows_event_id == 4688 {
+    # Process creation
+    .class_uid = 1002
+    .activity_name = "process_started"
+    .severity = "Low"
+} else {
+    .class_uid = 1000
+    .activity_name = "windows_event"
+    .severity = "Low"
+}
+
+.category_uid = 1
+.class_name = "Authentication"
+.category_name = "Identity & Access Management"
+.metadata_version = "1.6.0"
+.device_type = "Windows"
+.ocsf_message = .message ?? ""
+.raw_data = encode_json(.)
+'''
+
+# Threat intelligence enrichment
+[transforms.enrich_threats]
+type = "remap"  
+inputs = ["parse_syslog", "parse_json_logs", "parse_windows_events"]
+source = '''
+# Basic threat scoring based on keywords
+.risk_score = 0.0
+
+# Check for suspicious keywords
+suspicious_keywords = [
+    "powershell", "cmd.exe", "wscript", "cscript", "rundll32", 
+    "regsvr32", "mshta", "bitsadmin", "certutil",
+    "mimikatz", "bloodhound", "cobalt", "metasploit"
+]
+
+for_each(suspicious_keywords) -> |_index, keyword| {
+    if match(downcase(string!(.ocsf_message ?? "")), downcase(keyword)) {
+        .risk_score = .risk_score + 0.2
+    }
+}
+
+# Check for known bad IPs (simplified)
+bad_ips = ["192.168.1.666", "10.0.0.666"]  # Example bad IPs
+
+if includes(bad_ips, string!(.src_endpoint_ip ?? "")) {
+    .risk_score = .risk_score + 0.5
+    .enrichment_reputation = "malicious"
+}
+
+# Set final risk assessment
+.confidence = if .risk_score > 0.5 {
+    0.8
+} else if .risk_score > 0.2 {
+    0.6  
+} else {
+    0.3
+}
+
+# Add MITRE ATT&CK mapping for high-risk events
+if .risk_score > 0.3 {
+    if match(string!(.ocsf_message ?? ""), r"(?i)powershell") {
+        .mitre_technique_id = "T1059.001"
+        .mitre_technique_name = "PowerShell"
+        .mitre_tactic_id = "TA0002"
+        .mitre_tactic_name = "Execution"
+    }
+}
+'''
+
+# Final OCSF formatting
+[transforms.format_ocsf]
+type = "remap"
+inputs = ["enrich_threats"]
+source = '''
+# Ensure all required OCSF fields are present with defaults
+.tenant_id = .tenant_id ?? "default_tenant"
+.time = .time ?? now()
+.event_uid = .event_uid ?? uuid_v4()
+.metadata_version = .metadata_version ?? "1.6.0"
+.class_uid = .class_uid ?? 1000
+.category_uid = .category_uid ?? 1
+.class_name = .class_name ?? "Unknown"
+.category_name = .category_name ?? "Unknown"
+.activity_name = .activity_name ?? "unknown_activity"
+.severity = .severity ?? "Low"
+.message = .ocsf_message ?? ""
+
+# Set defaults for optional fields
+.actor_user_name = .actor_user_name ?? ""
+.device_name = .device_name ?? "unknown"
+.device_type = .device_type ?? "Unknown"
+.process_name = .process_name ?? ""
+.file_name = .file_name ?? ""
+.raw_data = .raw_data ?? encode_json(.)
+
+# Convert IP addresses to proper format
+if exists(.src_endpoint_ip) && .src_endpoint_ip != "" {
+    .src_endpoint_ip = ip_to_ipv4(.src_endpoint_ip) ?? null
+}
+if exists(.dst_endpoint_ip) && .dst_endpoint_ip != "" {  
+    .dst_endpoint_ip = ip_to_ipv4(.dst_endpoint_ip) ?? null
+}
+
+# Ensure numeric fields are proper types
+.class_uid = to_int(.class_uid) ?? 1000
+.category_uid = to_int(.category_uid) ?? 1
+.process_pid = if exists(.process_pid) { to_int(.process_pid) } else { null }
+.file_size = if exists(.file_size) { to_int(.file_size) } else { null }
+.risk_score = to_float(.risk_score) ?? 0.0
+.confidence = to_float(.confidence) ?? 0.0
+
+# Clean timestamp format for ClickHouse
+.time = format_timestamp!(.time, "%Y-%m-%d %H:%M:%S%.3f")
+'''
+
+# ==============================================================================
+# SINKS - Output destinations
+# ==============================================================================
+
+# ClickHouse sink for processed OCSF events
+[sinks.clickhouse_ocsf]
+type = "clickhouse"
+inputs = ["format_ocsf"]
+endpoint = "http://clickhouse:8123"
+database = "jupiter_siem"
+table = "ocsf_events"
+auth.strategy = "basic"
+auth.user = "${CLICKHOUSE_USER}"
+auth.password = "${CLICKHOUSE_PASSWORD}"
+skip_unknown_fields = true
+
+# Batch configuration for performance
+batch.max_bytes = 1048576  # 1MB
+batch.timeout_secs = 30
+
+# Health check
+healthcheck.enabled = true
+
+# Encoding
+encoding.codec = "json"
+
+# Error handling
+acknowledgements.enabled = true
+
+# File backup sink for reliability
+[sinks.file_backup]
+type = "file"
+inputs = ["format_ocsf"]
+path = "/logs/backup/ocsf-events-%Y-%m-%d.jsonl"
+encoding.codec = "json"
+
+# Console output for debugging (can be disabled in production)
+[sinks.console_debug]
+type = "console"
+inputs = ["format_ocsf"]
+encoding.codec = "json"
+target = "stdout"
+
+# Metrics sink for monitoring
+[sinks.prometheus_metrics]
+type = "prometheus_exporter"
+address = "0.0.0.0:9598"
+default_namespace = "jupiter_vector"
+
+# ==============================================================================
+# TESTS - Configuration validation
+# ==============================================================================
+
+[[tests]]
+name = "syslog_parsing"
+[[tests.inputs]]
+insert_at = "parse_syslog"
+value = '''
+<34>Oct 11 22:14:15 mymachine su: 'su root' failed for lonvick on /dev/pts/8
+'''
+
+[[tests.outputs]]
+extract_from = "parse_syslog"
+[[tests.outputs.conditions]]
+type = "vrl"
+source = '''
+assert_eq!(.class_uid, 1000)
+assert_eq!(.tenant_id, "default_tenant")  
+assert!(.time != null)
+assert!(.event_uid != null)
+'''
+
+[[tests]]
+name = "json_log_parsing"
+[[tests.inputs]]
+insert_at = "parse_json_logs"
+value = '''
+{"message": "failed login attempt", "user": "admin", "src_ip": "192.168.1.100", "timestamp": "2024-01-15T10:30:00Z"}
+'''
+
+[[tests.outputs]]
+extract_from = "parse_json_logs"  
+[[tests.outputs.conditions]]
+type = "vrl"
+source = '''
+assert_eq!(.class_uid, 1001)
+assert_eq!(.activity_name, "failed_login")
+assert_eq!(.actor_user_name, "admin")
+assert_eq!(.src_endpoint_ip, "192.168.1.100")
+'''

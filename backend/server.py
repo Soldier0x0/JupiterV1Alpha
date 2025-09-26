@@ -1,1998 +1,934 @@
-from fastapi import FastAPI, HTTPException, Depends, Response, Cookie, Header
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr
-from typing import Optional, List, Dict, Any
+#!/usr/bin/env python3
+"""
+Jupiter SIEM FastAPI Backend
+Integrated with Query AST System and ClickHouse
+"""
+
 import os
-from jose import JWTError, jwt
-import bcrypt
-import uuid
-import random
-import requests
-import json
-from datetime import datetime, timedelta
-from pymongo import MongoClient
-from bson import ObjectId
-import asyncio
-import aiohttp
-from dotenv import load_dotenv
-import pyotp
-import qrcode
-from io import BytesIO
-import base64
-import secrets
-import sys
-sys.path.append('/app')
-from api_rate_limiter import APIRateLimiter
+import logging
+from contextlib import asynccontextmanager
+from typing import Dict, List, Any, Optional
+from datetime import datetime
 
-load_dotenv()
+from fastapi import FastAPI, HTTPException, Depends, Query, Body
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic import BaseModel
 
-app = FastAPI(title="Jupiter SIEM API", version="1.0.0")
+# Import our AST system
+from query_ast_schema import JupiterQueryAST, EXAMPLE_ASTS, ASTTimeRange
+from query_manager import query_manager, execute_ocsf_query, get_example_queries, QueryBackend
+from query_providers import MockQueryProvider
 
-# Initialize API Rate Limiter
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/jupiter_siem")
-rate_limiter = APIRateLimiter(MONGO_URL)
+# Import Phase 3, 4 & 5 components
+from threat_intelligence import initialize_threat_intelligence, enrich_event_with_threat_intel
+from soar_engine import initialize_soar_engine, process_event_for_soar
+from reporting_engine import initialize_reporting_engine, generate_report_async
+from operations_manager import initialize_operations_manager, run_health_checks, execute_backup_job
 
-# Initialize default roles on startup
-@app.on_event("startup")
-async def startup_event():
-    initialize_default_roles()
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Import routes
-# from .auth_routes import router as auth_router
-# app.include_router(auth_router)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan management"""
+    logger.info("Jupiter SIEM Backend starting...")
+    
+    # Initialize query providers
+    logger.info(f"Available query backends: {query_manager.get_available_backends()}")
+    
+    # Initialize Phase 3 & 4 components
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+    
+    # Initialize Threat Intelligence
+    threat_config = {
+        "cache_ttl": 3600,
+        "providers": {
+            "abuseipdb": {
+                "enabled": bool(os.getenv("ABUSEIPDB_API_KEY")),
+                "api_key": os.getenv("ABUSEIPDB_API_KEY", "")
+            },
+            "virustotal": {
+                "enabled": bool(os.getenv("VIRUSTOTAL_API_KEY")),
+                "api_key": os.getenv("VIRUSTOTAL_API_KEY", "")
+            },
+            "mitre_attack": {
+                "enabled": True
+            }
+        }
+    }
+    await initialize_threat_intelligence(redis_url, threat_config)
+    
+    # Initialize SOAR Engine
+    soar_config = {
+        "n8n_webhook_url": os.getenv("N8N_WEBHOOK_URL", "http://n8n:5678/webhook")
+    }
+    initialize_soar_engine(soar_config)
+    
+    # Initialize Reporting Engine
+    reporting_config = {
+        "output_dir": "/app/reports"
+    }
+    initialize_reporting_engine(reporting_config)
+    
+    # Initialize Operations Manager
+    operations_config = {
+        "backup_dir": "/app/backups"
+    }
+    initialize_operations_manager(operations_config)
+    
+    logger.info("All systems initialized successfully")
+    
+    yield
+    
+    logger.info("Jupiter SIEM Backend shutting down...")
 
-# CORS configuration
+# FastAPI application
+app = FastAPI(
+    title="Jupiter SIEM API",
+    description="Advanced Security Information and Event Management Platform",
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    lifespan=lifespan
+)
+
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Configure properly for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# MongoDB connection
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/jupiter_siem")
-client = MongoClient(MONGO_URL)
-db = client.jupiter_siem
+# ==============================================================================
+# REQUEST/RESPONSE MODELS
+# ==============================================================================
 
-# Collections
-users_collection = db.users
-tenants_collection = db.tenants
-alerts_collection = db.alerts
-iocs_collection = db.iocs
-automations_collection = db.automations
-api_keys_collection = db.api_keys
-logs_collection = db.logs
-cases_collection = db.cases
-sessions_collection = db.sessions  # New collection for OAuth sessions
-roles_collection = db.roles  # New collection for RBAC
+class QueryRequest(BaseModel):
+    """Request model for OCSF queries"""
+    query: str
+    tenant_id: Optional[str] = None
+    backend: Optional[str] = None
+    limit: Optional[int] = 100
+    time_range: Optional[str] = None  # e.g., "1h", "24h", "7d"
 
-# JWT Configuration
-JWT_SECRET = os.getenv("JWT_SECRET", "your-super-secret-jwt-key")
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRATION_HOURS = 24
+class ASTQueryRequest(BaseModel):
+    """Request model for direct AST queries"""
+    ast: Dict[str, Any]
+    backend: Optional[str] = None
 
-security = HTTPBearer()
+class ThreatIntelRequest(BaseModel):
+    """Request for threat intelligence enrichment"""
+    event: Dict[str, Any]
 
-# Pydantic Models
-class UserRegister(BaseModel):
-    email: EmailStr
-    tenant_name: str
-    is_owner: bool = False
+class SOARTriggerRequest(BaseModel):
+    """Request to trigger SOAR workflow"""
+    event: Dict[str, Any]
+    playbook_id: Optional[str] = None
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    otp: str
-    tenant_id: str
+class ReportGenerationRequest(BaseModel):
+    """Request to generate report"""
+    report_id: str
+    parameters: Optional[Dict[str, Any]] = None
+    format: Optional[str] = "html"
 
-class OTPRequest(BaseModel):
-    email: EmailStr
-    tenant_id: str
+class QueryResponse(BaseModel):
+    """Response model for query results"""
+    success: bool
+    data: List[Dict[str, Any]]
+    total: int
+    execution_time: float
+    backend: str
+    query_id: Optional[str] = None
+    sql: Optional[str] = None
+    error: Optional[str] = None
 
-class ThreatIntelAPI(BaseModel):
-    name: str
-    api_key: str
-    endpoint: str
-    enabled: bool = True
+class HealthResponse(BaseModel):
+    """Health check response"""
+    status: str
+    timestamp: str
+    version: str
+    backends: List[str]
 
-class OAuthSession(BaseModel):
-    session_id: str
+# ==============================================================================
+# HEALTH & STATUS ENDPOINTS
+# ==============================================================================
 
-class IOCCreate(BaseModel):
-    ioc_type: str  # ip, domain, hash, url
-    value: str
-    threat_level: str  # low, medium, high, critical
-    tags: List[str] = []
-    description: Optional[str] = None
-
-class AutomationRule(BaseModel):
-    name: str
-    trigger_type: str  # high_severity_alert, ioc_match, regex_match
-    trigger_config: Dict[str, Any]
-    actions: List[Dict[str, Any]]
-    enabled: bool = True
-
-class AlertCreate(BaseModel):
-    severity: str
-    source: str
-    entity: str
-    message: str
-    metadata: Optional[Dict[str, Any]] = {}
-
-class RoleCreate(BaseModel):
-    name: str
-    display_name: str
-    description: str
-    permissions: List[str]
-    level: int  # Hierarchy level - lower numbers = more powerful
-    tenant_scoped: bool = True  # Whether this role is limited to tenant scope
-
-class RoleUpdate(BaseModel):
-    display_name: Optional[str] = None
-    description: Optional[str] = None
-    permissions: Optional[List[str]] = None
-    enabled: Optional[bool] = None
-
-class UserRoleAssignment(BaseModel):
-    user_id: str
-    role_id: str
-    assigned_by: str
-
-class TwoFASetup(BaseModel):
-    secret_key: str
-    backup_codes: List[str]
-
-class TwoFAEnable(BaseModel):
-    user_id: str
-    totp_code: str
-
-class TwoFAVerify(BaseModel):
-    email: str
-    totp_code: str
-    tenant_id: str
-
-class TwoFADisable(BaseModel):
-    user_id: str
-    totp_code: str
-
-# Helper Functions
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-def verify_password(password: str, hashed: str) -> bool:
-    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
-
-def create_jwt_token(user_id: str, tenant_id: str, is_owner: bool = False, twofa_verified: bool = False) -> str:
-    payload = {
-        "user_id": user_id,
-        "tenant_id": tenant_id,
-        "is_owner": is_owner,
-        "twofa_verified": twofa_verified,
-        "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
-    }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-
-def generate_otp() -> str:
-    return str(random.randint(100000, 999999))
-
-# RBAC System Constants and Functions
-DEFAULT_ROLES = [
-    {
-        "name": "super_admin",
-        "display_name": "Super Administrator", 
-        "description": "Complete system access across all tenants",
-        "permissions": [
-            "system:manage", "tenants:create", "tenants:delete", "tenants:manage",
-            "users:create", "users:delete", "users:manage", "roles:manage",
-            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
-            "intel:view", "intel:manage", "automations:view", "automations:manage",
-            "cases:view", "cases:manage", "settings:view", "settings:manage",
-            "ai:view", "ai:manage", "reports:generate"
-        ],
-        "level": 0,
-        "tenant_scoped": False
-    },
-    {
-        "name": "tenant_owner",
-        "display_name": "Tenant Owner",
-        "description": "Full access within tenant scope",
-        "permissions": [
-            "users:create", "users:manage", "roles:assign",
-            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
-            "intel:view", "intel:manage", "automations:view", "automations:manage", 
-            "cases:view", "cases:manage", "settings:view", "settings:manage",
-            "ai:view", "ai:manage", "reports:generate"
-        ],
-        "level": 1,
-        "tenant_scoped": True
-    },
-    {
-        "name": "admin",
-        "display_name": "Administrator",
-        "description": "Administrative access to security operations",
-        "permissions": [
-            "dashboards:view", "dashboards:manage", "alerts:view", "alerts:manage",
-            "intel:view", "intel:manage", "automations:view", "automations:manage",
-            "cases:view", "cases:manage", "settings:view", "ai:view", "ai:manage"
-        ],
-        "level": 2,
-        "tenant_scoped": True
-    },
-    {
-        "name": "analyst",
-        "display_name": "Security Analyst",
-        "description": "Operational access for threat analysis and response",
-        "permissions": [
-            "dashboards:view", "alerts:view", "alerts:manage", "intel:view", 
-            "intel:create", "cases:view", "cases:manage", "ai:view"
-        ],
-        "level": 3,
-        "tenant_scoped": True
-    },
-    {
-        "name": "viewer",
-        "display_name": "Viewer",
-        "description": "Read-only access to security data",
-        "permissions": [
-            "dashboards:view", "alerts:view", "intel:view", "cases:view"
-        ],
-        "level": 4,
-        "tenant_scoped": True
-    }
-]
-
-def initialize_default_roles():
-    """Initialize default roles if they don't exist"""
-    try:
-        for role_data in DEFAULT_ROLES:
-            existing = roles_collection.find_one({"name": role_data["name"]})
-            if not existing:
-                role_id = str(uuid.uuid4())
-                role = {
-                    "_id": role_id,
-                    **role_data,
-                    "enabled": True,
-                    "created_at": datetime.utcnow(),
-                    "created_by": "system"
-                }
-                roles_collection.insert_one(role)
-                print(f"Initialized role: {role_data['display_name']}")
-    except Exception as e:
-        print(f"Error initializing roles: {e}")
-
-def has_permission(user_permissions: List[str], required_permission: str) -> bool:
-    """Check if user has required permission"""
-    if "system:manage" in user_permissions:  # Super admin has all permissions
-        return True
-    return required_permission in user_permissions
-
-def get_user_permissions(user_id: str, tenant_id: str = None) -> List[str]:
-    """Get all permissions for a user"""
-    try:
-        user = users_collection.find_one({"_id": user_id})
-        if not user:
-            return []
-        
-        # Get user's role
-        role_id = user.get("role_id")
-        if not role_id:
-            # Fallback for legacy users - convert is_owner to role
-            if user.get("is_owner", False):
-                # Find tenant_owner role
-                role = roles_collection.find_one({"name": "tenant_owner"})
-            else:
-                # Find viewer role as default
-                role = roles_collection.find_one({"name": "viewer"})
-                
-            if role:
-                return role.get("permissions", [])
-            return []
-        
-        role = roles_collection.find_one({"_id": role_id, "enabled": True})
-        if not role:
-            return []
-            
-        return role.get("permissions", [])
-    except Exception as e:
-        print(f"Error getting user permissions: {e}")
-        return []
-
-def require_permission(permission: str):
-    """Decorator to require specific permission"""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            # Get current_user from kwargs or function signature
-            current_user = kwargs.get('current_user')
-            if not current_user:
-                raise HTTPException(status_code=401, detail="Authentication required")
-            
-            user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-            
-            if not has_permission(user_permissions, permission):
-                raise HTTPException(status_code=403, detail=f"Permission required: {permission}")
-                
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-# Two-Factor Authentication (2FA) Helper Functions
-
-def generate_backup_codes(count=10):
-    """Generate backup codes for 2FA recovery"""
-    codes = []
-    for _ in range(count):
-        code = ''.join([str(secrets.randbelow(10)) for _ in range(8)])
-        codes.append(f"{code[:4]}-{code[4:]}")
-    return codes
-
-def hash_backup_codes(codes):
-    """Hash backup codes for secure storage"""
-    return [bcrypt.hashpw(code.replace('-', '').encode('utf-8'), bcrypt.gensalt()).decode('utf-8') for code in codes]
-
-def verify_backup_code(code, hashed_codes):
-    """Verify a backup code against stored hashes"""
-    clean_code = code.replace('-', '').encode('utf-8')
-    for hashed in hashed_codes:
-        if bcrypt.checkpw(clean_code, hashed.encode('utf-8')):
-            return True
-    return False
-
-def generate_qr_code(provisioning_uri):
-    """Generate QR code for TOTP setup"""
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(provisioning_uri)
-    qr.make(fit=True)
-    
-    img = qr.make_image(fill_color="black", back_color="white")
-    buffered = BytesIO()
-    img.save(buffered)
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-    
-    return img_str
-
-async def send_otp_email(email: str, otp: str):
-    """Send OTP via email - simplified for demo"""
-    print(f"OTP for {email}: {otp}")  # In production, use real SMTP
-    # TODO: Implement real email sending
-
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    try:
-        token = credentials.credentials
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        user_id = payload.get("user_id")
-        tenant_id = payload.get("tenant_id")
-        
-        if user_id is None or tenant_id is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        
-        # Get user with role information
-        user = users_collection.find_one({"_id": user_id})
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found")
-        
-        # Check if user has 2FA enabled and if token is fully verified
-        twofa_verified = payload.get("twofa_verified", True)  # Default to True for backward compatibility
-        if user.get("twofa_enabled") and not twofa_verified:
-            raise HTTPException(status_code=401, detail="2FA verification required")
-        
-        # Get user's role and permissions
-        role = None
-        permissions = []
-        
-        if user.get("role_id"):
-            role = roles_collection.find_one({"_id": user["role_id"], "enabled": True})
-            if role:
-                permissions = role.get("permissions", [])
-        else:
-            # Legacy support - convert is_owner to permissions
-            if user.get("is_owner", False):
-                # Find tenant_owner role for permissions
-                owner_role = roles_collection.find_one({"name": "tenant_owner"})
-                if owner_role:
-                    permissions = owner_role.get("permissions", [])
-        
-        return {
-            "user_id": user_id,
-            "tenant_id": tenant_id,
-            "email": payload.get("email"),
-            "is_owner": payload.get("is_owner", False),  # Keep for backward compatibility
-            "role": role.get("name") if role else ("tenant_owner" if user.get("is_owner") else "viewer"),
-            "role_display": role.get("display_name") if role else ("Tenant Owner" if user.get("is_owner") else "Viewer"),
-            "permissions": permissions,
-            "twofa_enabled": user.get("twofa_enabled", False),
-            "twofa_verified": twofa_verified
-        }
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-# API Routes
-
-@app.get("/api/health")
+@app.get("/api/health", response_model=HealthResponse)
 async def health_check():
-    return {"status": "healthy", "timestamp": datetime.utcnow()}
-
-# Authentication Endpoints
-@app.post("/api/auth/register")
-async def register_user(user_data: UserRegister):
-    # Check if tenant exists
-    tenant = tenants_collection.find_one({"name": user_data.tenant_name})
-    if not tenant:
-        # Create new tenant
-        tenant_id = str(uuid.uuid4())
-        tenants_collection.insert_one({
-            "_id": tenant_id,
-            "name": user_data.tenant_name,
-            "created_at": datetime.utcnow(),
-            "enabled": True
-        })
-    else:
-        tenant_id = tenant["_id"]
-    
-    # Check if user exists
-    existing_user = users_collection.find_one({"email": user_data.email, "tenant_id": tenant_id})
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User already exists")
-    
-    # Create user
-    user_id = str(uuid.uuid4())
-    users_collection.insert_one({
-        "_id": user_id,
-        "email": user_data.email,
-        "tenant_id": tenant_id,
-        "is_owner": user_data.is_owner,
-        "created_at": datetime.utcnow(),
-        "last_login": None,
-        "otp": None,
-        "otp_expires": None
-    })
-    
-    return {"message": "User registered successfully", "user_id": user_id, "tenant_id": tenant_id}
-
-@app.get("/api/auth/tenant/{tenant_name}")
-async def get_tenant_by_name(tenant_name: str):
-    """Get tenant ID by tenant name for authentication"""
-    tenant = tenants_collection.find_one({"name": tenant_name})
-    if not tenant:
-        raise HTTPException(status_code=404, detail="Tenant not found")
-    return {"tenant_id": tenant["_id"], "name": tenant["name"]}
-
-@app.post("/api/auth/request-otp")
-async def request_otp(otp_request: OTPRequest):
-    user = users_collection.find_one({"email": otp_request.email, "tenant_id": otp_request.tenant_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Use fixed OTP for development mode
-    environment = os.getenv("ENVIRONMENT", "development")
-    if environment == "development":
-        otp = "123456"  # Fixed OTP for easy testing
-    else:
-        otp = generate_otp()
-    
-    otp_expires = datetime.utcnow() + timedelta(minutes=10)
-    
-    # Update user with OTP
-    users_collection.update_one(
-        {"_id": user["_id"]},
-        {"$set": {"otp": otp, "otp_expires": otp_expires}}
+    """Health check endpoint"""
+    return HealthResponse(
+        status="healthy",
+        timestamp=str(pd.Timestamp.now()),
+        version="1.0.0",
+        backends=query_manager.get_available_backends()
     )
-    
-    # Send OTP email
-    await send_otp_email(otp_request.email, otp)
-    
-    # For development/testing - include OTP in response
-    if environment == "development":
-        return {"message": "OTP sent successfully", "dev_otp": otp}
-    else:
-        return {"message": "OTP sent successfully"}
 
-@app.post("/api/auth/login")
-async def login_user(login_data: UserLogin):
-    user = users_collection.find_one({"email": login_data.email, "tenant_id": login_data.tenant_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Check OTP
-    if not user.get("otp") or user["otp"] != login_data.otp:
-        raise HTTPException(status_code=400, detail="Invalid OTP")
-    
-    if user.get("otp_expires") and user["otp_expires"] < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="OTP expired")
-    
-    # Clear OTP and update last login
-    users_collection.update_one(
-        {"_id": user["_id"]},
-        {"$set": {"last_login": datetime.utcnow(), "otp": None, "otp_expires": None}}
-    )
-    
-    # Check if 2FA is enabled and verified
-    if user.get("twofa_enabled") and user.get("twofa_verified"):
-        # Return partial token that requires 2FA verification
-        partial_token = create_jwt_token(
-            user["_id"], 
-            user["tenant_id"], 
-            user.get("is_owner", False), 
-            twofa_verified=False
-        )
-        return {
-            "requires_2fa": True,
-            "partial_token": partial_token,
-            "user": {
-                "id": user["_id"],
-                "email": user["email"],
-                "tenant_id": user["tenant_id"],
-                "is_owner": user.get("is_owner", False),
-                "twofa_enabled": True
-            }
-        }
-    
-    # Generate full JWT token (no 2FA required)
-    token = create_jwt_token(
-        user["_id"], 
-        user["tenant_id"], 
-        user.get("is_owner", False),
-        twofa_verified=True
-    )
-    
+@app.get("/api/status")
+async def get_status():
+    """Get detailed system status"""
     return {
-        "token": token,
-        "user": {
-            "id": user["_id"],
-            "email": user["email"],
-            "tenant_id": user["tenant_id"],
-            "is_owner": user.get("is_owner", False),
-            "twofa_enabled": user.get("twofa_enabled", False)
-        }
+        "application": "Jupiter SIEM",
+        "version": "1.0.0",
+        "environment": os.getenv("APP_ENVIRONMENT", "development"),
+        "query_backend": os.getenv("JUPITER_QUERY_BACKEND", "mock"),
+        "backends": {
+            backend: query_manager.get_backend_info(QueryBackend(backend))
+            for backend in query_manager.get_available_backends()
+        },
+        "timestamp": str(pd.Timestamp.now())
     }
 
-# Dashboard Endpoints
-@app.get("/api/dashboard/overview")
-async def get_dashboard_overview(current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    is_owner = current_user["is_owner"]
-    
-    if is_owner:
-        # Owner view - system-wide metrics
-        total_logs = logs_collection.count_documents({})
-        total_alerts = alerts_collection.count_documents({})
-        critical_alerts = alerts_collection.count_documents({"severity": "critical"})
-        
-        # Get recent alerts across all tenants
-        recent_alerts = list(alerts_collection.find({}).sort("timestamp", -1).limit(10))
-        
-        # System health metrics (mock for now)
-        health_metrics = [
-            {"name": "API", "status": "healthy"},
-            {"name": "MongoDB", "status": "healthy"},
-            {"name": "OpenSearch", "status": "degraded"},
-            {"name": "Threat Intel", "status": "healthy"},
-            {"name": "SOAR Engine", "status": "healthy"}
-        ]
-        
-    else:
-        # Tenant view - scoped metrics
-        total_logs = logs_collection.count_documents({"tenant_id": tenant_id})
-        total_alerts = alerts_collection.count_documents({"tenant_id": tenant_id})
-        critical_alerts = alerts_collection.count_documents({"tenant_id": tenant_id, "severity": "critical"})
-        
-        # Get recent alerts for this tenant only
-        recent_alerts = list(alerts_collection.find({"tenant_id": tenant_id}).sort("timestamp", -1).limit(10))
-        
-        # Limited health view for tenant
-        health_metrics = [
-            {"name": "Tenant Status", "status": "active"},
-            {"name": "Alert Processing", "status": "healthy"},
-            {"name": "IOC Matching", "status": "healthy"}
-        ]
-    
-    # Convert ObjectId to string for JSON serialization
-    for alert in recent_alerts:
-        alert["_id"] = str(alert["_id"])
-        if "timestamp" in alert and hasattr(alert["timestamp"], "isoformat"):
-            alert["timestamp"] = alert["timestamp"].isoformat()
-    
-    return {
-        "total_logs": total_logs,
-        "total_alerts": total_alerts,
-        "critical_alerts": critical_alerts,
-        "recent_alerts": recent_alerts,
-        "health_metrics": health_metrics,
-        "is_owner_view": is_owner
-    }
+# ==============================================================================
+# QUERY ENDPOINTS - LEGACY COMPATIBILITY
+# ==============================================================================
 
-# Alerts Endpoints
-@app.get("/api/alerts")
-async def get_alerts(current_user: dict = Depends(get_current_user), skip: int = 0, limit: int = 100):
-    tenant_id = current_user["tenant_id"]
-    is_owner = current_user["is_owner"]
-    
-    query = {} if is_owner else {"tenant_id": tenant_id}
-    
-    alerts = list(alerts_collection.find(query).sort("timestamp", -1).skip(skip).limit(limit))
-    
-    # Convert ObjectId to string
-    for alert in alerts:
-        alert["_id"] = str(alert["_id"])
-        if "timestamp" in alert and hasattr(alert["timestamp"], "isoformat"):
-            alert["timestamp"] = alert["timestamp"].isoformat()
-    
-    return {"alerts": alerts, "total": alerts_collection.count_documents(query)}
-
-@app.post("/api/alerts")
-async def create_alert(alert_data: AlertCreate, current_user: dict = Depends(get_current_user)):
-    alert_id = str(uuid.uuid4())
-    alert = {
-        "_id": alert_id,
-        "tenant_id": current_user["tenant_id"],
-        "severity": alert_data.severity,
-        "source": alert_data.source,
-        "entity": alert_data.entity,
-        "message": alert_data.message,
-        "metadata": alert_data.metadata,
-        "timestamp": datetime.utcnow(),
-        "status": "open",
-        "assigned_to": None
-    }
-    
-    alerts_collection.insert_one(alert)
-    
-    # Trigger automation rules
-    await trigger_automations("alert_created", alert)
-    
-    return {"alert_id": alert_id, "message": "Alert created successfully"}
-
-# Threat Intelligence Endpoints
-@app.get("/api/threat-intel/iocs")
-async def get_iocs(current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    is_owner = current_user["is_owner"]
-    
-    query = {} if is_owner else {"tenant_id": tenant_id}
-    
-    iocs = list(iocs_collection.find(query).sort("created_at", -1))
-    
-    for ioc in iocs:
-        ioc["_id"] = str(ioc["_id"])
-        if "created_at" in ioc and hasattr(ioc["created_at"], "isoformat"):
-            ioc["created_at"] = ioc["created_at"].isoformat()
-    
-    return {"iocs": iocs}
-
-@app.post("/api/threat-intel/iocs")
-async def create_ioc(ioc_data: IOCCreate, current_user: dict = Depends(get_current_user)):
-    ioc_id = str(uuid.uuid4())
-    ioc = {
-        "_id": ioc_id,
-        "tenant_id": current_user["tenant_id"],
-        "ioc_type": ioc_data.ioc_type,
-        "value": ioc_data.value,
-        "threat_level": ioc_data.threat_level,
-        "tags": ioc_data.tags,
-        "description": ioc_data.description,
-        "created_at": datetime.utcnow(),
-        "created_by": current_user["user_id"]
-    }
-    
-    iocs_collection.insert_one(ioc)
-    return {"ioc_id": ioc_id, "message": "IOC created successfully"}
-
-# API Keys Management
-@app.get("/api/settings/api-keys")
-async def get_api_keys(current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    
-    api_keys = list(api_keys_collection.find({"tenant_id": tenant_id}))
-    
-    # Don't return actual API keys, just metadata
-    for key in api_keys:
-        key["_id"] = str(key["_id"])
-        key.pop("api_key", None)  # Remove actual key for security
-        if "created_at" in key and hasattr(key["created_at"], "isoformat"):
-            key["created_at"] = key["created_at"].isoformat()
-    
-    return {"api_keys": api_keys}
-
-@app.post("/api/settings/api-keys")
-async def save_api_key(api_key_data: ThreatIntelAPI, current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    
-    # Check if API key already exists for this service
-    existing = api_keys_collection.find_one({"tenant_id": tenant_id, "name": api_key_data.name})
-    
-    if existing:
-        # Update existing
-        api_keys_collection.update_one(
-            {"_id": existing["_id"]},
-            {"$set": {
-                "api_key": api_key_data.api_key,
-                "endpoint": api_key_data.endpoint,
-                "enabled": api_key_data.enabled,
-                "updated_at": datetime.utcnow()
-            }}
+@app.post("/api/query/ocsf", response_model=QueryResponse)
+async def execute_ocsf_query_endpoint(request: QueryRequest):
+    """
+    Execute OCSF query string (legacy compatibility)
+    Converts query string to AST and executes
+    """
+    try:
+        result = execute_ocsf_query(
+            query_string=request.query,
+            tenant_id=request.tenant_id,
+            backend=request.backend
         )
-        return {"message": f"{api_key_data.name} API key updated successfully"}
-    else:
-        # Create new
-        key_id = str(uuid.uuid4())
-        api_keys_collection.insert_one({
-            "_id": key_id,
-            "tenant_id": tenant_id,
-            "name": api_key_data.name,
-            "api_key": api_key_data.api_key,
-            "endpoint": api_key_data.endpoint,
-            "enabled": api_key_data.enabled,
-            "created_at": datetime.utcnow(),
-            "created_by": current_user["user_id"]
-        })
-        return {"message": f"{api_key_data.name} API key saved successfully"}
-
-# Automation Rules
-@app.get("/api/automations")
-async def get_automation_rules(current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    
-    rules = list(automations_collection.find({"tenant_id": tenant_id}))
-    
-    for rule in rules:
-        rule["_id"] = str(rule["_id"])
-        if "created_at" in rule and hasattr(rule["created_at"], "isoformat"):
-            rule["created_at"] = rule["created_at"].isoformat()
-    
-    return {"automation_rules": rules}
-
-@app.post("/api/automations")
-async def create_automation_rule(rule_data: AutomationRule, current_user: dict = Depends(get_current_user)):
-    rule_id = str(uuid.uuid4())
-    rule = {
-        "_id": rule_id,
-        "tenant_id": current_user["tenant_id"],
-        "name": rule_data.name,
-        "trigger_type": rule_data.trigger_type,
-        "trigger_config": rule_data.trigger_config,
-        "actions": rule_data.actions,
-        "enabled": rule_data.enabled,
-        "created_at": datetime.utcnow(),
-        "created_by": current_user["user_id"],
-        "execution_count": 0
-    }
-    
-    automations_collection.insert_one(rule)
-    return {"rule_id": rule_id, "message": "Automation rule created successfully"}
-
-# Tenant Management (Permission-based access)
-@app.get("/api/admin/tenants")
-async def get_tenants(current_user: dict = Depends(get_current_user)):
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not (has_permission(user_permissions, "tenants:manage") or has_permission(user_permissions, "system:manage")):
-        raise HTTPException(status_code=403, detail="Permission required: tenants:manage")
-    
-    tenants = list(tenants_collection.find({}))
-    
-    for tenant in tenants:
-        tenant["_id"] = str(tenant["_id"])
-        if "created_at" in tenant and hasattr(tenant["created_at"], "isoformat"):
-            tenant["created_at"] = tenant["created_at"].isoformat()
         
-        # Add user count
-        tenant["user_count"] = users_collection.count_documents({"tenant_id": tenant["_id"]})
-    
-    return {"tenants": tenants}
-
-# Threat Intelligence API Integrations
-async def query_abuseipdb(ip: str, api_key: str) -> Dict[str, Any]:
-    """Query AbuseIPDB for IP reputation"""
-    url = "https://api.abuseipdb.com/api/v2/check"
-    headers = {
-        "Key": api_key,
-        "Accept": "application/json"
-    }
-    params = {
-        "ipAddress": ip,
-        "maxAgeInDays": 90,
-        "verbose": True
-    }
-    
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=10)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": f"API returned status {response.status_code}"}
+        return QueryResponse(
+            success=result["success"],
+            data=result.get("data", []),
+            total=result.get("total", 0),
+            execution_time=result.get("execution_time", 0),
+            backend=result.get("backend", "unknown"),
+            query_id=result.get("query_id"),
+            sql=result.get("sql"),
+            error=result.get("error")
+        )
     except Exception as e:
-        return {"error": str(e)}
+        logger.error(f"OCSF query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-async def query_virustotal(indicator: str, api_key: str) -> Dict[str, Any]:
-    """Query VirusTotal for indicator analysis"""
-    url = f"https://www.virustotal.com/vtapi/v2/ip-address/report"
-    params = {
-        "apikey": api_key,
-        "ip": indicator
-    }
-    
+@app.get("/api/query/examples")
+async def get_query_examples():
+    """Get example queries for testing"""
+    examples = {}
+    for name, ast in get_example_queries().items():
+        examples[name] = {
+            "name": name,
+            "description": f"Example {name.replace('_', ' ').title()} query",
+            "ast": ast.dict()
+        }
+    return examples
+
+# ==============================================================================
+# QUERY ENDPOINTS - NEW AST SYSTEM
+# ==============================================================================
+
+@app.post("/api/query/ast", response_model=QueryResponse)
+async def execute_ast_query(request: ASTQueryRequest):
+    """
+    Execute query using Jupiter Query AST
+    Direct AST execution for advanced users
+    """
     try:
-        response = requests.get(url, params=params, timeout=10)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": f"API returned status {response.status_code}"}
+        # Parse AST from request
+        ast = JupiterQueryAST.parse_obj(request.ast)
+        
+        # Execute query
+        backend_enum = QueryBackend(request.backend) if request.backend else None
+        result = query_manager.execute_query(ast, backend_enum)
+        
+        return QueryResponse(
+            success=result["success"],
+            data=result.get("data", []),
+            total=result.get("total", 0),
+            execution_time=result.get("execution_time", 0),
+            backend=result.get("backend", "unknown"),
+            query_id=result.get("query_id"),
+            sql=result.get("sql"),
+            error=result.get("error")
+        )
     except Exception as e:
-        return {"error": str(e)}
+        logger.error(f"AST query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-class ThreatLookupRequest(BaseModel):
-    indicator: str
-    ioc_type: str
+@app.post("/api/query/validate")
+async def validate_query(request: ASTQueryRequest):
+    """Validate query AST without executing"""
+    try:
+        ast = JupiterQueryAST.parse_obj(request.ast)
+        backend_enum = QueryBackend(request.backend) if request.backend else None
+        validation = query_manager.validate_query(ast, backend_enum)
+        return validation
+    except Exception as e:
+        logger.error(f"Query validation failed: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/api/threat-intel/lookup")
-async def threat_intel_lookup(
-    request: ThreatLookupRequest,
-    current_user: dict = Depends(get_current_user)
+# ==============================================================================
+# OCSF SCHEMA ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/ocsf/classes")
+async def get_ocsf_classes():
+    """Get OCSF event classes"""
+    return {
+        "classes": [
+            {"uid": 1001, "name": "Authentication", "category": "Identity & Access Management"},
+            {"uid": 1002, "name": "Process Activity", "category": "System Activity"},
+            {"uid": 1003, "name": "File System Activity", "category": "System Activity"},
+            {"uid": 1004, "name": "Network Activity", "category": "Network Activity"},
+            {"uid": 1005, "name": "Registry", "category": "System Activity"},
+        ]
+    }
+
+@app.get("/api/ocsf/fields")
+async def get_ocsf_fields():
+    """Get available OCSF fields for query building"""
+    return {
+        "core_fields": [
+            "time", "event_uid", "tenant_id", "class_uid", "category_uid", 
+            "activity_name", "severity", "message"
+        ],
+        "user_fields": [
+            "user.name", "user.uid", "user.type", "user.domain", "user.email"
+        ],
+        "device_fields": [
+            "device.name", "device.type", "device.ip", "device.hostname", "device.os.name"
+        ],
+        "network_fields": [
+            "src_endpoint.ip", "src_endpoint.port", "dst_endpoint.ip", "dst_endpoint.port",
+            "network.protocol"
+        ],
+        "process_fields": [
+            "process.name", "process.pid", "process.cmd_line", "process.parent.name"
+        ],
+        "file_fields": [
+            "file.name", "file.path", "file.size", "file.hash.sha256"
+        ]
+    }
+
+# ==============================================================================
+# DASHBOARD & ANALYTICS ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/dashboard/summary")
+async def get_dashboard_summary(
+    tenant_id: str = Query(default="main_tenant"),
+    time_range: str = Query(default="24h")
 ):
+    """Get dashboard summary statistics"""
     try:
-        tenant_id = current_user["tenant_id"]
+        # Create AST for summary query
+        from query_ast_schema import ASTField, ASTFunction, ASTSelectField, ASTTimeRange
         
-        # Get API keys for this tenant (exclude AI model configs)
-        api_keys = list(api_keys_collection.find({
-            "tenant_id": tenant_id, 
-            "enabled": True,
-            "service_type": {"$ne": "ai_model"}  # Exclude AI model configurations
-        }))
-        
-        results = {}
-        
-        for key_doc in api_keys:
-            # Check if this is a threat intel API key (has 'name' field)
-            if 'name' not in key_doc:
-                continue
-                
-            service_name = key_doc["name"].lower()
-            api_key = key_doc["api_key"]
-            
-            try:
-                if service_name == "abuseipdb" and request.ioc_type == "ip":
-                    results["abuseipdb"] = await query_abuseipdb(request.indicator, api_key)
-                elif service_name == "virustotal":
-                    results["virustotal"] = await query_virustotal(request.indicator, api_key)
-            except Exception as e:
-                results[service_name] = {"error": f"Service query failed: {str(e)}"}
-        
-        return {"indicator": request.indicator, "type": request.ioc_type, "results": results}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Threat intel lookup failed: {str(e)}")
-
-# Automation Engine
-async def trigger_automations(event_type: str, event_data: Dict[str, Any]):
-    """Trigger automation rules based on events"""
-    tenant_id = event_data.get("tenant_id")
-    if not tenant_id:
-        return
-    
-    # Find matching automation rules
-    rules = list(automations_collection.find({
-        "tenant_id": tenant_id,
-        "enabled": True,
-        "trigger_type": event_type
-    }))
-    
-    for rule in rules:
-        await execute_automation_rule(rule, event_data)
-
-async def execute_automation_rule(rule: Dict[str, Any], event_data: Dict[str, Any]):
-    """Execute actions for an automation rule"""
-    for action in rule["actions"]:
-        action_type = action.get("type")
-        
-        if action_type == "send_email":
-            # Mock email sending
-            print(f"Sending email: {action.get('subject', 'Alert Notification')}")
-        elif action_type == "block_ip":
-            # Mock IP blocking
-            print(f"Blocking IP: {event_data.get('entity', 'unknown')}")
-        elif action_type == "tag_alert":
-            # Add tag to alert
-            if event_data.get("_id"):
-                alerts_collection.update_one(
-                    {"_id": event_data["_id"]},
-                    {"$addToSet": {"tags": action.get("tag", "automated")}}
+        ast = JupiterQueryAST(
+            select=[
+                ASTSelectField(
+                    field=ASTFunction(name="count", args=[]),
+                    alias="total_events"
+                ),
+                ASTSelectField(
+                    field=ASTFunction(name="count_distinct", args=[ASTField(name="actor_user_name")]),
+                    alias="unique_users"
+                ),
+                ASTSelectField(
+                    field=ASTFunction(name="count_distinct", args=[ASTField(name="device_name")]), 
+                    alias="unique_devices"
                 )
-        elif action_type == "create_case":
-            # Create a case
-            case_id = str(uuid.uuid4())
-            cases_collection.insert_one({
-                "_id": case_id,
-                "tenant_id": rule["tenant_id"],
-                "title": action.get("title", f"Auto-generated case for {event_data.get('entity', 'unknown')}"),
-                "description": action.get("description", "Automatically created by SOAR automation"),
-                "severity": event_data.get("severity", "medium"),
-                "status": "open",
-                "created_at": datetime.utcnow(),
-                "created_by": "automation",
-                "related_alerts": [event_data.get("_id")] if event_data.get("_id") else []
-            })
-    
-    # Update execution count
-    automations_collection.update_one(
-        {"_id": rule["_id"]},
-        {"$inc": {"execution_count": 1}}
-    )
+            ],
+            tenant_id=tenant_id,
+            time_range=ASTTimeRange(last=time_range)
+        )
+        
+        result = query_manager.execute_query(ast)
+        
+        if result["success"] and result["data"]:
+            summary = result["data"][0]
+            return {
+                "success": True,
+                "summary": {
+                    "total_events": summary.get("total_events", 0),
+                    "unique_users": summary.get("unique_users", 0), 
+                    "unique_devices": summary.get("unique_devices", 0),
+                    "time_range": time_range,
+                    "tenant_id": tenant_id
+                },
+                "execution_time": result["execution_time"]
+            }
+        else:
+            return {"success": False, "error": result.get("error", "Unknown error")}
+            
+    except Exception as e:
+        logger.error(f"Dashboard summary failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-# Cases Management
-@app.get("/api/cases")
-async def get_cases(current_user: dict = Depends(get_current_user)):
-    tenant_id = current_user["tenant_id"]
-    is_owner = current_user["is_owner"]
-    
-    query = {} if is_owner else {"tenant_id": tenant_id}
-    
-    cases = list(cases_collection.find(query).sort("created_at", -1))
-    
-    for case in cases:
-        case["_id"] = str(case["_id"])
-        if "created_at" in case and hasattr(case["created_at"], "isoformat"):
-            case["created_at"] = case["created_at"].isoformat()
-    
-    return {"cases": cases}
-
-# System Health
-@app.get("/api/system/health")
-async def get_system_health(current_user: dict = Depends(get_current_user)):
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "system:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: system:manage")
-    
-    # Check database connectivity
+@app.get("/api/dashboard/events/recent")
+async def get_recent_events(
+    tenant_id: str = Query(default="main_tenant"),
+    limit: int = Query(default=50, le=1000),
+    severity: Optional[str] = Query(default=None)
+):
+    """Get recent security events"""
     try:
-        db.command("ping")
-        db_status = "healthy"
-    except Exception:
-        db_status = "unhealthy"
-    
-    # Check collections
-    collections_health = {
-        "users": users_collection.count_documents({}),
-        "tenants": tenants_collection.count_documents({}),
-        "alerts": alerts_collection.count_documents({}),
-        "iocs": iocs_collection.count_documents({}),
-        "automations": automations_collection.count_documents({}),
-        "roles": roles_collection.count_documents({})
-    }
+        from query_ast_schema import (
+            ASTField, ASTSelectField, ASTOrderBy, ASTCondition, 
+            ASTLiteral, SortOrder, ComparisonOperator, FieldType
+        )
+        
+        select_fields = [
+            ASTSelectField(field=ASTField(name="time")),
+            ASTSelectField(field=ASTField(name="severity")),
+            ASTSelectField(field=ASTField(name="activity_name")),
+            ASTSelectField(field=ASTField(name="message")),
+            ASTSelectField(field=ASTField(name="actor_user_name")),
+            ASTSelectField(field=ASTField(name="device_name"))
+        ]
+        
+        ast = JupiterQueryAST(
+            select=select_fields,
+            tenant_id=tenant_id,
+            order_by=[ASTOrderBy(field=ASTField(name="time"), direction=SortOrder.DESC)],
+            limit=limit
+        )
+        
+        # Add severity filter if specified
+        if severity:
+            ast.where = ASTCondition(
+                left=ASTField(name="severity"),
+                operator=ComparisonOperator.EQUALS,
+                right=ASTLiteral(value=severity, literal_type=FieldType.STRING)
+            )
+        
+        result = query_manager.execute_query(ast)
+        
+        return {
+            "success": result["success"],
+            "events": result.get("data", []),
+            "total": result.get("total", 0),
+            "execution_time": result.get("execution_time", 0),
+            "filters": {"severity": severity, "limit": limit}
+        }
+        
+    except Exception as e:
+        logger.error(f"Recent events query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# PHASE 3: THREAT INTELLIGENCE & SOAR ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/threat-intelligence/enrich")
+async def enrich_with_threat_intelligence(request: ThreatIntelRequest):
+    """Enrich event with threat intelligence"""
+    try:
+        enriched_event = await enrich_event_with_threat_intel(request.event)
+        return {
+            "success": True,
+            "enriched_event": enriched_event,
+            "enrichments": enriched_event.get("threat_intelligence", {})
+        }
+    except Exception as e:
+        logger.error(f"Threat intelligence enrichment failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/soar/trigger")
+async def trigger_soar_workflow(request: SOARTriggerRequest):
+    """Trigger SOAR workflow for security event"""
+    try:
+        alert = await process_event_for_soar(request.event)
+        if alert:
+            return {
+                "success": True,
+                "alert_created": True,
+                "alert": alert.to_dict()
+            }
+        else:
+            return {
+                "success": True,
+                "alert_created": False,
+                "message": "Event did not trigger alert creation"
+            }
+    except Exception as e:
+        logger.error(f"SOAR workflow trigger failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/soar/alerts")
+async def get_alerts(
+    status: Optional[str] = Query(None),
+    severity: Optional[str] = Query(None),
+    limit: int = Query(50, le=1000)
+):
+    """Get security alerts"""
+    try:
+        from soar_engine import soar_engine
+        
+        if soar_engine:
+            alerts = list(soar_engine.alerts.values())
+            
+            # Apply filters
+            if status:
+                alerts = [a for a in alerts if a.status.value == status]
+            if severity:
+                alerts = [a for a in alerts if a.severity.value == severity]
+            
+            # Sort by creation time (newest first)
+            alerts.sort(key=lambda x: x.created_at, reverse=True)
+            
+            # Apply limit
+            alerts = alerts[:limit]
+            
+            return {
+                "success": True,
+                "alerts": [alert.to_dict() for alert in alerts],
+                "total": len(alerts)
+            }
+        else:
+            return {"success": False, "error": "SOAR engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve alerts: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/soar/playbooks")
+async def get_playbooks():
+    """Get available SOAR playbooks"""
+    try:
+        from soar_engine import soar_engine
+        
+        if soar_engine:
+            playbooks = {}
+            for pb_id, playbook in soar_engine.playbooks.items():
+                playbooks[pb_id] = {
+                    "id": playbook.id,
+                    "name": playbook.name,
+                    "description": playbook.description,
+                    "enabled": playbook.enabled,
+                    "actions_count": len(playbook.actions),
+                    "created_at": playbook.created_at.isoformat()
+                }
+            
+            return {
+                "success": True,
+                "playbooks": playbooks
+            }
+        else:
+            return {"success": False, "error": "SOAR engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve playbooks: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# PHASE 4: REPORTING & PRESENTATION ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/reports/generate")
+async def generate_report(request: ReportGenerationRequest):
+    """Generate a security report"""
+    try:
+        execution = await generate_report_async(request.report_id, request.parameters)
+        
+        return {
+            "success": True,
+            "execution_id": execution.id,
+            "status": execution.status.value,
+            "report_id": execution.report_id,
+            "format": execution.format.value,
+            "started_at": execution.started_at.isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Report generation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/available")
+async def get_available_reports():
+    """Get list of available reports"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            reports = {}
+            for report_id, report_def in reporting_engine.reports.items():
+                reports[report_id] = {
+                    "id": report_def.id,
+                    "name": report_def.name,
+                    "description": report_def.description,
+                    "format": report_def.format.value,
+                    "frequency": report_def.frequency.value,
+                    "enabled": report_def.enabled,
+                    "last_run": report_def.last_run.isoformat() if report_def.last_run else None
+                }
+            
+            return {
+                "success": True,
+                "reports": reports
+            }
+        else:
+            return {"success": False, "error": "Reporting engine not initialized"}
+    except Exception as e:
+        logger.error(f"Failed to retrieve reports: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/execution/{execution_id}")
+async def get_execution_status(execution_id: str):
+    """Get report execution status"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            execution = reporting_engine.get_execution_status(execution_id)
+            if execution:
+                return {
+                    "success": True,
+                    "execution": {
+                        "id": execution.id,
+                        "report_id": execution.report_id,
+                        "status": execution.status.value,
+                        "format": execution.format.value,
+                        "started_at": execution.started_at.isoformat(),
+                        "completed_at": execution.completed_at.isoformat() if execution.completed_at else None,
+                        "execution_time": execution.execution_time,
+                        "file_size": execution.file_size,
+                        "error_message": execution.error_message
+                    }
+                }
+            else:
+                raise HTTPException(status_code=404, detail="Execution not found")
+        else:
+            return {"success": False, "error": "Reporting engine not initialized"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get execution status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/reports/download/{execution_id}")
+async def download_report(execution_id: str):
+    """Download generated report file"""
+    try:
+        from reporting_engine import reporting_engine
+        
+        if reporting_engine:
+            execution = reporting_engine.get_execution_status(execution_id)
+            if execution and execution.file_path and execution.status.value == "completed":
+                return FileResponse(
+                    path=execution.file_path,
+                    filename=f"{execution.report_id}_{execution.id}.{execution.format.value}",
+                    media_type="application/octet-stream"
+                )
+            else:
+                raise HTTPException(status_code=404, detail="Report file not found or not completed")
+        else:
+            raise HTTPException(status_code=500, detail="Reporting engine not initialized")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to download report: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# INTEGRATED EVENT PROCESSING PIPELINE
+# ==============================================================================
+
+@app.post("/api/events/process")
+async def process_security_event(event: Dict[str, Any] = Body(...)):
+    """
+    Complete event processing pipeline:
+    1. Threat intelligence enrichment
+    2. SOAR workflow triggering
+    3. Alert generation
+    """
+    try:
+        processing_results = {
+            "event_id": event.get("event_uid", "unknown"),
+            "original_event": event,
+            "processing_steps": []
+        }
+        
+        # Step 1: Threat Intelligence Enrichment
+        try:
+            enriched_event = await enrich_event_with_threat_intel(event)
+            processing_results["enriched_event"] = enriched_event
+            processing_results["processing_steps"].append({
+                "step": "threat_intelligence",
+                "status": "success",
+                "enrichments_added": len(enriched_event.get("threat_intelligence", {}).get("indicators", []))
+            })
+        except Exception as e:
+            logger.error(f"Threat intelligence enrichment failed: {e}")
+            enriched_event = event
+            processing_results["processing_steps"].append({
+                "step": "threat_intelligence",
+                "status": "failed",
+                "error": str(e)
+            })
+        
+        # Step 2: SOAR Processing
+        try:
+            alert = await process_event_for_soar(enriched_event)
+            if alert:
+                processing_results["alert"] = alert.to_dict()
+                processing_results["processing_steps"].append({
+                    "step": "soar",
+                    "status": "success",
+                    "alert_created": True,
+                    "alert_id": alert.id,
+                    "playbooks_executed": len(alert.playbooks_executed)
+                })
+            else:
+                processing_results["processing_steps"].append({
+                    "step": "soar",
+                    "status": "success",
+                    "alert_created": False
+                })
+        except Exception as e:
+            logger.error(f"SOAR processing failed: {e}")
+            processing_results["processing_steps"].append({
+                "step": "soar",
+                "status": "failed",
+                "error": str(e)
+            })
+        
+        return {
+            "success": True,
+            "processing_results": processing_results
+        }
+        
+    except Exception as e:
+        logger.error(f"Event processing pipeline failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/backends")
+async def get_backends():
+    """Get available query backends"""
+    backends = {}
+    for backend_name in query_manager.get_available_backends():
+        backend_enum = QueryBackend(backend_name)
+        backends[backend_name] = query_manager.get_backend_info(backend_enum)
     
     return {
-        "database": db_status,
-        "collections": collections_health,
-        "api_status": "healthy",
-        "timestamp": datetime.utcnow().isoformat()
+        "backends": backends,
+        "default": query_manager._select_backend(None).value,
+        "configured": os.getenv("JUPITER_QUERY_BACKEND", "auto")
     }
 
-# Role-Based Access Control (RBAC) Endpoints
-
-@app.get("/api/roles")
-async def get_roles(current_user: dict = Depends(get_current_user)):
-    """Get all available roles - requires roles:manage or system:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not (has_permission(user_permissions, "roles:manage") or has_permission(user_permissions, "system:manage")):
-        raise HTTPException(status_code=403, detail="Permission required: roles:manage")
-    
+@app.post("/api/backends/test/{backend_name}")
+async def test_backend(backend_name: str):
+    """Test a specific backend"""
     try:
-        # Super admins can see all roles, others only tenant-scoped roles
-        if has_permission(user_permissions, "system:manage"):
-            query = {}
-        else:
-            query = {"tenant_scoped": True}
+        backend_enum = QueryBackend(backend_name)
         
-        roles = list(roles_collection.find(query).sort("level", 1))
+        # Create simple test query
+        from query_ast_schema import ASTField, ASTSelectField, ASTFunction
         
-        for role in roles:
-            role["_id"] = str(role["_id"])
-            if "created_at" in role and hasattr(role["created_at"], "isoformat"):
-                role["created_at"] = role["created_at"].isoformat()
-        
-        return {"roles": roles}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get roles: {str(e)}")
-
-@app.post("/api/roles")
-async def create_role(role_data: RoleCreate, current_user: dict = Depends(get_current_user)):
-    """Create a new role - requires system:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "system:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: system:manage")
-    
-    try:
-        # Check if role name already exists
-        existing = roles_collection.find_one({"name": role_data.name})
-        if existing:
-            raise HTTPException(status_code=400, detail="Role name already exists")
-        
-        role_id = str(uuid.uuid4())
-        role = {
-            "_id": role_id,
-            "name": role_data.name,
-            "display_name": role_data.display_name,
-            "description": role_data.description,
-            "permissions": role_data.permissions,
-            "level": role_data.level,
-            "tenant_scoped": role_data.tenant_scoped,
-            "enabled": True,
-            "created_at": datetime.utcnow(),
-            "created_by": current_user["user_id"]
-        }
-        
-        roles_collection.insert_one(role)
-        return {"role_id": role_id, "message": "Role created successfully"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create role: {str(e)}")
-
-@app.put("/api/roles/{role_id}")
-async def update_role(role_id: str, role_data: RoleUpdate, current_user: dict = Depends(get_current_user)):
-    """Update a role - requires system:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "system:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: system:manage")
-    
-    try:
-        role = roles_collection.find_one({"_id": role_id})
-        if not role:
-            raise HTTPException(status_code=404, detail="Role not found")
-        
-        # Prevent modification of system default roles
-        if role.get("created_by") == "system":
-            raise HTTPException(status_code=400, detail="Cannot modify system default roles")
-        
-        update_data = {k: v for k, v in role_data.dict(exclude_unset=True).items()}
-        update_data["updated_at"] = datetime.utcnow()
-        update_data["updated_by"] = current_user["user_id"]
-        
-        roles_collection.update_one({"_id": role_id}, {"$set": update_data})
-        return {"message": "Role updated successfully"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to update role: {str(e)}")
-
-@app.delete("/api/roles/{role_id}")
-async def delete_role(role_id: str, current_user: dict = Depends(get_current_user)):
-    """Delete a role - requires system:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "system:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: system:manage")
-    
-    try:
-        role = roles_collection.find_one({"_id": role_id})
-        if not role:
-            raise HTTPException(status_code=404, detail="Role not found")
-        
-        # Prevent deletion of system default roles
-        if role.get("created_by") == "system":
-            raise HTTPException(status_code=400, detail="Cannot delete system default roles")
-        
-        # Check if any users have this role
-        users_with_role = users_collection.count_documents({"role_id": role_id})
-        if users_with_role > 0:
-            raise HTTPException(status_code=400, detail=f"Cannot delete role: {users_with_role} users still have this role")
-        
-        roles_collection.delete_one({"_id": role_id})
-        return {"message": "Role deleted successfully"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete role: {str(e)}")
-
-@app.post("/api/users/{user_id}/role")
-async def assign_user_role(user_id: str, assignment: UserRoleAssignment, current_user: dict = Depends(get_current_user)):
-    """Assign a role to a user - requires users:manage or roles:assign permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not (has_permission(user_permissions, "users:manage") or has_permission(user_permissions, "roles:assign")):
-        raise HTTPException(status_code=403, detail="Permission required: users:manage or roles:assign")
-    
-    try:
-        # Check if user exists and is in the same tenant (unless super admin)
-        user = users_collection.find_one({"_id": user_id})
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        # Tenant scoping check (super admins can assign across tenants)
-        if not has_permission(user_permissions, "system:manage"):
-            if user.get("tenant_id") != current_user.get("tenant_id"):
-                raise HTTPException(status_code=403, detail="Cannot assign roles to users in other tenants")
-        
-        # Check if role exists
-        role = roles_collection.find_one({"_id": assignment.role_id, "enabled": True})
-        if not role:
-            raise HTTPException(status_code=404, detail="Role not found")
-        
-        # Check if user can assign this role level
-        current_user_role = roles_collection.find_one({"name": current_user.get("role", "viewer")})
-        current_user_level = current_user_role.get("level", 999) if current_user_role else 999
-        
-        # Users cannot assign roles higher than their own level
-        if role.get("level", 0) < current_user_level and not has_permission(user_permissions, "system:manage"):
-            raise HTTPException(status_code=403, detail="Cannot assign role with higher privileges")
-        
-        # Update user's role
-        users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$set": {
-                    "role_id": assignment.role_id,
-                    "role_assigned_at": datetime.utcnow(),
-                    "role_assigned_by": current_user["user_id"]
-                }
-            }
-        )
-        
-        return {"message": f"Role '{role['display_name']}' assigned to user successfully"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to assign role: {str(e)}")
-
-@app.get("/api/users")
-async def get_users(current_user: dict = Depends(get_current_user)):
-    """Get users with role information - requires users:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "users:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: users:manage")
-    
-    try:
-        # Super admins can see all users, others only their tenant
-        if has_permission(user_permissions, "system:manage"):
-            query = {}
-        else:
-            query = {"tenant_id": current_user.get("tenant_id")}
-        
-        users = list(users_collection.find(query))
-        
-        # Enrich with role information
-        for user in users:
-            user["_id"] = str(user["_id"])
-            if "created_at" in user and hasattr(user["created_at"], "isoformat"):
-                user["created_at"] = user["created_at"].isoformat()
-            if "last_login" in user and user["last_login"] and hasattr(user["last_login"], "isoformat"):
-                user["last_login"] = user["last_login"].isoformat()
-            
-            # Add role information
-            if user.get("role_id"):
-                role = roles_collection.find_one({"_id": user["role_id"]})
-                if role:
-                    user["role_name"] = role["name"]
-                    user["role_display"] = role["display_name"]
-                    user["role_level"] = role["level"]
-            else:
-                # Legacy support
-                if user.get("is_owner", False):
-                    user["role_name"] = "tenant_owner"
-                    user["role_display"] = "Tenant Owner"
-                    user["role_level"] = 1
-                else:
-                    user["role_name"] = "viewer"
-                    user["role_display"] = "Viewer"
-                    user["role_level"] = 4
-            
-            # Remove sensitive data
-            user.pop("otp", None)
-            user.pop("otp_expires", None)
-        
-        return {"users": users}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get users: {str(e)}")
-
-@app.get("/api/permissions")
-async def get_available_permissions(current_user: dict = Depends(get_current_user)):
-    """Get all available permissions - requires roles:manage permission"""
-    user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-    
-    if not has_permission(user_permissions, "roles:manage"):
-        raise HTTPException(status_code=403, detail="Permission required: roles:manage")
-    
-    permissions = [
-        # System level
-        {"name": "system:manage", "description": "Complete system administration", "category": "System"},
-        
-        # Tenant management
-        {"name": "tenants:create", "description": "Create new tenants", "category": "Tenants"},
-        {"name": "tenants:delete", "description": "Delete tenants", "category": "Tenants"},
-        {"name": "tenants:manage", "description": "Manage tenant settings", "category": "Tenants"},
-        
-        # User management
-        {"name": "users:create", "description": "Create new users", "category": "Users"},
-        {"name": "users:delete", "description": "Delete users", "category": "Users"},
-        {"name": "users:manage", "description": "Manage user accounts", "category": "Users"},
-        
-        # Role management
-        {"name": "roles:manage", "description": "Manage roles and permissions", "category": "Roles"},
-        {"name": "roles:assign", "description": "Assign roles to users", "category": "Roles"},
-        
-        # Dashboard access
-        {"name": "dashboards:view", "description": "View dashboards", "category": "Dashboards"},
-        {"name": "dashboards:manage", "description": "Customize and manage dashboards", "category": "Dashboards"},
-        
-        # Alerts
-        {"name": "alerts:view", "description": "View alerts", "category": "Alerts"},
-        {"name": "alerts:manage", "description": "Create and manage alerts", "category": "Alerts"},
-        
-        # Threat Intelligence
-        {"name": "intel:view", "description": "View threat intelligence", "category": "Threat Intelligence"},
-        {"name": "intel:create", "description": "Create threat intelligence entries", "category": "Threat Intelligence"},
-        {"name": "intel:manage", "description": "Full threat intelligence management", "category": "Threat Intelligence"},
-        
-        # Automations
-        {"name": "automations:view", "description": "View automation rules", "category": "Automations"},
-        {"name": "automations:manage", "description": "Create and manage automations", "category": "Automations"},
-        
-        # Cases
-        {"name": "cases:view", "description": "View cases", "category": "Cases"},
-        {"name": "cases:manage", "description": "Create and manage cases", "category": "Cases"},
-        
-        # Settings
-        {"name": "settings:view", "description": "View system settings", "category": "Settings"},
-        {"name": "settings:manage", "description": "Modify system settings", "category": "Settings"},
-        
-        # AI Features
-        {"name": "ai:view", "description": "Access AI features", "category": "AI"},
-        {"name": "ai:manage", "description": "Configure AI settings", "category": "AI"},
-        
-        # Reports
-        {"name": "reports:generate", "description": "Generate reports", "category": "Reports"}
-    ]
-    
-    return {"permissions": permissions}
-
-# Two-Factor Authentication (2FA) Endpoints
-
-@app.post("/api/auth/2fa/setup")
-async def setup_2fa(current_user: dict = Depends(get_current_user)):
-    """Generate 2FA secret and QR code for user setup"""
-    try:
-        user_id = current_user["user_id"]
-        user = users_collection.find_one({"_id": user_id})
-        
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        if user.get("twofa_enabled"):
-            raise HTTPException(status_code=400, detail="2FA is already enabled for this user")
-        
-        # Generate secret key
-        secret_key = pyotp.random_base32()
-        
-        # Create TOTP object and provisioning URI
-        totp = pyotp.TOTP(secret_key)
-        provisioning_uri = totp.provisioning_uri(
-            name=user["email"],
-            issuer_name="Jupiter SIEM"
-        )
-        
-        # Generate QR code
-        qr_code_img = generate_qr_code(provisioning_uri)
-        
-        # Generate backup codes
-        backup_codes = generate_backup_codes()
-        hashed_backup_codes = hash_backup_codes(backup_codes)
-        
-        # Store the secret temporarily (not enabled until verification)
-        users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$set": {
-                    "twofa_secret": secret_key,
-                    "twofa_backup_codes": hashed_backup_codes,
-                    "twofa_setup_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                }
-            }
-        )
-        
-        return {
-            "secret_key": secret_key,
-            "qr_code": qr_code_img,
-            "provisioning_uri": provisioning_uri,
-            "backup_codes": backup_codes,
-            "message": "2FA setup initiated. Please verify with your authenticator app to complete setup."
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to setup 2FA: {str(e)}")
-
-@app.post("/api/auth/2fa/verify-setup")
-async def verify_2fa_setup(setup_data: TwoFAEnable, current_user: dict = Depends(get_current_user)):
-    """Verify and enable 2FA for user"""
-    try:
-        user_id = current_user["user_id"]
-        user = users_collection.find_one({"_id": user_id})
-        
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        if user.get("twofa_enabled"):
-            raise HTTPException(status_code=400, detail="2FA is already enabled")
-        
-        secret_key = user.get("twofa_secret")
-        if not secret_key:
-            raise HTTPException(status_code=400, detail="2FA setup not initiated. Please start setup first.")
-        
-        # Verify the TOTP code
-        totp = pyotp.TOTP(secret_key)
-        if not totp.verify(setup_data.totp_code, valid_window=1):
-            raise HTTPException(status_code=400, detail="Invalid TOTP code")
-        
-        # Enable 2FA
-        users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$set": {
-                    "twofa_enabled": True,
-                    "twofa_verified": True,
-                    "twofa_enabled_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                }
-            }
-        )
-        
-        return {"message": "2FA has been successfully enabled for your account"}
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to verify 2FA setup: {str(e)}")
-
-@app.post("/api/auth/2fa/verify")
-async def verify_2fa_login(verify_data: TwoFAVerify):
-    """Verify 2FA during login process"""
-    try:
-        # Find user by email and tenant
-        user = users_collection.find_one({
-            "email": verify_data.email, 
-            "tenant_id": verify_data.tenant_id
-        })
-        
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        if not user.get("twofa_enabled") or not user.get("twofa_verified"):
-            raise HTTPException(status_code=400, detail="2FA is not enabled for this user")
-        
-        secret_key = user.get("twofa_secret")
-        if not secret_key:
-            raise HTTPException(status_code=500, detail="2FA secret not found")
-        
-        # Verify TOTP code or backup code
-        totp = pyotp.TOTP(secret_key)
-        is_valid_totp = totp.verify(verify_data.totp_code, valid_window=1)
-        is_valid_backup = False
-        
-        if not is_valid_totp:
-            # Check if it's a backup code
-            backup_codes = user.get("twofa_backup_codes", [])
-            is_valid_backup = verify_backup_code(verify_data.totp_code, backup_codes)
-            
-            if is_valid_backup:
-                # Remove used backup code
-                remaining_codes = [code for code in backup_codes 
-                                 if not bcrypt.checkpw(verify_data.totp_code.replace('-', '').encode('utf-8'), 
-                                                      code.encode('utf-8'))]
-                users_collection.update_one(
-                    {"_id": user["_id"]},
-                    {"$set": {"twofa_backup_codes": remaining_codes}}
+        test_ast = JupiterQueryAST(
+            select=[
+                ASTSelectField(
+                    field=ASTFunction(name="count", args=[]),
+                    alias="test_count"
                 )
-        
-        if not (is_valid_totp or is_valid_backup):
-            raise HTTPException(status_code=400, detail="Invalid 2FA code")
-        
-        # Update last 2FA verification
-        users_collection.update_one(
-            {"_id": user["_id"]},
-            {"$set": {"last_2fa_verification": datetime.utcnow()}}
+            ],
+            limit=1
         )
         
-        # Generate full JWT token
-        token = create_jwt_token(
-            user["_id"], 
-            user["tenant_id"], 
-            user.get("is_owner", False),
-            twofa_verified=True
-        )
+        result = query_manager.execute_query(test_ast, backend_enum)
         
         return {
-            "token": token,
-            "user": {
-                "id": user["_id"],
-                "email": user["email"],
-                "tenant_id": user["tenant_id"],
-                "is_owner": user.get("is_owner", False),
-                "twofa_enabled": True
-            },
-            "message": "2FA verification successful"
+            "backend": backend_name,
+            "success": result["success"],
+            "execution_time": result.get("execution_time", 0),
+            "error": result.get("error")
         }
         
+    except Exception as e:
+        logger.error(f"Backend test failed: {e}")
+        return {
+            "backend": backend_name,
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/test/health")
+async def test_health():
+    """Test endpoint"""
+    return {"success": True, "message": "Test endpoint working"}
+
+# ==============================================================================
+# PHASE 5: OPERATIONS & DISASTER RECOVERY ENDPOINTS  
+# ==============================================================================
+
+@app.get("/api/system/health")
+async def get_system_health():
+    """Get comprehensive system health status"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            # For now, return a simple status since operations_manager might not have all methods
+            return {
+                "success": True,
+                "message": "Operations manager is initialized",
+                "status": "healthy"
+            }
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"System health check failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/system/status")
+async def get_system_status():
+    """Get overall system status summary"""
+    try:
+        from operations_manager import operations_manager
+        
+        if operations_manager:
+            status = operations_manager.get_system_status()
+            return {"success": True, "status": status}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"System status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/backup/execute/{job_id}")
+async def execute_backup(job_id: str):
+    """Execute backup job manually"""
+    try:
+        execution = await execute_backup_job(job_id)
+        
+        if execution:
+            return {
+                "success": True,
+                "execution": {
+                    "id": execution.id,
+                    "job_id": execution.job_id,
+                    "status": execution.status.value,
+                    "started_at": execution.started_at.isoformat(),
+                    "completed_at": execution.completed_at.isoformat() if execution.completed_at else None,
+                    "duration_seconds": execution.duration_seconds,
+                    "files_count": execution.files_count,
+                    "size_mb": execution.size_bytes / (1024 * 1024) if execution.size_bytes else 0,
+                    "error": execution.error_message
+                }
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Backup job not found")
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to verify 2FA: {str(e)}")
+        logger.error(f"Backup execution failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/auth/2fa/disable")
-async def disable_2fa(disable_data: TwoFADisable, current_user: dict = Depends(get_current_user)):
-    """Disable 2FA for user"""
+@app.get("/api/backup/status")
+async def get_backup_status():
+    """Get backup system status"""
     try:
-        user_id = current_user["user_id"]
-        user = users_collection.find_one({"_id": user_id})
+        from operations_manager import operations_manager
         
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        if operations_manager:
+            status = operations_manager.get_backup_status()
+            return {"success": True, "backup_status": status}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
+    except Exception as e:
+        logger.error(f"Backup status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/backup/jobs")
+async def get_backup_jobs():
+    """Get list of backup jobs"""
+    try:
+        from operations_manager import operations_manager
         
-        if not user.get("twofa_enabled"):
-            raise HTTPException(status_code=400, detail="2FA is not enabled")
-        
-        secret_key = user.get("twofa_secret")
-        if not secret_key:
-            raise HTTPException(status_code=500, detail="2FA secret not found")
-        
-        # Verify current TOTP code before disabling
-        totp = pyotp.TOTP(secret_key)
-        if not totp.verify(disable_data.totp_code, valid_window=1):
-            raise HTTPException(status_code=400, detail="Invalid TOTP code")
-        
-        # Disable 2FA and remove secrets
-        users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$set": {
-                    "twofa_enabled": False,
-                    "twofa_verified": False,
-                    "twofa_disabled_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                },
-                "$unset": {
-                    "twofa_secret": "",
-                    "twofa_backup_codes": ""
+        if operations_manager:
+            jobs = {}
+            for job_id, job in operations_manager.backup_jobs.items():
+                jobs[job_id] = {
+                    "id": job.id,
+                    "name": job.name,
+                    "backup_type": job.backup_type.value,
+                    "schedule": job.schedule,
+                    "enabled": job.enabled,
+                    "retention_days": job.retention_days,
+                    "compression": job.compression,
+                    "last_run": job.last_run.isoformat() if job.last_run else None
                 }
-            }
-        )
-        
-        return {"message": "2FA has been disabled for your account"}
-        
-    except HTTPException:
-        raise
+            
+            return {"success": True, "jobs": jobs}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to disable 2FA: {str(e)}")
+        logger.error(f"Backup jobs retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/auth/2fa/status")
-async def get_2fa_status(current_user: dict = Depends(get_current_user)):
-    """Get 2FA status for current user"""
+@app.get("/api/monitoring/metrics")
+async def get_monitoring_metrics():
+    """Get system monitoring metrics"""
     try:
-        user_id = current_user["user_id"]
-        user = users_collection.find_one({"_id": user_id})
+        from operations_manager import operations_manager
         
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        backup_codes_count = len(user.get("twofa_backup_codes", []))
-        
-        return {
-            "enabled": user.get("twofa_enabled", False),
-            "verified": user.get("twofa_verified", False),
-            "backup_codes_remaining": backup_codes_count,
-            "enabled_at": user.get("twofa_enabled_at"),
-            "last_verification": user.get("last_2fa_verification")
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get 2FA status: {str(e)}")
-
-@app.post("/api/auth/2fa/regenerate-backup-codes")
-async def regenerate_backup_codes(current_user: dict = Depends(get_current_user)):
-    """Regenerate backup codes for user"""
-    try:
-        user_id = current_user["user_id"]
-        user = users_collection.find_one({"_id": user_id})
-        
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        if not user.get("twofa_enabled"):
-            raise HTTPException(status_code=400, detail="2FA is not enabled")
-        
-        # Generate new backup codes
-        backup_codes = generate_backup_codes()
-        hashed_backup_codes = hash_backup_codes(backup_codes)
-        
-        # Update backup codes
-        users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$set": {
-                    "twofa_backup_codes": hashed_backup_codes,
-                    "backup_codes_regenerated_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                }
+        if operations_manager:
+            metrics = {
+                "timestamp": datetime.now().isoformat(),
+                "system": {},
+                "services": {},
+                "storage": {}
             }
-        )
-        
-        return {
-            "backup_codes": backup_codes,
-            "message": "New backup codes generated. Store them safely!"
-        }
-        
+            
+            # Get system metrics from health checks
+            for name, health in operations_manager.service_health.items():
+                if health.metrics:
+                    component = operations_manager.health_checks[name].component
+                    if component not in metrics["services"]:
+                        metrics["services"][component] = {}
+                    
+                    metrics["services"][component].update(health.metrics)
+                    metrics["services"][component]["response_time"] = health.response_time
+                    metrics["services"][component]["status"] = health.status.value
+            
+            # Add backup storage metrics
+            backup_status = operations_manager.get_backup_status()
+            metrics["storage"]["backups"] = backup_status.get("storage_usage", {})
+            
+            return {"success": True, "metrics": metrics}
+        else:
+            return {"success": False, "error": "Operations manager not initialized"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to regenerate backup codes: {str(e)}")
+        logger.error(f"Metrics retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# ERROR HANDLERS
+# ==============================================================================
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.detail, "timestamp": str(pd.Timestamp.now())}
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error", "timestamp": str(pd.Timestamp.now())}
+    )
+
+# Add missing import
+import pandas as pd
 
 if __name__ == "__main__":
     import uvicorn
-    # Initialize default roles on startup
-    initialize_default_roles()
-    uvicorn.run(app, host="0.0.0.0", port=8001)
-
-# AI Endpoints - Integrated directly to avoid import issues
-from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
-
-# AI Pydantic Models
-class ThreatAnalysisRequest(BaseModel):
-    source_ip: Optional[str] = None
-    technique: Optional[str] = None
-    severity: str = "medium"
-    indicators: List[str] = []
-    timeline: Optional[str] = None
-    metadata: Dict[str, Any] = {}
-    model_preference: str = "auto"
-
-class AIChartRequest(BaseModel):
-    message: str
-    session_id: Optional[str] = None
-    model_preference: str = "auto"
-    context_type: str = "security"
-
-class AIKeyConfigRequest(BaseModel):
-    provider: str  # openai, anthropic, google, emergent
-    api_key: str
-    model_name: str = "gpt-4o-mini"
-    enabled: bool = True
-
-# AI Analysis Endpoints
-@app.post("/api/ai/analyze/threat")
-async def analyze_threat_with_ai(
-    request: ThreatAnalysisRequest,
-    current_user: dict = Depends(get_current_user)
-):
-    """AI-powered threat analysis - Mock implementation for now"""
-    try:
-        # Mock AI analysis response
-        analysis = {
-            "analysis_id": str(uuid.uuid4()),
-            "threat_data": {
-                "source_ip": request.source_ip,
-                "technique": request.technique,
-                "severity": request.severity,
-                "indicators": request.indicators,
-                "confidence": 94.7
-            },
-            "ai_analysis": {
-                "severity_assessment": "HIGH",
-                "confidence": 94.7,
-                "threat_type": "APT Activity",
-                "explanation": "AI has detected coordinated attack patterns similar to APT29 campaigns. The attack exhibits lateral movement techniques and credential harvesting behaviors typical of state-sponsored actors.",
-                "recommendations": [
-                    "Immediate isolation of affected endpoints",
-                    "Deploy deception technology to confuse attackers",
-                    "Activate threat hunting playbook TH-2024-001",
-                    "Alert incident response team with Purple Team engagement"
-                ],
-                "biological_analogy": "This threat behaves like a viral infection - fast-spreading with polymorphic characteristics. The immune system should activate memory cells for similar past infections.",
-                "risk_evolution": "87% likelihood of escalation within 24 hours if not contained",
-                "attack_psychology": "Attacker shows patience and stealth - likely experienced threat actor with long-term objectives"
-            },
-            "model_used": request.model_preference,
-            "rag_context_count": 3,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-        return analysis
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
-
-@app.post("/api/ai/chat")
-async def ai_security_chat(
-    request: AIChartRequest,
-    current_user: dict = Depends(get_current_user)
-):
-    """AI Chat for security analysis - Mock implementation"""
-    try:
-        # Mock AI chat response
-        responses = [
-            "Based on the indicators you've provided, this appears to be a sophisticated attack targeting your network infrastructure. I recommend immediate containment actions.",
-            "The behavioral patterns suggest this is likely an advanced persistent threat (APT) actor. The attack techniques align with known TTPs from Eastern European threat groups.",
-            "Your network logs show signs of lateral movement using WMI and PowerShell. This is consistent with modern living-off-the-land techniques.",
-            "The time-based analysis reveals the attacker has been in your environment for approximately 72 hours, suggesting a patient, methodical approach.",
-            "I'm seeing anomalous authentication patterns that suggest credential harvesting. Recommend immediate password resets for affected accounts."
-        ]
-        
-        session_id = request.session_id or str(uuid.uuid4())
-        
-        # Select response based on message content
-        response_text = random.choice(responses)
-        
-        return {
-            "session_id": session_id,
-            "response": {
-                "model": "jupiter-ai-security-analyst",
-                "response": response_text,
-                "confidence": 89.5,
-                "analysis_type": request.context_type
-            },
-            "context_used": 3,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
-
-@app.get("/api/ai/models")
-async def get_available_ai_models(current_user: dict = Depends(get_current_user)):
-    """Get available AI models"""
-    return {
-        "local_models": ["llama2:7b", "llama2:13b", "mistral:7b", "codellama:7b"],
-        "cloud_providers": ["openai", "anthropic", "google", "emergent"],
-        "recommended": {
-            "fast_analysis": "local:llama2:7b",
-            "deep_analysis": "cloud:emergent:gpt-4o",
-            "privacy_focused": "local:mistral:7b"
-        },
-        "emergent_key_available": bool(os.getenv("EMERGENT_LLM_KEY")),
-        "status": {
-            "ollama_available": True,  # Mock for now
-            "vector_db_ready": True,
-            "rag_documents": 156
-        }
-    }
-
-@app.post("/api/ai/config/api-key")
-async def save_ai_api_key(
-    request: AIKeyConfigRequest,
-    current_user: dict = Depends(get_current_user)
-):
-    """Save AI API key configuration"""
-    try:
-        tenant_id = current_user["tenant_id"]
-        
-        # Check if API key configuration already exists
-        existing = api_keys_collection.find_one({
-            "tenant_id": tenant_id, 
-            "service_type": "ai_model",
-            "provider": request.provider
-        })
-        
-        config_data = {
-            "tenant_id": tenant_id,
-            "service_type": "ai_model",
-            "provider": request.provider,
-            "api_key": request.api_key,
-            "model_name": request.model_name,
-            "enabled": request.enabled,
-            "updated_at": datetime.utcnow()
-        }
-        
-        if existing:
-            # Update existing configuration
-            api_keys_collection.update_one(
-                {"_id": existing["_id"]},
-                {"$set": config_data}
-            )
-            message = f"{request.provider} AI configuration updated successfully"
-        else:
-            # Create new configuration
-            config_data["_id"] = str(uuid.uuid4())
-            config_data["created_at"] = datetime.utcnow()
-            config_data["created_by"] = current_user["user_id"]
-            api_keys_collection.insert_one(config_data)
-            message = f"{request.provider} AI configuration saved successfully"
-        
-        return {"message": message, "provider": request.provider}
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save AI configuration: {str(e)}")
-
-@app.get("/api/ai/config")
-async def get_ai_configurations(current_user: dict = Depends(get_current_user)):
-    """Get AI model configurations for tenant"""
-    try:
-        tenant_id = current_user["tenant_id"]
-        
-        configs = list(api_keys_collection.find({
-            "tenant_id": tenant_id,
-            "service_type": "ai_model"
-        }))
-        
-        # Remove sensitive API keys from response
-        for config in configs:
-            config["_id"] = str(config["_id"])
-            config.pop("api_key", None)  # Don't return actual keys
-            config["api_key_configured"] = True
-            if "created_at" in config:
-                config["created_at"] = config["created_at"].isoformat()
-            if "updated_at" in config:
-                config["updated_at"] = config["updated_at"].isoformat()
-        
-        return {"ai_configurations": configs}
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get AI configurations: {str(e)}")
-
-# Add intelligence summary for dashboard
-@app.get("/api/ai/intelligence/summary")
-async def get_ai_intelligence_summary(current_user: dict = Depends(get_current_user)):
-    """Get AI intelligence summary for dashboard"""
-    try:
-        tenant_id = current_user["tenant_id"]
-        
-        # Mock intelligence data - in real implementation this would come from AI analysis
-        summary = {
-            "recent_analyses": 47,
-            "threat_assessments_today": 12,
-            "high_confidence_alerts": 3,
-            "ai_recommendations": [
-                "Deploy additional deception technology on network segment 10.0.50.x",
-                "Investigate anomalous authentication patterns from IP 192.168.1.247",
-                "Consider threat hunting for persistence mechanisms in domain controllers"
-            ],
-            "immune_system_health": {
-                "adaptive_learning": 94.2,
-                "threat_memory_cells": 3456,
-                "antibody_patterns": 1247,
-                "resistance_strength": 89.1
-            },
-            "cognitive_load": 42,
-            "ai_health": {
-                "local_models_available": True,
-                "cloud_providers_configured": 2,
-                "rag_operational": True,
-                "vector_documents": 156
-            }
-        }
-        
-        return summary
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate intelligence summary: {str(e)}")
-
-# API Rate Limiting Endpoints
-
-class CustomAPIRequest(BaseModel):
-    name: str
-    api_key: str
-    rate_limits: Optional[Dict[str, Any]] = None
-    notes: Optional[str] = None
-
-@app.get("/api/rate-limits/status")
-async def get_rate_limits_status(current_user: dict = Depends(get_current_user)):
-    """Get current rate limit status for all configured APIs"""
-    try:
-        user_id = current_user["user_id"]
-        status = rate_limiter.get_all_api_status(user_id)
-        
-        # Add summary statistics
-        total_apis = len(status)
-        available_apis = sum(1 for api in status.values() if api["status"] == "available")
-        rate_limited_apis = sum(1 for api in status.values() if api["status"] == "rate_limited")
-        
-        return {
-            "summary": {
-                "total_apis": total_apis,
-                "available_apis": available_apis,
-                "rate_limited_apis": rate_limited_apis,
-                "configured_apis": sum(1 for api in status.values() if api["config"]["has_key"])
-            },
-            "apis": status,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get rate limit status: {str(e)}")
-
-@app.get("/api/rate-limits/usage/{api_name}")
-async def get_api_usage_history(
-    api_name: str, 
-    current_user: dict = Depends(get_current_user),
-    hours: int = 24
-):
-    """Get usage history for a specific API"""
-    try:
-        user_id = current_user["user_id"]
-        
-        # Get usage data from the last specified hours
-        start_time = datetime.utcnow() - timedelta(hours=hours)
-        
-        usage_query = {
-            "api_name": api_name,
-            "user_id": user_id,
-            "timestamp": {"$gte": start_time}
-        }
-        
-        usage_records = list(rate_limiter.usage_collection.find(usage_query).sort("timestamp", 1))
-        
-        # Convert ObjectId to string and format timestamps
-        for record in usage_records:
-            record["_id"] = str(record["_id"])
-            record["timestamp"] = record["timestamp"].isoformat()
-        
-        # Calculate hourly aggregations
-        hourly_usage = {}
-        for record in usage_records:
-            hour_key = record["timestamp"][:13]  # YYYY-MM-DDTHH
-            if hour_key not in hourly_usage:
-                hourly_usage[hour_key] = {"successful": 0, "failed": 0, "total": 0}
-            
-            hourly_usage[hour_key]["total"] += 1
-            if record["response_code"] < 400:
-                hourly_usage[hour_key]["successful"] += 1
-            else:
-                hourly_usage[hour_key]["failed"] += 1
-        
-        return {
-            "api_name": api_name,
-            "usage_records": usage_records,
-            "hourly_aggregation": hourly_usage,
-            "total_requests": len(usage_records),
-            "time_range_hours": hours
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get usage history: {str(e)}")
-
-@app.post("/api/rate-limits/custom-api")
-async def add_custom_api(
-    request: CustomAPIRequest,
-    current_user: dict = Depends(get_current_user)
-):
-    """Add a new custom API configuration"""
-    try:
-        # Check if user has permission to manage APIs
-        user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-        
-        if not (has_permission(user_permissions, "settings:manage") or has_permission(user_permissions, "system:manage")):
-            raise HTTPException(status_code=403, detail="Permission required: settings:manage")
-        
-        success = rate_limiter.add_custom_api(
-            name=request.name,
-            api_key=request.api_key,
-            rate_limits=request.rate_limits
-        )
-        
-        if success:
-            return {"message": f"Custom API '{request.name}' added successfully"}
-        else:
-            raise HTTPException(status_code=400, detail="No available custom API slots (maximum 3)")
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to add custom API: {str(e)}")
-
-@app.delete("/api/rate-limits/custom-api/{api_key}")
-async def remove_custom_api(
-    api_key: str,
-    current_user: dict = Depends(get_current_user)
-):
-    """Remove a custom API configuration"""
-    try:
-        # Check permissions
-        user_permissions = get_user_permissions(current_user["user_id"], current_user.get("tenant_id"))
-        
-        if not (has_permission(user_permissions, "settings:manage") or has_permission(user_permissions, "system:manage")):
-            raise HTTPException(status_code=403, detail="Permission required: settings:manage")
-        
-        # Check if it's a custom API
-        if not api_key.startswith('custom_'):
-            raise HTTPException(status_code=400, detail="Can only remove custom APIs")
-        
-        if api_key in rate_limiter.apis:
-            del rate_limiter.apis[api_key]
-            
-            # Clean up environment variables
-            slot_num = api_key.split('_')[1]
-            env_vars_to_remove = [
-                f'CUSTOM_API_{slot_num}_NAME',
-                f'CUSTOM_API_{slot_num}_KEY',
-                f'CUSTOM_API_{slot_num}_RATE_LIMIT'
-            ]
-            
-            for env_var in env_vars_to_remove:
-                if env_var in os.environ:
-                    del os.environ[env_var]
-            
-            return {"message": f"Custom API removed successfully"}
-        else:
-            raise HTTPException(status_code=404, detail="Custom API not found")
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to remove custom API: {str(e)}")
-
-@app.get("/api/rate-limits/available-apis")
-async def get_available_api_templates():
-    """Get list of available API templates for easy configuration"""
-    templates = [
-        {
-            "name": "VirusTotal",
-            "key": "virustotal",
-            "description": "File and URL reputation analysis",
-            "website": "https://www.virustotal.com/",
-            "default_limits": {
-                "free_tier": {"per_minute": 4, "per_day": 500},
-                "premium": {"per_minute": 300, "per_day": 60000}
-            },
-            "env_vars": ["VT_API_KEY", "VT_RATE_LIMIT_PER_MIN", "VT_RATE_LIMIT_PER_DAY"]
-        },
-        {
-            "name": "AbuseIPDB",
-            "key": "abuseipdb", 
-            "description": "IP address reputation and abuse reports",
-            "website": "https://www.abuseipdb.com/",
-            "default_limits": {
-                "free_tier": {"per_day": 1000},
-                "premium": {"per_day": 10000}
-            },
-            "env_vars": ["ABUSEIPDB_API_KEY", "ABUSEIPDB_RATE_LIMIT_CHECKS_PER_DAY"]
-        },
-        {
-            "name": "AlienVault OTX",
-            "key": "otx",
-            "description": "Open Threat Exchange intelligence",
-            "website": "https://otx.alienvault.com/",
-            "default_limits": {"note": "Reasonable use policy - no strict limits"},
-            "env_vars": ["OTX_API_KEY"]
-        },
-        {
-            "name": "IntelligenceX",
-            "key": "intelx",
-            "description": "Search engine for leaked data and breaches",
-            "website": "https://intelx.io/",
-            "default_limits": {
-                "free_tier": {"per_month": 50},
-                "premium": {"per_month": 500}
-            },
-            "env_vars": ["INTELX_API_KEY", "INTELX_RATE_LIMIT_SEARCH_PER_MONTH"]
-        },
-        {
-            "name": "LeakIX",
-            "key": "leakix",
-            "description": "Information disclosure search engine", 
-            "website": "https://leakix.net/",
-            "default_limits": {
-                "free_tier": {"per_month": 3000},
-                "premium": {"per_month": 30000}
-            },
-            "env_vars": ["LEAKIX_API_KEY", "LEAKIX_RATE_LIMIT_PER_MONTH"]
-        },
-        {
-            "name": "FOFA",
-            "key": "fofa",
-            "description": "Cyberspace mapping search engine",
-            "website": "https://fofa.info/",
-            "default_limits": {
-                "free_tier": {"per_month": 300},
-                "premium": {"per_month": 3000}
-            },
-            "env_vars": ["FOFA_KEY", "FOFA_RATE_LIMIT_PER_MONTH"]
-        }
-    ]
-    
-    return {"available_apis": templates}
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8001,
+        reload=os.getenv("HOT_RELOAD", "false").lower() == "true",
+        log_level="info"
+    )
